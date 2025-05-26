@@ -1,0 +1,86 @@
+﻿<!-- student-data.html -->
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ورود اطلاعات دانش‌آموزان</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: linear-gradient(to bottom, #e0e7ff, #f8fafc);
+      color: #1e293b;
+      padding: 2rem;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 2rem;
+    }
+    th, td {
+      border: 1px solid #94a3b8;
+      padding: 0.75rem;
+      text-align: center;
+    }
+    th {
+      background-color: #cbd5e1;
+    }
+    input {
+      width: 90%;
+      padding: 0.5rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 0.5rem;
+    }
+    button {
+      padding: 0.75rem 1.5rem;
+      background-color: #3b82f6;
+      color: white;
+      border: none;
+      border-radius: 0.5rem;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #2563eb;
+    }
+  </style>
+</head>
+<body>
+  <h1>ورود اطلاعات دانش‌آموزان</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>شماره</th>
+        <th>نام دانش‌آموز</th>
+        <th>نمره</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- 15 ردیف دانش‌آموز -->
+      <script>
+        for (let i = 1; i <= 15; i++) {
+          document.write(
+            `<tr>
+              <td>دانش‌آموز ${i}</td>
+              <td><input type="text" name="name-${i}" /></td>
+              <td><input type="number" name="score-${i}" min="0" max="20" /></td>
+            </tr>`
+          );
+        }
+      </script>
+    </tbody>
+  </table>
+  <div style="text-align: center;">
+    <button onclick="saveData()">ذخیره اطلاعات</button>
+  </div>
+
+  <script>
+    function saveData() {
+      alert("فعلاً این داده‌ها ذخیره نمی‌شوند — بعداً اتصال به دیتابیس یا فایل انجام می‌دهیم.");
+    }
+  </script>
+</body>
+</html>
