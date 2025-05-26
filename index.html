@@ -1,0 +1,87 @@
+﻿<!DOCTYPE html>
+<html lang="fa">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ورود به تَعلیم‌بات</title>
+  <style>
+    body {
+      background: linear-gradient(to bottom right, #4A90E2, #D3D3D3);
+      font-family: sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .login-box {
+      background: white;
+      padding: 2rem;
+      border-radius: 20px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.2);
+      text-align: center;
+      width: 90%;
+      max-width: 400px;
+    }
+    img {
+      max-width: 100px;
+      margin-bottom: 1rem;
+    }
+    h2 {
+      color: #333;
+      margin-bottom: 1rem;
+    }
+    input {
+      display: block;
+      width: 100%;
+      padding: 0.75rem;
+      margin-bottom: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      font-size: 1rem;
+    }
+    button {
+      background-color: #4A90E2;
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #357ABD;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-box">
+    <img src="talimbot-logo.png" alt="TalimBot Logo">
+    <h2>ورود به کلاس تَعلیم‌بات</h2>
+    <form onsubmit="return login(event)">
+      <input type="text" id="username" placeholder="نام کاربری" required>
+      <input type="password" id="password" placeholder="رمز عبور" required>
+      <button type="submit">ورود</button>
+    </form>
+    <p id="error" style="color:red"></p>
+  </div>
+  <script>
+    function login(event) {
+      event.preventDefault();
+      const user = document.getElementById("username").value;
+      const pass = document.getElementById("password").value;
+
+      // بررسی ساده - می‌توان با لیست کامل جایگزین کرد
+      if ((user === "teacher" && pass === "1234") || (user.startsWith("stu") && pass === "1111")) {
+        if (user === "teacher") {
+          window.location.href = "teacher.html";
+        } else {
+          window.location.href = "classroom.html?user=" + encodeURIComponent(user);
+        }
+      } else {
+        document.getElementById("error").innerText = "نام کاربری یا رمز عبور اشتباه است.";
+      }
+    }
+  </script>
+</body>
+</html>
