@@ -1,0 +1,104 @@
+﻿<!DOCTYPE html>
+<html lang="fa">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>چت با GPT - TalimBot</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: linear-gradient(to right, #e0eafc, #cfdef3);
+      margin: 0;
+      padding: 2rem;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    .upload-area, .chat-area {
+      max-width: 800px;
+      margin: 0 auto 2rem;
+      background: white;
+      border-radius: 12px;
+      padding: 1rem 2rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .upload-area input, textarea {
+      width: 100%;
+      padding: 0.75rem;
+      margin-top: 0.5rem;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    .chat-box {
+      height: 300px;
+      overflow-y: auto;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-top: 1rem;
+      background-color: #f9f9f9;
+    }
+    .message {
+      margin-bottom: 1rem;
+    }
+    .user {
+      text-align: right;
+      color: #0d47a1;
+    }
+    .gpt {
+      text-align: left;
+      color: #00695c;
+    }
+    button {
+      margin-top: 1rem;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      background-color: #3b82f6;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>چت معلم با GPT</h1>
+
+  <div class="upload-area">
+    <label>آپلود فایل PDF درس:</label>
+    <input type="file" accept="application/pdf">
+    <label style="margin-top: 1rem; display: block;">دستور یا هدف خود را وارد کنید (پرامپت):</label>
+    <textarea id="prompt" rows="4" placeholder="مثلاً: برای فصل تابع یک تمرین گروهی طراحی کن..."></textarea>
+    <button onclick="sendPrompt()">ارسال به GPT</button>
+  </div>
+
+  <div class="chat-area">
+    <h2>گفتگو</h2>
+    <div class="chat-box" id="chatBox">
+      <!-- پیام‌ها اینجا ظاهر می‌شوند -->
+    </div>
+  </div>
+
+  <script>
+    function sendPrompt() {
+      const prompt = document.getElementById("prompt").value;
+      const box = document.getElementById("chatBox");
+      if (!prompt) return;
+      // نمایش پیام معلم
+      const userMsg = document.createElement("div");
+      userMsg.className = "message user";
+      userMsg.textContent = "👩‍🏫 معلم: " + prompt;
+      box.appendChild(userMsg);
+      // نمایش پاسخ نمایشی GPT
+      const gptMsg = document.createElement("div");
+      gptMsg.className = "message gpt";
+      gptMsg.textContent = "🤖 GPT: (پاسخ شبیه‌سازی‌شده — در نسخه نهایی به GPT API وصل می‌شود)";
+      box.appendChild(gptMsg);
+      document.getElementById("prompt").value = "";
+      box.scrollTop = box.scrollHeight;
+    }
+  </script>
+</body>
+</html>
