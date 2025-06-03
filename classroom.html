@@ -1,5 +1,4 @@
-
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fa">
 <head>
   <meta charset="UTF-8">
@@ -15,46 +14,47 @@
       padding: 30px;
     }
     .logo {
-      width: 200px;
-      margin-bottom: 20px;
+      width: 300px;
+      margin-bottom: 30px;
       animation: fadeIn 1s ease-in-out;
     }
     h2 {
       color: #fff;
-      font-size: 28px;
-      margin-bottom: 10px;
+      font-size: 32px;
+      margin-bottom: 20px;
     }
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
       gap: 20px;
-      margin-top: 30px;
+      margin-top: 20px;
       justify-items: center;
     }
-    .icon {
-      background: white;
-      color: #333;
+    .icon-box {
+      background-color: #ffffff;
+      color: #1e293b;
       border-radius: 12px;
-      padding: 10px;
-      box-shadow: 0 6px 14px rgba(0,0,0,0.35);
+      width: 100px;
+      height: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 14px;
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
       cursor: pointer;
       transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
-    .icon:hover {
+    .icon-box:hover {
       transform: scale(1.08);
-      box-shadow: 0 10px 18px rgba(0,0,0,0.5);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.5);
     }
-    .icon img {
-      width: 64px;
-      height: 64px;
-      margin-bottom: 8px;
+    section {
+      margin-bottom: 50px;
     }
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(-20px); }
       to { opacity: 1; transform: translateY(0); }
-    }
-    section {
-      margin-bottom: 50px;
     }
   </style>
 </head>
@@ -65,10 +65,7 @@
   <section>
     <h3>👩‍🏫 معلم</h3>
     <div class="grid">
-      <div class="icon" onclick="location.href='teacher.html'">
-        <img src="teacher.png" alt="Teacher">
-        <div>معلم</div>
-      </div>
+      <div class="icon-box" onclick="location.href='teacher.html'">معلم</div>
     </div>
   </section>
 
@@ -89,8 +86,8 @@
     const studentGrid = document.getElementById("students");
     for (let i = 1; i <= studentCount; i++) {
       const el = document.createElement("div");
-      el.className = "icon";
-      el.innerHTML = '<img src="student.png"><div>دانش‌آموز ' + i + '</div>';
+      el.className = "icon-box";
+      el.textContent = 'دانش‌آموز ' + i;
       el.onclick = () => window.location.href = 'student.html';
       studentGrid.appendChild(el);
     }
@@ -98,8 +95,8 @@
     const groupGrid = document.getElementById("groups");
     for (let g = 1; g <= groupCount; g++) {
       const el = document.createElement("div");
-      el.className = "icon";
-      el.innerHTML = '<img src="group.png"><div>گروه ' + g + '</div>';
+      el.className = "icon-box";
+      el.textContent = 'گروه ' + g;
       el.onclick = () => window.location.href = 'group' + g + '-chat.html';
       groupGrid.appendChild(el);
     }
