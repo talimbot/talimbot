@@ -1,115 +1,186 @@
-﻿<!DOCTYPE html>
+
+<!DOCTYPE html>
 <html lang="fa">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Classroom - TalimBot</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
-  </head>
-  <body class="bg-gradient-to-br from-blue-200 to-gray-100 min-h-screen p-6">
-    <div class="max-w-6xl mx-auto">
-      <header class="flex justify-between items-center mb-6">
-        <div class="flex items-center space-x-4">
-         <img src="logo.png" alt="Logo" class="w-40 h-auto" />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>کلاس TalimBot</title>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: 'Vazirmatn', sans-serif;
+      background: linear-gradient(135deg, #0f2027, #2c5364);
+      color: #333;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .logo {
+      width: 200px;
+      display: block;
+      margin: 0 auto 20px;
+    }
+    h1 {
+      color: #fff;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+      gap: 20px;
+      justify-items: center;
+    }
+    .icon-box {
+      background: #fff;
+      border-radius: 15px;
+      padding: 10px;
+      width: 100px;
+      text-align: center;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+      transition: transform 0.2s;
+      cursor: pointer;
+    }
+    .icon-box:hover {
+      transform: translateY(-5px);
+    }
+    .icon-box img {
+      width: 60px;
+      height: 60px;
+    }
+    .label {
+      margin-top: 8px;
+      font-weight: bold;
+      color: #333;
+    }
 
-          <h1 class="text-3xl font-bold text-gray-700">TalimBot - Classroom</h1>
-        </div>
-      </header>
+    .section-title {
+      color: #fff;
+      font-size: 20px;
+      margin: 30px 10px 15px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <img src="logo.png" alt="TalimBot Logo" class="logo" />
+    <h1>کلاس هوشمند TalimBot</h1>
+  </div>
 
-      <div class="grid grid-cols-4 gap-6 mb-10">
-        <!-- Teacher Icon -->
-        <a href="teacher.html"
-          class="flex flex-col items-center justify-center bg-white p-4 rounded-2xl shadow hover:bg-gray-100">
-          <img src="https://img.icons8.com/color/96/teacher.png" class="w-20 h-20" alt="Teacher" />
-          <span class="mt-2 font-semibold text-gray-700">معلم</span>
-        </a>
-
-        <!-- 15 Students (همه میرن به student.html) -->
-        <a href="student.html" class="flex flex-col items-center justify-center bg-white p-4 rounded-2xl shadow hover:bg-gray-100">
-          <img src="https://img.icons8.com/color/96/student-male.png" class="w-16 h-16" />
-          <span class="mt-2 font-medium text-gray-600">دانش‌آموز ۱</span>
-        </a>
-        <a href="student.html" class="flex flex-col items-center justify-center bg-white p-4 rounded-2xl shadow hover:bg-gray-100">
-          <img src="https://img.icons8.com/color/96/student-male.png" class="w-16 h-16" />
-          <span class="mt-2 font-medium text-gray-600">دانش‌آموز ۲</span>
-        </a>
-        <a href="student.html" class="flex flex-col items-center justify-center bg-white p-4 rounded-2xl shadow hover:bg-gray-100">
-          <img src="https://img.icons8.com/color/96/student-male.png" class="w-16 h-16" />
-          <span class="mt-2 font-medium text-gray-600">دانش‌آموز ۳</span>
-        </a>
-        <a href="student.html" class="flex flex-col items-center justify-center bg-white p-4 rounded-2xl shadow hover:bg-gray-100">
-          <img src="https://img.icons8.com/color/96/student-male.png" class="w-16 h-16" />
-          <span class="mt-2 font-medium text-gray-600">دانش‌آموز ۴</span>
-        </a>
-        <a href="student.html" class="flex flex-col items-center justify-center bg-white p-4 rounded-2xl shadow hover:bg-gray-100">
-          <img src="https://img.icons8.com/color/96/student-male.png" class="w-16 h-16" />
-          <span class="mt-2 font-medium text-gray-600">دانش‌آموز ۵</span>
-        </a>
-        <a href="student.html" class="flex flex-col items-center justify-center bg-white p-4 rounded-2xl shadow hover:bg-gray-100">
-          <img src="https://img.icons8.com/color/96/student-male.png" class="w-16 h-16" />
-          <span class="mt-2 font-medium text-gray-600">دانش‌آموز ۶</span>
-        </a>
-        <a href="student.html" class="flex flex-col items-center justify-center bg-white p-4 rounded-2xl shadow hover:bg-gray-100">
-          <img src="https://img.icons8.com/color/96/student-male.png" class="w-16 h-16" />
-          <span class="mt-2 font-medium text-gray-600">دانش‌آموز ۷</span>
-        </a>
-        <a href="student.html" class="flex flex-col items-center justify-center bg-white p-4 rounded-2xl shadow hover:bg-gray-100">
-          <img src="https://img.icons8.com/color/96/student-male.png" class="w-16 h-16" />
-          <span class="mt-2 font-medium text-gray-600">دانش‌آموز ۸</span>
-        </a>
-        <a href="student.html" class="flex flex-col items-center justify-center bg-white p-4 rounded-2xl shadow hover:bg-gray-100">
-          <img src="https://img.icons8.com/color/96/student-male.png" class="w-16 h-16" />
-          <span class="mt-2 font-medium text-gray-600">دانش‌آموز ۹</span>
-        </a>
-        <a href="student.html" class="flex flex-col items-center justify-center bg-white p-4 rounded-2xl shadow hover:bg-gray-100">
-          <img src="https://img.icons8.com/color/96/student-male.png" class="w-16 h-16" />
-          <span class="mt-2 font-medium text-gray-600">دانش‌آموز ۱۰</span>
-        </a>
-        <a href="student.html" class="flex flex-col items-center justify-center bg-white p-4 rounded-2xl shadow hover:bg-gray-100">
-          <img src="https://img.icons8.com/color/96/student-male.png" class="w-16 h-16" />
-          <span class="mt-2 font-medium text-gray-600">دانش‌آموز ۱۱</span>
-        </a>
-        <a href="student.html" class="flex flex-col items-center justify-center bg-white p-4 rounded-2xl shadow hover:bg-gray-100">
-          <img src="https://img.icons8.com/color/96/student-male.png" class="w-16 h-16" />
-          <span class="mt-2 font-medium text-gray-600">دانش‌آموز ۱۲</span>
-        </a>
-        <a href="student.html" class="flex flex-col items-center justify-center bg-white p-4 rounded-2xl shadow hover:bg-gray-100">
-          <img src="https://img.icons8.com/color/96/student-male.png" class="w-16 h-16" />
-          <span class="mt-2 font-medium text-gray-600">دانش‌آموز ۱۳</span>
-        </a>
-        <a href="student.html" class="flex flex-col items-center justify-center bg-white p-4 rounded-2xl shadow hover:bg-gray-100">
-          <img src="https://img.icons8.com/color/96/student-male.png" class="w-16 h-16" />
-          <span class="mt-2 font-medium text-gray-600">دانش‌آموز ۱۴</span>
-        </a>
-        <a href="student.html" class="flex flex-col items-center justify-center bg-white p-4 rounded-2xl shadow hover:bg-gray-100">
-          <img src="https://img.icons8.com/color/96/student-male.png" class="w-16 h-16" />
-          <span class="mt-2 font-medium text-gray-600">دانش‌آموز ۱۵</span>
-        </a>
-      </div>
-
-      <!-- Group Icons -->
-      <div class="grid grid-cols-5 gap-4 mt-10">
-        <a href="group1-chat.html" class="flex flex-col items-center justify-center bg-white p-4 rounded-2xl shadow hover:bg-gray-100">
-          <img src="https://img.icons8.com/fluency/96/groups.png" class="w-16 h-16" />
-          <span class="mt-2 font-medium text-gray-700">گروه ۱</span>
-        </a>
-        <a href="group2-chat.html" class="flex flex-col items-center justify-center bg-white p-4 rounded-2xl shadow hover:bg-gray-100">
-          <img src="https://img.icons8.com/fluency/96/groups.png" class="w-16 h-16" />
-          <span class="mt-2 font-medium text-gray-700">گروه ۲</span>
-        </a>
-        <a href="group3-chat.html" class="flex flex-col items-center justify-center bg-white p-4 rounded-2xl shadow hover:bg-gray-100">
-          <img src="https://img.icons8.com/fluency/96/groups.png" class="w-16 h-16" />
-          <span class="mt-2 font-medium text-gray-700">گروه ۳</span>
-        </a>
-        <a href="group4-chat.html" class="flex flex-col items-center justify-center bg-white p-4 rounded-2xl shadow hover:bg-gray-100">
-          <img src="https://img.icons8.com/fluency/96/groups.png" class="w-16 h-16" />
-          <span class="mt-2 font-medium text-gray-700">گروه ۴</span>
-        </a>
-        <a href="group5-chat.html" class="flex flex-col items-center justify-center bg-white p-4 rounded-2xl shadow hover:bg-gray-100">
-          <img src="https://img.icons8.com/fluency/96/groups.png" class="w-16 h-16" />
-          <span class="mt-2 font-medium text-gray-700">گروه ۵</span>
-        </a>
-      </div>
+  <h2 class="section-title">👩‍🏫 معلم</h2>
+  <div class="grid">
+    <div class="icon-box" onclick="location.href='teacher.html'">
+      <img src="teacher.png" alt="Teacher">
+      <div class="label">معلم</div>
     </div>
-  </body>
+  </div>
+
+  <h2 class="section-title">👦 دانش‌آموزان</h2>
+  <div class="grid">
+    <!-- 15 student icons linking to student.html -->
+    <!-- Repeat manually -->
+    
+    <div class="icon-box" onclick="location.href='student.html'">
+      <img src="student.png" alt="Student 1">
+      <div class="label">دانش‌آموز 1</div>
+    </div>
+    
+    <div class="icon-box" onclick="location.href='student.html'">
+      <img src="student.png" alt="Student 2">
+      <div class="label">دانش‌آموز 2</div>
+    </div>
+    
+    <div class="icon-box" onclick="location.href='student.html'">
+      <img src="student.png" alt="Student 3">
+      <div class="label">دانش‌آموز 3</div>
+    </div>
+    
+    <div class="icon-box" onclick="location.href='student.html'">
+      <img src="student.png" alt="Student 4">
+      <div class="label">دانش‌آموز 4</div>
+    </div>
+    
+    <div class="icon-box" onclick="location.href='student.html'">
+      <img src="student.png" alt="Student 5">
+      <div class="label">دانش‌آموز 5</div>
+    </div>
+    
+    <div class="icon-box" onclick="location.href='student.html'">
+      <img src="student.png" alt="Student 6">
+      <div class="label">دانش‌آموز 6</div>
+    </div>
+    
+    <div class="icon-box" onclick="location.href='student.html'">
+      <img src="student.png" alt="Student 7">
+      <div class="label">دانش‌آموز 7</div>
+    </div>
+    
+    <div class="icon-box" onclick="location.href='student.html'">
+      <img src="student.png" alt="Student 8">
+      <div class="label">دانش‌آموز 8</div>
+    </div>
+    
+    <div class="icon-box" onclick="location.href='student.html'">
+      <img src="student.png" alt="Student 9">
+      <div class="label">دانش‌آموز 9</div>
+    </div>
+    
+    <div class="icon-box" onclick="location.href='student.html'">
+      <img src="student.png" alt="Student 10">
+      <div class="label">دانش‌آموز 10</div>
+    </div>
+    
+    <div class="icon-box" onclick="location.href='student.html'">
+      <img src="student.png" alt="Student 11">
+      <div class="label">دانش‌آموز 11</div>
+    </div>
+    
+    <div class="icon-box" onclick="location.href='student.html'">
+      <img src="student.png" alt="Student 12">
+      <div class="label">دانش‌آموز 12</div>
+    </div>
+    
+    <div class="icon-box" onclick="location.href='student.html'">
+      <img src="student.png" alt="Student 13">
+      <div class="label">دانش‌آموز 13</div>
+    </div>
+    
+    <div class="icon-box" onclick="location.href='student.html'">
+      <img src="student.png" alt="Student 14">
+      <div class="label">دانش‌آموز 14</div>
+    </div>
+    
+    <div class="icon-box" onclick="location.href='student.html'">
+      <img src="student.png" alt="Student 15">
+      <div class="label">دانش‌آموز 15</div>
+    </div>
+    
+  </div>
+
+  <h2 class="section-title">🧩 گروه‌ها</h2>
+  <div class="grid">
+    <!-- 5 group icons linking to group chats -->
+    <div class="icon-box" onclick="location.href='group1-chat.html'">
+      <img src="group.png" alt="Group 1">
+      <div class="label">گروه ۱</div>
+    </div>
+    <div class="icon-box" onclick="location.href='group2-chat.html'">
+      <img src="group.png" alt="Group 2">
+      <div class="label">گروه ۲</div>
+    </div>
+    <div class="icon-box" onclick="location.href='group3-chat.html'">
+      <img src="group.png" alt="Group 3">
+      <div class="label">گروه ۳</div>
+    </div>
+    <div class="icon-box" onclick="location.href='group4-chat.html'">
+      <img src="group.png" alt="Group 4">
+      <div class="label">گروه ۴</div>
+    </div>
+    <div class="icon-box" onclick="location.href='group5-chat.html'">
+      <img src="group.png" alt="Group 5">
+      <div class="label">گروه ۵</div>
+    </div>
+  </div>
+</body>
 </html>
