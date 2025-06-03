@@ -1,186 +1,79 @@
-
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fa">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>کلاس TalimBot</title>
   <link href="https://fonts.googleapis.com/css2?family=Vazirmatn&display=swap" rel="stylesheet">
   <style>
     body {
-      margin: 0;
-      padding: 20px;
       font-family: 'Vazirmatn', sans-serif;
       background: linear-gradient(135deg, #0f2027, #2c5364);
-      color: #333;
-    }
-    .header {
+      color: #fff;
       text-align: center;
-      margin-bottom: 30px;
+      padding: 30px;
     }
     .logo {
       width: 200px;
-      display: block;
-      margin: 0 auto 20px;
-    }
-    h1 {
-      color: #fff;
+      margin-bottom: 20px;
     }
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
       gap: 20px;
-      justify-items: center;
+      margin-top: 30px;
     }
-    .icon-box {
-      background: #fff;
-      border-radius: 15px;
+    .icon {
+      background: white;
+      color: #333;
+      border-radius: 10px;
       padding: 10px;
-      width: 100px;
-      text-align: center;
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-      transition: transform 0.2s;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
       cursor: pointer;
     }
-    .icon-box:hover {
-      transform: translateY(-5px);
-    }
-    .icon-box img {
+    .icon img {
       width: 60px;
       height: 60px;
     }
-    .label {
-      margin-top: 8px;
-      font-weight: bold;
-      color: #333;
-    }
-
-    .section-title {
+    h2 {
       color: #fff;
-      font-size: 20px;
-      margin: 30px 10px 15px;
     }
   </style>
 </head>
 <body>
-  <div class="header">
-    <img src="logo.png" alt="TalimBot Logo" class="logo" />
-    <h1>کلاس هوشمند TalimBot</h1>
-  </div>
+  <img src="logo.png" alt="Logo" class="logo">
+  <h2>کلاس هوشمند TalimBot</h2>
 
-  <h2 class="section-title">👩‍🏫 معلم</h2>
+  <h3>👩‍🏫 معلم</h3>
   <div class="grid">
-    <div class="icon-box" onclick="location.href='teacher.html'">
+    <div class="icon" onclick="location.href='teacher.html'">
       <img src="teacher.png" alt="Teacher">
-      <div class="label">معلم</div>
+      <div>معلم</div>
     </div>
   </div>
 
-  <h2 class="section-title">👦 دانش‌آموزان</h2>
+  <h3>👨‍🎓 دانش‌آموزان</h3>
+  <div class="grid" id="students"></div>
+
+  <h3>🧩 گروه‌ها</h3>
   <div class="grid">
-    <!-- 15 student icons linking to student.html -->
-    <!-- Repeat manually -->
-    
-    <div class="icon-box" onclick="location.href='student.html'">
-      <img src="student.png" alt="Student 1">
-      <div class="label">دانش‌آموز 1</div>
-    </div>
-    
-    <div class="icon-box" onclick="location.href='student.html'">
-      <img src="student.png" alt="Student 2">
-      <div class="label">دانش‌آموز 2</div>
-    </div>
-    
-    <div class="icon-box" onclick="location.href='student.html'">
-      <img src="student.png" alt="Student 3">
-      <div class="label">دانش‌آموز 3</div>
-    </div>
-    
-    <div class="icon-box" onclick="location.href='student.html'">
-      <img src="student.png" alt="Student 4">
-      <div class="label">دانش‌آموز 4</div>
-    </div>
-    
-    <div class="icon-box" onclick="location.href='student.html'">
-      <img src="student.png" alt="Student 5">
-      <div class="label">دانش‌آموز 5</div>
-    </div>
-    
-    <div class="icon-box" onclick="location.href='student.html'">
-      <img src="student.png" alt="Student 6">
-      <div class="label">دانش‌آموز 6</div>
-    </div>
-    
-    <div class="icon-box" onclick="location.href='student.html'">
-      <img src="student.png" alt="Student 7">
-      <div class="label">دانش‌آموز 7</div>
-    </div>
-    
-    <div class="icon-box" onclick="location.href='student.html'">
-      <img src="student.png" alt="Student 8">
-      <div class="label">دانش‌آموز 8</div>
-    </div>
-    
-    <div class="icon-box" onclick="location.href='student.html'">
-      <img src="student.png" alt="Student 9">
-      <div class="label">دانش‌آموز 9</div>
-    </div>
-    
-    <div class="icon-box" onclick="location.href='student.html'">
-      <img src="student.png" alt="Student 10">
-      <div class="label">دانش‌آموز 10</div>
-    </div>
-    
-    <div class="icon-box" onclick="location.href='student.html'">
-      <img src="student.png" alt="Student 11">
-      <div class="label">دانش‌آموز 11</div>
-    </div>
-    
-    <div class="icon-box" onclick="location.href='student.html'">
-      <img src="student.png" alt="Student 12">
-      <div class="label">دانش‌آموز 12</div>
-    </div>
-    
-    <div class="icon-box" onclick="location.href='student.html'">
-      <img src="student.png" alt="Student 13">
-      <div class="label">دانش‌آموز 13</div>
-    </div>
-    
-    <div class="icon-box" onclick="location.href='student.html'">
-      <img src="student.png" alt="Student 14">
-      <div class="label">دانش‌آموز 14</div>
-    </div>
-    
-    <div class="icon-box" onclick="location.href='student.html'">
-      <img src="student.png" alt="Student 15">
-      <div class="label">دانش‌آموز 15</div>
-    </div>
-    
+    <div class="icon" onclick="location.href='group1-chat.html'"><img src="group.png"><div>گروه ۱</div></div>
+    <div class="icon" onclick="location.href='group2-chat.html'"><img src="group.png"><div>گروه ۲</div></div>
+    <div class="icon" onclick="location.href='group3-chat.html'"><img src="group.png"><div>گروه ۳</div></div>
+    <div class="icon" onclick="location.href='group4-chat.html'"><img src="group.png"><div>گروه ۴</div></div>
+    <div class="icon" onclick="location.href='group5-chat.html'"><img src="group.png"><div>گروه ۵</div></div>
   </div>
 
-  <h2 class="section-title">🧩 گروه‌ها</h2>
-  <div class="grid">
-    <!-- 5 group icons linking to group chats -->
-    <div class="icon-box" onclick="location.href='group1-chat.html'">
-      <img src="group.png" alt="Group 1">
-      <div class="label">گروه ۱</div>
-    </div>
-    <div class="icon-box" onclick="location.href='group2-chat.html'">
-      <img src="group.png" alt="Group 2">
-      <div class="label">گروه ۲</div>
-    </div>
-    <div class="icon-box" onclick="location.href='group3-chat.html'">
-      <img src="group.png" alt="Group 3">
-      <div class="label">گروه ۳</div>
-    </div>
-    <div class="icon-box" onclick="location.href='group4-chat.html'">
-      <img src="group.png" alt="Group 4">
-      <div class="label">گروه ۴</div>
-    </div>
-    <div class="icon-box" onclick="location.href='group5-chat.html'">
-      <img src="group.png" alt="Group 5">
-      <div class="label">گروه ۵</div>
-    </div>
-  </div>
+  <script>
+    const count = localStorage.getItem('studentCount') || 15;
+    const container = document.getElementById("students");
+    for (let i = 1; i <= count; i++) {
+      const el = document.createElement("div");
+      el.className = "icon";
+      el.innerHTML = '<img src="student.png"><div>دانش‌آموز ' + i + '</div>';
+      el.onclick = () => window.location.href = 'student.html';
+      container.appendChild(el);
+    }
+  </script>
 </body>
 </html>
