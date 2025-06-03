@@ -1,13 +1,18 @@
-﻿<!DOCTYPE html>
+
+<!DOCTYPE html>
 <html lang="fa">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ورود به TalimBot</title>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn&display=swap" rel="stylesheet">
   <style>
+    * {
+      box-sizing: border-box;
+    }
     body {
-      font-family: "Vazir", sans-serif;
-      background: linear-gradient(135deg, #5f9ea0, #d3d3d3);
+      font-family: 'Vazirmatn', sans-serif;
+      background: linear-gradient(135deg, #0f2027, #2c5364);
       color: #333;
       display: flex;
       flex-direction: column;
@@ -17,46 +22,65 @@
       margin: 0;
     }
     .logo {
-      width: 120px;
-      margin-bottom: 20px;
+      width: 280px;
+      margin-bottom: 30px;
+      animation: fadeIn 1.2s ease-in-out;
     }
     .login-container {
-      background-color: white;
-      padding: 30px;
-      border-radius: 16px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      background-color: #ffffff;
+      padding: 40px 30px;
+      border-radius: 18px;
+      box-shadow: 0 12px 24px rgba( 0, 0, 0, 0.3);
       text-align: center;
-      width: 300px;
+      width: 100%;
+      max-width: 350px;
+    }
+    h2 {
+      margin-bottom: 20px;
+      color: #1f2937;
     }
     input {
       width: 100%;
-      padding: 10px;
-      margin: 10px 0;
-      border-radius: 8px;
+      padding: 12px;
+      margin: 12px 0;
+      border-radius: 10px;
       border: 1px solid #ccc;
+      font-size: 14px;
     }
     button {
-      padding: 10px 20px;
-      background-color: #5f9ea0;
+      width: 100%;
+      padding: 12px;
+      background-color: #2563eb;
       color: white;
       border: none;
-      border-radius: 8px;
+      border-radius: 10px;
       cursor: pointer;
+      font-size: 16px;
       font-weight: bold;
+      transition: background-color 0.3s;
     }
     button:hover {
-      background-color: #538a8c;
+      background-color: #1d4ed8;
+    }
+    #message {
+      margin-top: 12px;
+      color: red;
+      font-size: 14px;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
   </style>
 </head>
 <body>
- <img src="logo.png" alt="TalimBot Logo" style="width: 320px; height: auto;">
+  <img src="logo.png" alt="TalimBot Logo" class="logo" />
   <div class="login-container">
     <h2>ورود به سامانه TalimBot</h2>
-    <input type="text" id="username" placeholder="نام کاربری">
-    <input type="password" id="password" placeholder="رمز عبور">
+    <input type="text" id="username" placeholder="نام کاربری" />
+    <input type="password" id="password" placeholder="رمز عبور" />
     <button onclick="login()">ورود</button>
-    <p id="message" style="color:red;"></p>
+    <p id="message"></p>
   </div>
 
   <script>
@@ -64,7 +88,6 @@
       const username = document.getElementById("username").value;
       const password = document.getElementById("password").value;
 
-      // لیست یوزر و پسوردهای مجاز
       const users = {
         "teacher": "1234",
         "admin": "adminpass"
