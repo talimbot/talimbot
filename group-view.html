@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Group - Student Grouping System</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container dashboard-container">
+        <div class="header">
+            <a href="student-dashboard.html" class="back-link">← Back to Dashboard</a>
+            <div class="icon">👥</div>
+            <h1>Your Study Group</h1>
+            <p id="headerSubtext">View your assigned group members</p>
+        </div>
+
+        <!-- Loading State -->
+        <div id="loadingState" style="display: none;">
+            <div class="card">
+                <div class="card-body" style="text-align: center; padding: 40px;">
+                    <div class="loading" style="width: 50px; height: 50px; border-width: 5px; margin: 0 auto 20px;"></div>
+                    <p style="color: var(--text-light);">Loading group information...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Not Grouped Yet State -->
+        <div id="notGroupedState" style="display: none;">
+            <div class="card">
+                <div class="card-body">
+                    <div class="empty-state">
+                        <div class="icon">⏳</div>
+                        <h3>Grouping Not Complete</h3>
+                        <p>The teacher hasn't completed the grouping process yet.</p>
+                        <p style="margin-top: 15px;">Please check back later or contact your teacher for more information.</p>
+                    </div>
+                    <div style="margin-top: 30px; text-align: center;">
+                        <button onclick="window.location.reload()" class="btn btn-secondary">
+                            Refresh Page
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Group Information State -->
+        <div id="groupedState" style="display: none;">
+            <!-- Course Info -->
+            <div class="alert alert-info" id="courseInfo">
+                📚 <strong>Course:</strong> <span id="courseName">-</span>
+            </div>
+
+            <!-- Group Number Card -->
+            <div class="card">
+                <div class="card-header">
+                    🎯 Group <span id="groupNumber">-</span>
+                </div>
+                <div class="card-body">
+                    <div class="info-display">
+                        <div class="label">Total Members</div>
+                        <div class="value" id="memberCount">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Group Members Card -->
+            <div class="card">
+                <div class="card-header">
+                    👥 Group Members
+                </div>
+                <div class="card-body">
+                    <ul class="group-list" id="groupMembersList">
+                        <!-- Will be populated by JavaScript -->
+                    </ul>
+                </div>
+            </div>
+
+            <!-- My Info in Group -->
+            <div class="card">
+                <div class="card-header">
+                    📊 Your Profile
+                </div>
+                <div class="card-body">
+                    <div class="info-display">
+                        <div class="label">MBTI Type</div>
+                        <div class="value" id="myMbti">-</div>
+                    </div>
+                    <div class="info-display">
+                        <div class="label">Learning Style</div>
+                        <div class="value" id="myLearningStyle">-</div>
+                    </div>
+                    <div class="info-display">
+                        <div class="label">Grade</div>
+                        <div class="value" id="myGrade">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div style="display: flex; gap: 15px; margin-top: 20px;">
+                <button onclick="window.location.href='student-dashboard.html'" class="btn btn-secondary" style="width: auto; flex: 1;">
+                    Back to Dashboard
+                </button>
+                <button onclick="window.location.reload()" class="btn btn-primary" style="width: auto; flex: 1;">
+                    Refresh Group Info
+                </button>
+            </div>
+        </div>
+
+        <!-- Error State -->
+        <div id="errorState" style="display: none;">
+            <div class="card">
+                <div class="card-body">
+                    <div class="empty-state">
+                        <div class="icon">⚠️</div>
+                        <h3>Oops! Something went wrong</h3>
+                        <p id="errorMessage">Unable to load group information.</p>
+                    </div>
+                    <div style="margin-top: 30px; text-align: center;">
+                        <button onclick="window.location.href='student-dashboard.html'" class="btn btn-primary">
+                            Return to Dashboard
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="data.js"></script>
+    <script>
+        let currentStudent = null;
+
+        // Check if user is logged in
+        function checkAuth() {
+            const studentNumber = sessionStorage.getItem('currentStudent');
+            if (!studentNumber) {
+                window.location.href = 'login.html';
+                return null;
+            }
+            return studentNumber;
+        }
+
+        // Show specific state
+        function showState(state) {
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('notGroupedState').style.display = 'none';
+            document.getElementById('groupedState').style.display = 'none';
+            document.getElementById('errorState').style.display = 'none';
+
+            if (state) {
+                document.getElementById(state).style.display = 'block';
+            }
+        }
+
+        // Load group information
+        function loadGroupInfo() {
+            // Show loading
+            showState('loadingState');
+
+            const studentNumber = checkAuth();
+            if (!studentNumber) return;
+
+            currentStudent = getStudent(studentNumber);
+
+            if (!currentStudent) {
+                showState('errorState');
+                document.getElementById('errorMessage').textContent = 'Student not found. Please log in again.';
+                return;
+            }
+
+            // Check if student has entered their information
+            if (!currentStudent.mbti || !currentStudent.learningStyle) {
+                showState('errorState');
+                document.getElementById('errorMessage').textContent = 'Please complete your profile information first before viewing your group.';
+                return;
+            }
+
+            // Check if grouping is complete
+            const groupingComplete = isGroupingComplete();
+
+            if (!groupingComplete || !currentStudent.group) {
+                showState('notGroupedState');
+                return;
+            }
+
+            // Show group information
+            displayGroupInfo();
+        }
+
+        // Display group information
+        function displayGroupInfo() {
+            const allStudents = getAllStudents();
+            const groupMembers = allStudents.filter(s => s.group === currentStudent.group);
+
+            // Update header
+            document.getElementById('headerSubtext').textContent = `You are in Group ${currentStudent.group}`;
+
+            // Update course info
+            const courseName = getCourseName();
+            if (courseName) {
+                document.getElementById('courseInfo').style.display = 'block';
+                document.getElementById('courseName').textContent = courseName;
+            } else {
+                document.getElementById('courseInfo').style.display = 'none';
+            }
+
+            // Update group number
+            document.getElementById('groupNumber').textContent = currentStudent.group;
+            document.getElementById('memberCount').textContent = groupMembers.length;
+
+            // Update my info
+            document.getElementById('myMbti').textContent = currentStudent.mbti || 'Not set';
+            document.getElementById('myLearningStyle').textContent = currentStudent.learningStyle || 'Not set';
+            document.getElementById('myGrade').textContent = currentStudent.grade + '%';
+
+            // Display group members
+            const membersList = document.getElementById('groupMembersList');
+            membersList.innerHTML = '';
+
+            groupMembers.forEach(member => {
+                const li = document.createElement('li');
+                li.className = 'group-member';
+
+                // Highlight current student
+                if (member.studentNumber === currentStudent.studentNumber) {
+                    li.style.background = 'linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(139, 92, 246, 0.15) 100%)';
+                    li.style.borderLeft = '4px solid var(--primary-color)';
+                }
+
+                li.innerHTML = `
+                    <div class="member-icon">${member.studentNumber === currentStudent.studentNumber ? '⭐' : '👤'}</div>
+                    <div class="member-info">
+                        <div class="member-name">
+                            ${member.name} ${member.studentNumber === currentStudent.studentNumber ? '(You)' : ''}
+                        </div>
+                        <div class="member-details">
+                            ${member.studentNumber} • MBTI: ${member.mbti || 'N/A'} • Learning: ${member.learningStyle || 'N/A'} • Grade: ${member.grade}%
+                        </div>
+                    </div>
+                `;
+
+                membersList.appendChild(li);
+            });
+
+            showState('groupedState');
+        }
+
+        // Load data on page load
+        window.onload = () => {
+            // Simulate loading delay for better UX
+            setTimeout(loadGroupInfo, 500);
+        };
+    </script>
+</body>
+</html>

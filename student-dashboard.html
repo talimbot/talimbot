@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - Student Grouping System</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container dashboard-container">
+        <div class="header">
+            <a href="login.html" class="back-link">← Logout</a>
+            <div class="icon">👨‍🎓</div>
+            <h1>Welcome, <span id="studentName">Student</span>!</h1>
+            <p>Complete your profile to be included in the grouping</p>
+        </div>
+
+        <!-- Student Info Card -->
+        <div class="card">
+            <div class="card-header">
+                📋 Your Information
+            </div>
+            <div class="card-body">
+                <div class="info-display">
+                    <div class="label">Student Number</div>
+                    <div class="value" id="studentNumberDisplay">-</div>
+                </div>
+                <div class="info-display">
+                    <div class="label">Current Grade</div>
+                    <div class="value" id="gradeDisplay">-</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Test Links Card -->
+        <div class="card">
+            <div class="card-header">
+                🧪 Take Required Tests
+            </div>
+            <div class="card-body">
+                <p style="margin-bottom: 20px; color: var(--text-light);">
+                    Please complete both tests to determine your personality type and learning style.
+                </p>
+                <div class="links-section">
+                    <a href="https://www.16personalities.com/free-personality-test" target="_blank" class="external-link">
+                        <div class="icon">🧠</div>
+                        <div>MBTI Test</div>
+                    </a>
+                    <a href="https://vark-learn.com/the-vark-questionnaire/" target="_blank" class="external-link">
+                        <div class="icon">📚</div>
+                        <div>Learning Style Test</div>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Enter Results Card -->
+        <div class="card">
+            <div class="card-header">
+                ✍️ Enter Your Results
+            </div>
+            <div class="card-body">
+                <form id="resultsForm" onsubmit="saveResults(event)">
+                    <div class="form-group">
+                        <label for="mbtiInput">MBTI Type (e.g., INTJ, ENFP)</label>
+                        <input 
+                            type="text" 
+                            id="mbtiInput" 
+                            placeholder="Enter your 4-letter MBTI type"
+                            pattern="[EI][NS][TF][JP]"
+                            title="Must be a valid 4-letter MBTI type"
+                            maxlength="4"
+                            style="text-transform: uppercase;"
+                        >
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="learningStyleInput">Learning Style (e.g., VARK, Visual, Auditory)</label>
+                        <input 
+                            type="text" 
+                            id="learningStyleInput" 
+                            placeholder="Enter your learning style"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label>Preferred Groupmates (Optional - Select up to 4)</label>
+                        <p style="font-size: 0.85rem; color: var(--text-light); margin-bottom: 10px;">
+                            Select students you'd prefer to be grouped with
+                        </p>
+                        <div class="checkbox-group" id="preferredStudentsCheckbox">
+                            <!-- Will be populated by JavaScript -->
+                        </div>
+                        <div id="selectedCount" style="margin-top: 10px; font-size: 0.9rem; color: var(--text-light);">
+                            Selected: 0/4
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">
+                        Save Information
+                    </button>
+                </form>
+
+                <div id="successMessage" class="alert alert-success" style="display: none; margin-top: 20px;">
+                    ✅ Your information has been saved successfully!
+                </div>
+            </div>
+        </div>
+
+        <!-- View Group Card -->
+        <div class="card">
+            <div class="card-header">
+                👥 Your Group
+            </div>
+            <div class="card-body">
+                <p style="margin-bottom: 15px; color: var(--text-light);">
+                    Once the teacher completes the grouping process, you'll be able to see your group members here.
+                </p>
+                <button onclick="viewGroup()" class="btn btn-success">
+                    See My Group
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="data.js"></script>
+    <script>
+        let currentStudent = null;
+        let allStudents = [];
+
+        // Check if user is logged in
+        function checkAuth() {
+            const studentNumber = sessionStorage.getItem('currentStudent');
+            if (!studentNumber) {
+                window.location.href = 'login.html';
+                return null;
+            }
+            return studentNumber;
+        }
+
+        // Load student data
+        function loadStudentData() {
+            const studentNumber = checkAuth();
+            if (!studentNumber) return;
+
+            currentStudent = getStudent(studentNumber);
+            allStudents = getAllStudents();
+
+            if (!currentStudent) {
+                alert('Student not found');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Update UI
+            document.getElementById('studentName').textContent = currentStudent.name;
+            document.getElementById('studentNumberDisplay').textContent = currentStudent.studentNumber;
+            document.getElementById('gradeDisplay').textContent = currentStudent.grade + '%';
+
+            // Populate form if data exists
+            if (currentStudent.mbti) {
+                document.getElementById('mbtiInput').value = currentStudent.mbti;
+            }
+            if (currentStudent.learningStyle) {
+                document.getElementById('learningStyleInput').value = currentStudent.learningStyle;
+            }
+
+            // Populate preferred students checkboxes
+            populatePreferredStudents();
+        }
+
+        // Populate preferred students checkboxes
+        function populatePreferredStudents() {
+            const container = document.getElementById('preferredStudentsCheckbox');
+            container.innerHTML = '';
+
+            allStudents.forEach(student => {
+                // Don't show current student in the list
+                if (student.studentNumber === currentStudent.studentNumber) return;
+
+                const div = document.createElement('div');
+                div.className = 'checkbox-item';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.id = 'student_' + student.studentNumber;
+                checkbox.value = student.studentNumber;
+                checkbox.onchange = updateSelectedCount;
+
+                // Check if already selected
+                if (currentStudent.preferredStudents && currentStudent.preferredStudents.includes(student.studentNumber)) {
+                    checkbox.checked = true;
+                }
+
+                const label = document.createElement('label');
+                label.htmlFor = 'student_' + student.studentNumber;
+                label.textContent = `${student.name} (${student.studentNumber})`;
+
+                div.appendChild(checkbox);
+                div.appendChild(label);
+                container.appendChild(div);
+            });
+
+            updateSelectedCount();
+        }
+
+        // Update selected count
+        function updateSelectedCount() {
+            const checkboxes = document.querySelectorAll('#preferredStudentsCheckbox input[type="checkbox"]:checked');
+            const count = checkboxes.length;
+            document.getElementById('selectedCount').textContent = `Selected: ${count}/4`;
+
+            // Disable unchecked checkboxes if 4 are already selected
+            const allCheckboxes = document.querySelectorAll('#preferredStudentsCheckbox input[type="checkbox"]');
+            allCheckboxes.forEach(cb => {
+                if (!cb.checked && count >= 4) {
+                    cb.disabled = true;
+                } else {
+                    cb.disabled = false;
+                }
+            });
+        }
+
+        // Save results
+        function saveResults(event) {
+            event.preventDefault();
+
+            const mbti = document.getElementById('mbtiInput').value.trim().toUpperCase();
+            const learningStyle = document.getElementById('learningStyleInput').value.trim();
+
+            if (!mbti || !learningStyle) {
+                alert('Please fill in both MBTI type and Learning Style');
+                return;
+            }
+
+            // Validate MBTI format
+            const mbtiPattern = /^[EI][NS][TF][JP]$/;
+            if (!mbtiPattern.test(mbti)) {
+                alert('Please enter a valid 4-letter MBTI type (e.g., INTJ, ENFP)');
+                return;
+            }
+
+            // Get selected preferred students
+            const checkboxes = document.querySelectorAll('#preferredStudentsCheckbox input[type="checkbox"]:checked');
+            const preferredStudents = Array.from(checkboxes).map(cb => cb.value);
+
+            // Update student data
+            const success = updateStudent(currentStudent.studentNumber, {
+                mbti: mbti,
+                learningStyle: learningStyle,
+                preferredStudents: preferredStudents
+            });
+
+            if (success) {
+                // Show success message
+                document.getElementById('successMessage').style.display = 'block';
+                
+                // Reload data
+                currentStudent = getStudent(currentStudent.studentNumber);
+
+                // Hide success message after 3 seconds
+                setTimeout(() => {
+                    document.getElementById('successMessage').style.display = 'none';
+                }, 3000);
+            } else {
+                alert('Failed to save information. Please try again.');
+            }
+        }
+
+        // View group
+        function viewGroup() {
+            window.location.href = 'group-view.html';
+        }
+
+        // Load data on page load
+        window.onload = loadStudentData;
+    </script>
+</body>
+</html>
