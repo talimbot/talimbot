@@ -1,66 +1,69 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Student Grouping System</title>
+    <title>ورود - سیستم گروه‌بندی دانش آموزان</title>
     <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body class="login-page">
     <div class="container">
+        <div class="logo-section">
+            <img src="images/logo.png" alt="لوگو">
+        </div>
+        
         <div class="header">
-            <div class="icon">🎓</div>
-            <h1>Student Grouping System</h1>
-            <p>Welcome! Please select your role to continue</p>
+            <h1>سیستم گروه‌بندی دانش آموزان</h1>
+            <p>خوش آمدید! لطفاً نقش خود را انتخاب کنید</p>
         </div>
 
         <div class="role-selector">
             <div class="role-option" id="studentRole" onclick="selectRole('student')">
-                <div class="icon">👨‍🎓</div>
-                <h3>Student</h3>
+                <div class="icon">🙋‍♀️</div>
+                <h3>دانش آموز</h3>
             </div>
             <div class="role-option" id="teacherRole" onclick="selectRole('teacher')">
-                <div class="icon">👨‍🏫</div>
-                <h3>Teacher</h3>
+                <div class="icon">👩‍🏫</div>
+                <h3>معلم</h3>
             </div>
         </div>
 
         <form id="loginForm" onsubmit="handleLogin(event)">
-            <!-- Student Login -->
+            <!-- ورود دانش آموز -->
             <div id="studentLogin" class="login-section" style="display: none;">
                 <div class="form-group">
-                    <label for="studentNumber">Student Number</label>
+                    <label for="studentNumber">شماره دانش آموزی</label>
                     <input 
                         type="text" 
                         id="studentNumber" 
-                        placeholder="Enter your student number (e.g., S001)"
+                        placeholder="شماره دانش آموزی خود را وارد کنید (مثال: S001)"
                         pattern="S\d{3}"
-                        title="Student number must be in format S001-S030"
+                        title="شماره دانش آموزی باید در فرمت S001 تا S030 باشد"
                     >
                 </div>
             </div>
 
-            <!-- Teacher Login -->
+            <!-- ورود استاد -->
             <div id="teacherLogin" class="login-section" style="display: none;">
                 <div class="form-group">
-                    <label for="teacherPassword">Password</label>
+                    <label for="teacherPassword">رمز عبور</label>
                     <input 
                         type="password" 
                         id="teacherPassword" 
-                        placeholder="Enter teacher password"
+                        placeholder="رمز عبور معلم را وارد کنید"
                     >
                 </div>
                 <p style="color: var(--text-light); font-size: 0.85rem; text-align: center; margin-top: -10px;">
-                    Demo password: teacher123
+                    رمز عبور دمو: teacher123
                 </p>
             </div>
 
             <button type="submit" class="btn btn-primary" id="loginButton" disabled>
-                Login
+                ورود به سیستم
             </button>
         </form>
 
-        <div id="errorMessage" class="alert alert-warning" style="display: none; margin-top: 20px;">
+        <div id="errorMessage" class="alert alert-warning" style="display: none; margin-top: 15px;">
         </div>
     </div>
 
@@ -68,25 +71,25 @@
     <script>
         let selectedRole = null;
 
-        // Initialize data on page load
+        // مقداردهی اولیه داده‌ها
         initializeData();
 
         function selectRole(role) {
             selectedRole = role;
             
-            // Update UI
+            // بروزرسانی رابط کاربری
             document.getElementById('studentRole').classList.remove('selected');
             document.getElementById('teacherRole').classList.remove('selected');
             document.getElementById(role + 'Role').classList.add('selected');
             
-            // Show appropriate login form
+            // نمایش فرم مربوطه
             document.getElementById('studentLogin').style.display = role === 'student' ? 'block' : 'none';
             document.getElementById('teacherLogin').style.display = role === 'teacher' ? 'block' : 'none';
             
-            // Enable login button
+            // فعال‌سازی دکمه ورود
             document.getElementById('loginButton').disabled = false;
             
-            // Hide error message
+            // مخفی کردن پیام خطا
             document.getElementById('errorMessage').style.display = 'none';
         }
 
@@ -100,40 +103,40 @@
                 const studentNumber = document.getElementById('studentNumber').value.trim().toUpperCase();
                 
                 if (!studentNumber) {
-                    showError('Please enter your student number');
+                    showError('لطفاً شماره دانشجویی خود را وارد کنید');
                     return;
                 }
                 
                 const student = getStudent(studentNumber);
                 
                 if (!student) {
-                    showError('Invalid student number. Please enter a valid student number (S001-S030)');
+                    showError('شماره دانشجویی نامعتبر است. لطفاً یک شماره معتبر (S001-S030) وارد کنید');
                     return;
                 }
                 
-                // Store current student in session
+                // ذخیره دانشجو در session
                 sessionStorage.setItem('currentStudent', studentNumber);
                 
-                // Redirect to student dashboard
+                // انتقال به داشبورد دانشجو
                 window.location.href = 'student-dashboard.html';
                 
             } else if (selectedRole === 'teacher') {
                 const password = document.getElementById('teacherPassword').value;
                 
                 if (!password) {
-                    showError('Please enter the teacher password');
+                    showError('لطفاً رمز عبور استاد را وارد کنید');
                     return;
                 }
                 
                 if (!checkTeacherPassword(password)) {
-                    showError('Invalid password. Please try again.');
+                    showError('رمز عبور نادرست است. دوباره تلاش کنید.');
                     return;
                 }
                 
-                // Store teacher session
+                // ذخیره session استاد
                 sessionStorage.setItem('isTeacher', 'true');
                 
-                // Redirect to teacher dashboard
+                // انتقال به داشبورد استاد
                 window.location.href = 'teacher-dashboard.html';
             }
         }
@@ -144,7 +147,7 @@
             errorDiv.style.display = 'block';
         }
 
-        // Add enter key support
+        // پشتیبانی از کلید Enter
         document.getElementById('studentNumber')?.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 handleLogin(e);

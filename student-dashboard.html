@@ -1,123 +1,222 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Dashboard - Student Grouping System</title>
+    <title>داشبورد دانش آموز - سیستم گروه‌بندی</title>
     <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body class="dashboard-page">
     <div class="container dashboard-container">
-        <div class="header">
-            <a href="login.html" class="back-link">← Logout</a>
-            <div class="icon">👨‍🎓</div>
-            <h1>Welcome, <span id="studentName">Student</span>!</h1>
-            <p>Complete your profile to be included in the grouping</p>
-        </div>
+        <!-- هدر -->
+        <div class="card header-card" style="margin-bottom: 20px; position: relative;">
+            <a href="login.html" class="logout-btn btn--small" title="خروج">خروج</a>
 
-        <!-- Student Info Card -->
-        <div class="card">
-            <div class="card-header">
-                📋 Your Information
-            </div>
-            <div class="card-body">
-                <div class="info-display">
-                    <div class="label">Student Number</div>
-                    <div class="value" id="studentNumberDisplay">-</div>
-                </div>
-                <div class="info-display">
-                    <div class="label">Current Grade</div>
-                    <div class="value" id="gradeDisplay">-</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Test Links Card -->
-        <div class="card">
-            <div class="card-header">
-                🧪 Take Required Tests
-            </div>
-            <div class="card-body">
-                <p style="margin-bottom: 20px; color: var(--text-light);">
-                    Please complete both tests to determine your personality type and learning style.
+            <div style="text-align: center; padding: 18px 0;">
+                <h1 style="font-size: 1.6rem; color: var(--primary-color); margin-bottom: 5px;">
+                    خوش آمدید، <span id="studentName">دانش آموز</span>! 👋
+                </h1>
+                <p style="color: var(--text-light); font-size: 0.9rem;">
+                    لطفاً تمام تست‌ها را انجام دهید و اطلاعات خود را تکمیل کنید
                 </p>
-                <div class="links-section">
-                    <a href="https://www.16personalities.com/free-personality-test" target="_blank" class="external-link">
-                        <div class="icon">🧠</div>
-                        <div>MBTI Test</div>
+            </div>
+        </div>
+
+        <!-- اطلاعات شخصی -->
+        <div class="card">
+            <div class="card-header">
+                📋 اطلاعات پایه
+            </div>
+            <div class="card-body">
+                <div class="info-grid">
+                    <div class="info-display">
+                        <div class="label">شماره دانش آموزی</div>
+                        <div class="value" id="studentNumberDisplay">-</div>
+                    </div>
+                    <div class="info-display">
+                        <div class="label">نام و نام خانوادگی</div>
+                        <div class="value" id="fullNameDisplay">-</div>
+                    </div>
+                    <div class="info-display">
+                        <div class="label">معدل</div>
+                        <div class="value" id="gradeDisplay">-</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- بخش 1 و 2: تست‌ها - ردیف افقی -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 18px;">
+            <!-- VARK -->
+            <div class="card">
+                <div class="card-header" style="font-size: 1.05rem;">
+                    📚 VARK - شناخت سبک یادگیری
+                </div>
+                <div class="card-body">
+                    <p style="font-size: 0.85rem; color: var(--text-light); margin-bottom: 12px; line-height: 1.6;">
+                        <strong>هدف:</strong> شناخت سبک یادگیری (دیداری + شنیداری + جنبشی = یادگیری کامل‌تر)
+                    </p>
+                    <a href="https://vark-learn.com/the-vark-questionnaire/" target="_blank" class="external-link" style="margin-bottom: 8px;">
+                        <span>🌐</span>
+                        <span>سایت رسمی (انگلیسی)</span>
                     </a>
-                    <a href="https://vark-learn.com/the-vark-questionnaire/" target="_blank" class="external-link">
-                        <div class="icon">📚</div>
-                        <div>Learning Style Test</div>
+                    <a href="http://maktabestan.ir/" target="_blank" class="external-link">
+                        <span>🇮🇷</span>
+                        <span>سایت فارسی</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Cooperative Learning Scale -->
+            <div class="card">
+                <div class="card-header" style="font-size: 1.05rem;">
+                    🤝 Cooperative Learning Scale
+                </div>
+                <div class="card-body">
+                    <p style="font-size: 0.85rem; color: var(--text-light); margin-bottom: 12px; line-height: 1.6;">
+                        <strong>هدف:</strong> تشخیص افراد اجتماعی‌تر برای هدایت گروه
+                    </p>
+                    <div class="alert alert-info" style="font-size: 0.8rem; padding: 10px; margin-bottom: 10px;">
+                        ⚠️ آنلاین نداره - باید بسازیم<br>
+                        فایل راهنما سوالات و نحوه نمره‌گذاری ضمیمه شد
+                    </div>
+                    <p style="font-size: 0.8rem; color: var(--text-light); line-height: 1.5;">
+                        مستقیماً همکاری، تعامل و رفتار گروهی را می‌سنجد
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- بخش 3 و 4: تست‌های بیشتر - ردیف افقی -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 18px;">
+            <!-- AMS -->
+            <div class="card">
+                <div class="card-header" style="font-size: 1.05rem;">
+                    🎯 AMS - انگیزش تحصیلی
+                </div>
+                <div class="card-body">
+                    <p style="font-size: 0.85rem; color: var(--text-light); margin-bottom: 12px; line-height: 1.6;">
+                        <strong>هدف:</strong> شناخت انگیزش درونی / بیرونی
+                    </p>
+                    <a href="https://idrlabs.com/academic-motivation/test.php" target="_blank" class="external-link" style="margin-bottom: 8px;">
+                        <span>🌐</span>
+                        <span>سایت انگلیسی</span>
+                    </a>
+                    <div class="alert alert-warning" style="font-size: 0.8rem; padding: 10px;">
+                        ⚠️ آنلاین فارسی نداره - باید بسازیم
+                    </div>
+                </div>
+            </div>
+
+            <!-- MBTI -->
+            <div class="card">
+                <div class="card-header" style="font-size: 1.05rem;">
+                    🧠 MBTI Short Form
+                </div>
+                <div class="card-body">
+                    <p style="font-size: 0.85rem; color: var(--text-light); margin-bottom: 12px; line-height: 1.6;">
+                        <strong>هدف:</strong> ایجاد تعادل شخصیتی در گروه
+                    </p>
+                    <a href="https://www.mbtionline.com" target="_blank" class="external-link" style="margin-bottom: 8px;">
+                        <span>🌐</span>
+                        <span>سایت اصلی (انگلیسی)</span>
+                    </a>
+                    <a href="https://www.16personalities.com/fa" target="_blank" class="external-link">
+                        <span>🇮🇷</span>
+                        <span>سایت فارسی</span>
                     </a>
                 </div>
             </div>
         </div>
 
-        <!-- Enter Results Card -->
+        <!-- ثبت نتایج تست‌ها -->
         <div class="card">
             <div class="card-header">
-                ✍️ Enter Your Results
+                ثبت نتایج تست‌ها
             </div>
             <div class="card-body">
                 <form id="resultsForm" onsubmit="saveResults(event)">
-                    <div class="form-group">
-                        <label for="mbtiInput">MBTI Type (e.g., INTJ, ENFP)</label>
-                        <input 
-                            type="text" 
-                            id="mbtiInput" 
-                            placeholder="Enter your 4-letter MBTI type"
-                            pattern="[EI][NS][TF][JP]"
-                            title="Must be a valid 4-letter MBTI type"
-                            maxlength="4"
-                            style="text-transform: uppercase;"
-                        >
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="learningStyleInput">Learning Style (e.g., VARK, Visual, Auditory)</label>
-                        <input 
-                            type="text" 
-                            id="learningStyleInput" 
-                            placeholder="Enter your learning style"
-                        >
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="mbtiInput">نتیجه MBTI (مثال: INTJ, ENFP)</label>
+                            <input 
+                                type="text" 
+                                id="mbtiInput" 
+                                placeholder="4 حرف انگلیسی"
+                                pattern="[EI][NS][TF][JP]"
+                                maxlength="4"
+                                style="text-transform: uppercase;"
+                            >
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="varkInput">نتیجه VARK (مثال: دیداری، شنیداری)</label>
+                            <input 
+                                type="text"
+                                id="varkInput" 
+                                placeholder="سبک یادگیری"
+                            >
+                        </div>
                     </div>
 
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="amsInput">نتیجه AMS (مثال: درونی، بیرونی)</label>
+                            <input 
+                                type="text" 
+                                id="amsInput" 
+                                placeholder="نوع انگیزش"
+                            >
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="cooperativeInput">نتیجه Cooperative Learning</label>
+                            <input 
+                                type="text" 
+                                id="cooperativeInput" 
+                                placeholder="امتیاز همکاری"
+                            >
+                        </div>
+                    </div>
+
+                    <!-- ترجیحات فردی -->
                     <div class="form-group">
-                        <label>Preferred Groupmates (Optional - Select up to 4)</label>
+                        <label>
+                            ترجیحات فردی برای همگروهی (اختیاری - حداکثر 4 نفر)
+                        </label>
                         <p style="font-size: 0.85rem; color: var(--text-light); margin-bottom: 10px;">
-                            Select students you'd prefer to be grouped with
+                            چهار نفر از دانش‌آموزان کلاس که دوست دارید در یک گروه باشید را انتخاب کنید
                         </p>
                         <div class="checkbox-group" id="preferredStudentsCheckbox">
-                            <!-- Will be populated by JavaScript -->
+                            <!-- توسط JavaScript پر می‌شود -->
                         </div>
                         <div id="selectedCount" style="margin-top: 10px; font-size: 0.9rem; color: var(--text-light);">
-                            Selected: 0/4
+                            انتخاب شده: 0/4
                         </div>
                     </div>
 
-                    <button type="submit" class="btn btn-primary">
-                        Save Information
+                    <button type="submit" class="btn btn-primary btn--compact">
+                         ذخیره تمام اطلاعات
                     </button>
                 </form>
 
-                <div id="successMessage" class="alert alert-success" style="display: none; margin-top: 20px;">
-                    ✅ Your information has been saved successfully!
+                <div id="successMessage" class="alert alert-success" style="display: none; margin-top: 15px;">
+                    ✅ اطلاعات شما با موفقیت ذخیره شد!
                 </div>
             </div>
         </div>
 
-        <!-- View Group Card -->
+        <!-- مشاهده گروه -->
         <div class="card">
             <div class="card-header">
-                👥 Your Group
+                👥 گروه من
             </div>
             <div class="card-body">
-                <p style="margin-bottom: 15px; color: var(--text-light);">
-                    Once the teacher completes the grouping process, you'll be able to see your group members here.
+                <p style="margin-bottom: 15px; color: var(--text-light); font-size: 0.9rem;">
+                    پس از تکمیل گروه‌بندی توسط معلم، می‌توانید اعضای گروه خود را مشاهده کنید
                 </p>
-                <button onclick="viewGroup()" class="btn btn-success">
-                    See My Group
+                <button onclick="viewGroup()" class="btn btn-success btn--compact">
+                    🔍 مشاهده گروه من
                 </button>
             </div>
         </div>
@@ -128,7 +227,6 @@
         let currentStudent = null;
         let allStudents = [];
 
-        // Check if user is logged in
         function checkAuth() {
             const studentNumber = sessionStorage.getItem('currentStudent');
             if (!studentNumber) {
@@ -138,7 +236,6 @@
             return studentNumber;
         }
 
-        // Load student data
         function loadStudentData() {
             const studentNumber = checkAuth();
             if (!studentNumber) return;
@@ -147,35 +244,37 @@
             allStudents = getAllStudents();
 
             if (!currentStudent) {
-                alert('Student not found');
+                alert('دانش آموز یافت نشد');
                 window.location.href = 'login.html';
                 return;
             }
 
-            // Update UI
             document.getElementById('studentName').textContent = currentStudent.name;
             document.getElementById('studentNumberDisplay').textContent = currentStudent.studentNumber;
+            document.getElementById('fullNameDisplay').textContent = currentStudent.name;
             document.getElementById('gradeDisplay').textContent = currentStudent.grade + '%';
 
-            // Populate form if data exists
             if (currentStudent.mbti) {
                 document.getElementById('mbtiInput').value = currentStudent.mbti;
             }
             if (currentStudent.learningStyle) {
-                document.getElementById('learningStyleInput').value = currentStudent.learningStyle;
+                document.getElementById('varkInput').value = currentStudent.learningStyle;
+            }
+            if (currentStudent.ams) {
+                document.getElementById('amsInput').value = currentStudent.ams;
+            }
+            if (currentStudent.cooperative) {
+                document.getElementById('cooperativeInput').value = currentStudent.cooperative;
             }
 
-            // Populate preferred students checkboxes
             populatePreferredStudents();
         }
 
-        // Populate preferred students checkboxes
         function populatePreferredStudents() {
             const container = document.getElementById('preferredStudentsCheckbox');
             container.innerHTML = '';
 
             allStudents.forEach(student => {
-                // Don't show current student in the list
                 if (student.studentNumber === currentStudent.studentNumber) return;
 
                 const div = document.createElement('div');
@@ -187,7 +286,6 @@
                 checkbox.value = student.studentNumber;
                 checkbox.onchange = updateSelectedCount;
 
-                // Check if already selected
                 if (currentStudent.preferredStudents && currentStudent.preferredStudents.includes(student.studentNumber)) {
                     checkbox.checked = true;
                 }
@@ -204,13 +302,11 @@
             updateSelectedCount();
         }
 
-        // Update selected count
         function updateSelectedCount() {
             const checkboxes = document.querySelectorAll('#preferredStudentsCheckbox input[type="checkbox"]:checked');
             const count = checkboxes.length;
-            document.getElementById('selectedCount').textContent = `Selected: ${count}/4`;
+            document.getElementById('selectedCount').textContent = `انتخاب شده: ${count}/4`;
 
-            // Disable unchecked checkboxes if 4 are already selected
             const allCheckboxes = document.querySelectorAll('#preferredStudentsCheckbox input[type="checkbox"]');
             allCheckboxes.forEach(cb => {
                 if (!cb.checked && count >= 4) {
@@ -221,58 +317,52 @@
             });
         }
 
-        // Save results
         function saveResults(event) {
             event.preventDefault();
 
             const mbti = document.getElementById('mbtiInput').value.trim().toUpperCase();
-            const learningStyle = document.getElementById('learningStyleInput').value.trim();
+            const vark = document.getElementById('varkInput').value.trim();
+            const ams = document.getElementById('amsInput').value.trim();
+            const cooperative = document.getElementById('cooperativeInput').value.trim();
 
-            if (!mbti || !learningStyle) {
-                alert('Please fill in both MBTI type and Learning Style');
+            if (!mbti || !vark) {
+                alert('لطفاً حداقل نتایج MBTI و VARK را وارد کنید');
                 return;
             }
 
-            // Validate MBTI format
             const mbtiPattern = /^[EI][NS][TF][JP]$/;
             if (!mbtiPattern.test(mbti)) {
-                alert('Please enter a valid 4-letter MBTI type (e.g., INTJ, ENFP)');
+                alert('لطفاً یک نوع MBTI معتبر 4 حرفی وارد کنید (مثال: INTJ, ENFP)');
                 return;
             }
 
-            // Get selected preferred students
             const checkboxes = document.querySelectorAll('#preferredStudentsCheckbox input[type="checkbox"]:checked');
             const preferredStudents = Array.from(checkboxes).map(cb => cb.value);
 
-            // Update student data
             const success = updateStudent(currentStudent.studentNumber, {
                 mbti: mbti,
-                learningStyle: learningStyle,
+                learningStyle: vark,
+                ams: ams,
+                cooperative: cooperative,
                 preferredStudents: preferredStudents
             });
 
             if (success) {
-                // Show success message
                 document.getElementById('successMessage').style.display = 'block';
-                
-                // Reload data
                 currentStudent = getStudent(currentStudent.studentNumber);
 
-                // Hide success message after 3 seconds
                 setTimeout(() => {
                     document.getElementById('successMessage').style.display = 'none';
                 }, 3000);
             } else {
-                alert('Failed to save information. Please try again.');
+                alert('ذخیره اطلاعات با خطا مواجه شد. لطفاً دوباره تلاش کنید.');
             }
         }
 
-        // View group
         function viewGroup() {
             window.location.href = 'group-view.html';
         }
 
-        // Load data on page load
         window.onload = loadStudentData;
     </script>
 </body>
