@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TalimBot Chat - گفتگو با هوش مصنوعی</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Top Navigation -->
+    <nav class="bg-white shadow-lg border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-400 rounded-lg flex items-center justify-center text-white text-xl font-bold">
+                        T
+                    </div>
+                    <span class="text-xl font-bold text-gray-900">TalimBot</span>
+                </div>
+
+                <!-- Navigation Links -->
+                <div class="hidden md:flex items-center gap-6">
+                    <a href="student-dashboard.html" class="text-gray-700 hover:text-blue-600 font-medium transition-colors">
+                        داشبورد
+                    </a>
+                    <a href="group-view.html" class="text-gray-700 hover:text-blue-600 font-medium transition-colors">
+                        گروه من
+                    </a>
+                    <a href="teacher-chat-new.html" class="text-blue-600 font-bold border-b-2 border-blue-600 pb-1">
+                        چت
+                    </a>
+                </div>
+
+                <!-- User Menu -->
+                <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-2">
+                        <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                            <span class="text-blue-600 font-bold text-lg" id="navStudentInitial">D</span>
+                        </div>
+                        <div class="hidden md:block text-right">
+                            <p class="text-sm font-bold text-gray-900" id="navStudentName">دانش‌آموز</p>
+                            <p class="text-xs text-gray-600" id="navStudentNumber">-</p>
+                        </div>
+                    </div>
+                    <button onclick="logout()" class="text-red-600 hover:text-red-700 font-medium text-sm transition-colors">
+                        خروج
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 py-8">
+        <!-- Page Header -->
+        <div class="mb-8">
+            <h1 class="text-4xl font-bold text-gray-900 mb-2">🤖 TalimBot Chat</h1>
+            <p class="text-gray-600">گفتگو با هوش مصنوعی درباره گروه‌بندی و آموزش</p>
+        </div>
+
+        <!-- Chat Container -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Chat Messages (2/3 width) -->
+            <div class="lg:col-span-2 bg-white rounded-xl shadow-md flex flex-col" style="height: calc(100vh - 250px);">
+                <div class="p-4 border-b border-gray-200 bg-gradient-to-r from-purple-600 to-blue-600 rounded-t-xl">
+                    <h2 class="text-xl font-bold text-white">💬 پیام‌ها</h2>
+                </div>
+                <div id="chatMessages" class="flex-1 overflow-y-auto p-6 space-y-4">
+                    <div class="flex gap-3">
+                        <div class="flex-shrink-0 w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                            <span class="text-xl">🤖</span>
+                        </div>
+                        <div class="flex-1 bg-purple-50 border-r-4 border-purple-500 rounded-lg p-4">
+                            <p class="text-gray-800">سلام! من TalimBot هستم. می‌توانم در مورد گروه‌بندی دانشجویان، روش‌های آموزشی و سؤالات شما کمک کنم. لطفاً فایل PDF خود را بارگذاری کنید یا سؤال خود را مطرح کنید.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input Area (1/3 width) -->
+            <div class="space-y-4">
+                <!-- File Upload Card -->
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-lg font-bold text-gray-900 mb-4">📄 بارگذاری فایل</h3>
+                    <label for="pdfFile" class="block">
+                        <div class="border-2 border-dashed border-blue-400 rounded-lg p-6 text-center cursor-pointer hover:border-blue-600 hover:bg-blue-50 transition-all">
+                            <div class="text-4xl mb-2">📎</div>
+                            <p class="text-sm text-gray-600 font-medium">کلیک کنید یا فایل را بکشید</p>
+                            <p class="text-xs text-gray-500 mt-1">PDF تا 10 مگابایت</p>
+                        </div>
+                        <input type="file" id="pdfFile" accept=".pdf" onchange="handleFileUpload(event)" class="hidden">
+                    </label>
+                    <div id="fileInfo" class="hidden mt-3 bg-green-50 border border-green-300 rounded-lg p-3">
+                        <p class="text-sm text-green-800 font-medium"></p>
+                    </div>
+                </div>
+
+                <!-- Message Input Card -->
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-lg font-bold text-gray-900 mb-4">✏️ پیام شما</h3>
+                    <textarea 
+                        id="userPrompt" 
+                        placeholder="سؤال یا درخواست خود را بنویسید..." 
+                        class="w-full p-3 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none resize-none"
+                        rows="5"
+                    ></textarea>
+                    <button 
+                        onclick="sendMessage()" 
+                        class="w-full mt-4 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white py-3 px-6 rounded-lg font-bold transition-all shadow-md hover:shadow-lg"
+                    >
+                        ارسال پیام 🚀
+                    </button>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-lg font-bold text-gray-900 mb-3">⚡ دسترسی سریع</h3>
+                    <div class="space-y-2">
+                        <button onclick="window.location.href='student-dashboard.html'" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 px-4 rounded-lg font-medium text-sm transition-colors text-right">
+                            🏠 داشبورد
+                        </button>
+                        <button onclick="window.location.href='group-view.html'" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 px-4 rounded-lg font-medium text-sm transition-colors text-right">
+                            👥 گروه من
+                        </button>
+                        <button onclick="clearChat()" class="w-full bg-red-50 hover:bg-red-100 text-red-600 py-2 px-4 rounded-lg font-medium text-sm transition-colors text-right">
+                            🗑️ پاک کردن چت
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="data.js"></script>
+    <script>
+        let uploadedFile = null;
+
+        function checkAuth() {
+            const studentNumber = sessionStorage.getItem('currentStudent');
+            if (!studentNumber) {
+                window.location.href = 'login.html';
+                return null;
+            }
+            return studentNumber;
+        }
+
+        function logout() {
+            sessionStorage.clear();
+            window.location.href = 'login.html';
+        }
+
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                if (file.size > 10 * 1024 * 1024) {
+                    alert('حجم فایل نباید بیشتر از 10 مگابایت باشد.');
+                    event.target.value = '';
+                    return;
+                }
+                uploadedFile = file;
+                const fileInfo = document.getElementById('fileInfo');
+                fileInfo.classList.remove('hidden');
+                fileInfo.querySelector('p').textContent = `✅ ${file.name} (${(file.size / 1024).toFixed(2)} KB)`;
+            }
+        }
+
+        function sendMessage() {
+            const prompt = document.getElementById('userPrompt').value.trim();
+            
+            if (!prompt && !uploadedFile) {
+                alert('لطفاً یک پیام وارد کنید یا فایلی را بارگذاری کنید.');
+                return;
+            }
+
+            const messagesContainer = document.getElementById('chatMessages');
+            
+            if (prompt) {
+                const userMessage = document.createElement('div');
+                userMessage.className = 'flex gap-3 justify-end';
+                userMessage.innerHTML = `
+                    <div class="bg-blue-500 text-white rounded-lg p-4 max-w-md">
+                        <p>${prompt}</p>
+                    </div>
+                    <div class="flex-shrink-0 w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                        <span class="text-xl">👤</span>
+                    </div>
+                `;
+                messagesContainer.appendChild(userMessage);
+            }
+
+            const processingMessage = document.createElement('div');
+            processingMessage.className = 'flex gap-3';
+            processingMessage.innerHTML = `
+                <div class="flex-shrink-0 w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                    <span class="text-xl">🤖</span>
+                </div>
+                <div class="flex-1 bg-gray-100 rounded-lg p-4 max-w-md">
+                    <div class="flex items-center gap-2">
+                        <div class="w-2 h-2 bg-purple-600 rounded-full animate-bounce"></div>
+                        <div class="w-2 h-2 bg-purple-600 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+                        <div class="w-2 h-2 bg-purple-600 rounded-full animate-bounce" style="animation-delay: 0.4s"></div>
+                        <span class="text-gray-600 text-sm mr-2">در حال پردازش...</span>
+                    </div>
+                </div>
+            `;
+            messagesContainer.appendChild(processingMessage);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+            setTimeout(() => {
+                let responseText = 'این یک پاسخ شبیه‌سازی شده است. در نسخه واقعی، پاسخ از API هوش مصنوعی دریافت می‌شود.';
+                
+                if (uploadedFile) {
+                    responseText += `\n\n📎 فایل "${uploadedFile.name}" دریافت شد و در حال تحلیل است.`;
+                }
+
+                processingMessage.innerHTML = `
+                    <div class="flex-shrink-0 w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                        <span class="text-xl">🤖</span>
+                    </div>
+                    <div class="flex-1 bg-purple-50 border-r-4 border-purple-500 rounded-lg p-4 max-w-md">
+                        <p class="text-gray-800 whitespace-pre-line">${responseText}</p>
+                    </div>
+                `;
+
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                
+                document.getElementById('userPrompt').value = '';
+                document.getElementById('pdfFile').value = '';
+                document.getElementById('fileInfo').classList.add('hidden');
+                uploadedFile = null;
+            }, 1500);
+        }
+
+        function clearChat() {
+            if (confirm('آیا می‌خواهید تمام پیام‌ها را پاک کنید؟')) {
+                const messagesContainer = document.getElementById('chatMessages');
+                messagesContainer.innerHTML = `
+                    <div class="flex gap-3">
+                        <div class="flex-shrink-0 w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                            <span class="text-xl">🤖</span>
+                        </div>
+                        <div class="flex-1 bg-purple-50 border-r-4 border-purple-500 rounded-lg p-4">
+                            <p class="text-gray-800">سلام! من TalimBot هستم. چطور می‌توانم کمکتان کنم؟</p>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        document.getElementById('userPrompt').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        window.onload = () => {
+            const studentNumber = checkAuth();
+            if (studentNumber) {
+                const student = getStudent(studentNumber);
+                if (student) {
+                    document.getElementById('navStudentName').textContent = student.name;
+                    document.getElementById('navStudentNumber').textContent = student.studentNumber;
+                    document.getElementById('navStudentInitial').textContent = student.name.charAt(0);
+                }
+            }
+        };
+    </script>
+</body>
+</html>

@@ -4,100 +4,185 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ورود - سیستم گروه‌بندی دانش آموزان</title>
-    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Vazirmatn', system-ui, -apple-system, sans-serif;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'vazir': ['Vazirmatn', 'system-ui', '-apple-system', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
 </head>
-<body class="login-page">
-    <div class="container">
-        <div class="logo-section">
-            <img src="images/logo.png" alt="لوگو">
-        </div>
-        
-        <div class="header">
-            <h1>سیستم گروه‌بندی دانش آموزان</h1>
-            <p>خوش آمدید! لطفاً نقش خود را انتخاب کنید</p>
+<body class="font-vazir bg-gray-50">
+    <!-- Split Layout -->
+    <div class="min-h-screen flex flex-col md:flex-row">
+        <!-- Left: Illustration Section -->
+        <div class="bg-gradient-to-br from-purple-500 via-purple-400 to-pink-400 p-8 md:p-12 flex flex-col items-center justify-center md:w-2/5">
+            <div class="max-w-sm w-full">
+                <!-- Illustration Placeholder -->
+                <div class="bg-white/20 backdrop-blur-sm rounded-3xl p-8 mb-8 shadow-2xl">
+                    <div class="text-center text-white">
+                        <svg class="w-32 h-32 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                        </svg>
+                        <h2 class="text-2xl font-bold mb-2">سیستم گروه‌بندی هوشمند</h2>
+                        <p class="text-purple-100 text-sm">مدیریت و گروه‌بندی دانش آموزان بر اساس شخصیت و سبک یادگیری</p>
+                    </div>
+                </div>
+                <h1 class="text-4xl font-extrabold text-white text-center drop-shadow-lg">
+                    ورود به پنل
+                </h1>
+            </div>
         </div>
 
-        <div class="role-selector">
-            <div class="role-option" id="studentRole" onclick="selectRole('student')">
-                <div class="icon">🙋‍♀️</div>
-                <h3>دانش آموز</h3>
-            </div>
-            <div class="role-option" id="teacherRole" onclick="selectRole('teacher')">
-                <div class="icon">👩‍🏫</div>
-                <h3>معلم</h3>
-            </div>
-        </div>
+        <!-- Right: Form Section -->
+        <div class="bg-white p-6 md:p-12 flex-1 flex items-center justify-center">
+            <div class="w-full max-w-md space-y-8">
+                <!-- Header -->
+                <div class="text-center">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-2">سیستم گروه‌بندی دانش آموزان</h2>
+                    <p class="text-gray-600">لطفاً نقش خود را انتخاب کنید</p>
+                </div>
 
-        <form id="loginForm" onsubmit="handleLogin(event)">
-            <!-- ورود دانش آموز -->
-            <div id="studentLogin" class="login-section" style="display: none;">
-                <div class="form-group">
-                    <label for="studentNumber">شماره دانش آموزی</label>
-                    <input 
-                        type="text" 
-                        id="studentNumber" 
-                        placeholder="شماره دانش آموزی خود را وارد کنید (مثال: S001)"
-                        pattern="S\d{3}"
-                        title="شماره دانش آموزی باید در فرمت S001 تا S030 باشد"
+                <!-- Role Selector -->
+                <div class="grid grid-cols-2 gap-4">
+                    <button type="button" id="studentRole" onclick="selectRole('student')" 
+                        class="role-card p-6 border-2 border-gray-200 rounded-2xl hover:border-purple-500 hover:bg-purple-50 transition-all duration-300 group">
+                        <div class="text-4xl mb-3">🎓</div>
+                        <h3 class="text-lg font-bold text-gray-800 group-hover:text-purple-600">دانش آموز</h3>
+                    </button>
+                    <button type="button" id="teacherRole" onclick="selectRole('teacher')" 
+                        class="role-card p-6 border-2 border-gray-200 rounded-2xl hover:border-blue-500 hover:bg-blue-50 transition-all duration-300 group">
+                        <div class="text-4xl mb-3">🏫</div>
+                        <h3 class="text-lg font-bold text-gray-800 group-hover:text-blue-600">معلم</h3>
+                    </button>
+                </div>
+
+                <!-- Login Form -->
+                <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-6">
+                    <!-- Student Login -->
+                    <div id="studentLogin" class="hidden">
+                        <label for="studentNumber" class="block text-sm font-semibold text-gray-700 mb-2">
+                            شماره دانش آموزی
+                        </label>
+                        <input 
+                            type="text" 
+                            id="studentNumber" 
+                            placeholder="مثال: S001"
+                            pattern="S\d{3}"
+                            class="w-full p-4 border-2 border-gray-300 rounded-xl text-center text-lg font-mono focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none transition-all"
+                        >
+                        <p class="text-xs text-gray-500 mt-2 text-center">شماره دانش آموزی باید در فرمت S001 تا S030 باشد</p>
+                    </div>
+
+                    <!-- Teacher Login -->
+                    <div id="teacherLogin" class="hidden">
+                        <label for="teacherPassword" class="block text-sm font-semibold text-gray-700 mb-2">
+                            رمز عبور
+                        </label>
+                        <div class="relative">
+                            <input 
+                                type="password" 
+                                id="teacherPassword" 
+                                placeholder="رمز عبور خود را وارد کنید"
+                                class="w-full p-4 border-2 border-gray-300 rounded-xl pr-12 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all"
+                            >
+                            <button type="button" onclick="togglePassword()" class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700">
+                                <svg id="eyeIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-2 text-center">💡 رمز عبور دمو: teacher123</p>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button 
+                        type="submit" 
+                        id="loginButton" 
+                        disabled
+                        class="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-4 rounded-xl font-bold text-lg hover:from-blue-700 hover:to-blue-800 disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 shadow-lg disabled:shadow-none"
                     >
+                        ورود به سیستم
+                    </button>
+                </form>
+
+                <!-- Error Message -->
+                <div id="errorMessage" class="hidden bg-red-50 border-r-4 border-red-500 text-red-700 p-4 rounded-lg">
+                    <div class="flex items-center gap-2">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                        </svg>
+                        <span id="errorText" class="text-sm font-medium"></span>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div class="text-center text-sm text-gray-500">
+                    <p>نسخه 1.0.0 | آبان 1404</p>
                 </div>
             </div>
-
-            <!-- ورود استاد -->
-            <div id="teacherLogin" class="login-section" style="display: none;">
-                <div class="form-group">
-                    <label for="teacherPassword">رمز عبور</label>
-                    <input 
-                        type="password" 
-                        id="teacherPassword" 
-                        placeholder="رمز عبور معلم را وارد کنید"
-                    >
-                </div>
-                <p style="color: var(--text-light); font-size: 0.85rem; text-align: center; margin-top: -10px;">
-                    رمز عبور دمو: teacher123
-                </p>
-            </div>
-
-            <button type="submit" class="btn btn-primary" id="loginButton" disabled>
-                ورود به سیستم
-            </button>
-        </form>
-
-        <div id="errorMessage" class="alert alert-warning" style="display: none; margin-top: 15px;">
         </div>
     </div>
 
     <script src="data.js"></script>
     <script>
         let selectedRole = null;
-
-        // مقداردهی اولیه داده‌ها
         initializeData();
 
         function selectRole(role) {
             selectedRole = role;
             
-            // بروزرسانی رابط کاربری
-            document.getElementById('studentRole').classList.remove('selected');
-            document.getElementById('teacherRole').classList.remove('selected');
-            document.getElementById(role + 'Role').classList.add('selected');
+            // Update UI
+            const studentBtn = document.getElementById('studentRole');
+            const teacherBtn = document.getElementById('teacherRole');
             
-            // نمایش فرم مربوطه
-            document.getElementById('studentLogin').style.display = role === 'student' ? 'block' : 'none';
-            document.getElementById('teacherLogin').style.display = role === 'teacher' ? 'block' : 'none';
+            studentBtn.className = 'role-card p-6 border-2 rounded-2xl transition-all duration-300 group';
+            teacherBtn.className = 'role-card p-6 border-2 rounded-2xl transition-all duration-300 group';
             
-            // فعال‌سازی دکمه ورود
+            if (role === 'student') {
+                studentBtn.className += ' border-purple-500 bg-purple-50 shadow-lg scale-105';
+                document.getElementById('loginButton').className = document.getElementById('loginButton').className.replace('from-blue-600 to-blue-700', 'from-purple-600 to-purple-700').replace('hover:from-blue-700 hover:to-blue-800', 'hover:from-purple-700 hover:to-purple-800');
+            } else {
+                teacherBtn.className += ' border-blue-500 bg-blue-50 shadow-lg scale-105';
+                document.getElementById('loginButton').className = document.getElementById('loginButton').className.replace('from-purple-600 to-purple-700', 'from-blue-600 to-blue-700').replace('hover:from-purple-700 hover:to-purple-800', 'hover:from-blue-700 hover:to-blue-800');
+            }
+            
+            // Show appropriate form
+            document.getElementById('studentLogin').classList.toggle('hidden', role !== 'student');
+            document.getElementById('teacherLogin').classList.toggle('hidden', role !== 'teacher');
+            
+            // Enable login button
             document.getElementById('loginButton').disabled = false;
             
-            // مخفی کردن پیام خطا
-            document.getElementById('errorMessage').style.display = 'none';
+            // Hide error
+            document.getElementById('errorMessage').classList.add('hidden');
+        }
+
+        function togglePassword() {
+            const input = document.getElementById('teacherPassword');
+            const type = input.type === 'password' ? 'text' : 'password';
+            input.type = type;
         }
 
         function handleLogin(event) {
             event.preventDefault();
             
             const errorDiv = document.getElementById('errorMessage');
-            errorDiv.style.display = 'none';
+            errorDiv.classList.add('hidden');
             
             if (selectedRole === 'student') {
                 const studentNumber = document.getElementById('studentNumber').value.trim().toUpperCase();
@@ -114,10 +199,7 @@
                     return;
                 }
                 
-                // ذخیره دانشجو در session
                 sessionStorage.setItem('currentStudent', studentNumber);
-                
-                // انتقال به داشبورد دانشجو
                 window.location.href = 'student-dashboard.html';
                 
             } else if (selectedRole === 'teacher') {
@@ -133,32 +215,17 @@
                     return;
                 }
                 
-                // ذخیره session استاد
                 sessionStorage.setItem('isTeacher', 'true');
-                
-                // انتقال به داشبورد استاد
                 window.location.href = 'teacher-dashboard.html';
             }
         }
 
         function showError(message) {
             const errorDiv = document.getElementById('errorMessage');
-            errorDiv.textContent = message;
-            errorDiv.style.display = 'block';
+            const errorText = document.getElementById('errorText');
+            errorText.textContent = message;
+            errorDiv.classList.remove('hidden');
         }
-
-        // پشتیبانی از کلید Enter
-        document.getElementById('studentNumber')?.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                handleLogin(e);
-            }
-        });
-
-        document.getElementById('teacherPassword')?.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                handleLogin(e);
-            }
-        });
     </script>
 </body>
 </html>
