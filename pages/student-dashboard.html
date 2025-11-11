@@ -61,14 +61,6 @@
                             گروه من
                         </span>
                     </a>
-                    <a href="teacher-chat-new.html" class="px-4 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg font-medium transition-colors">
-                        <span class="flex items-center gap-2">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
-                            </svg>
-                            چت
-                        </span>
-                    </a>
                 </div>
 
                 <!-- User Menu -->
@@ -170,15 +162,18 @@
                         </svg>
                     </div>
                     <div class="flex-1">
-                        <h3 class="font-bold text-lg text-gray-900 mb-2">🧠 MBTI - تیپ شخصیتی</h3>
+                        <h3 class="font-bold text-lg text-gray-900 mb-2">MBTI - تیپ شخصیتی</h3>
                         <p class="text-sm text-gray-600 leading-relaxed">شناخت تیپ شخصیتی برای ایجاد تعادل در گروه و درک نقاط قوت شما</p>
                     </div>
                 </div>
                 <div class="space-y-3">
                     <div class="flex gap-2">
                         <a href="https://www.16personalities.com/fa" target="_blank" 
-                           class="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-3 px-4 rounded-lg transition-colors text-center">
-                            شروع آزمون 🌐
+                           class="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-3 px-4 rounded-lg transition-colors text-center flex items-center justify-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
+                            </svg>
+                            شروع آزمون
                         </a>
                         <a href="https://www.16personalities.com/" target="_blank" 
                            class="bg-blue-100 hover:bg-blue-200 text-blue-700 text-sm font-semibold py-3 px-4 rounded-lg transition-colors">
@@ -186,10 +181,27 @@
                         </a>
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">نتیجه تست (مثال: INTJ)</label>
-                        <input type="text" id="mbtiInput" placeholder="4 حرف انگلیسی وارد کنید" 
-                               maxlength="4" style="text-transform: uppercase;"
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">نتیجه تست</label>
+                        <select id="mbtiInput" 
                                class="w-full text-center font-mono text-lg font-bold border-2 border-gray-300 rounded-lg py-3 px-4 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all">
+                            <option value="">انتخاب کنید...</option>
+                            <option value="INTJ">INTJ</option>
+                            <option value="INTP">INTP</option>
+                            <option value="ENTJ">ENTJ</option>
+                            <option value="ENTP">ENTP</option>
+                            <option value="INFJ">INFJ</option>
+                            <option value="INFP">INFP</option>
+                            <option value="ENFJ">ENFJ</option>
+                            <option value="ENFP">ENFP</option>
+                            <option value="ISTJ">ISTJ</option>
+                            <option value="ISFJ">ISFJ</option>
+                            <option value="ESTJ">ESTJ</option>
+                            <option value="ESFJ">ESFJ</option>
+                            <option value="ISTP">ISTP</option>
+                            <option value="ISFP">ISFP</option>
+                            <option value="ESTP">ESTP</option>
+                            <option value="ESFP">ESFP</option>
+                        </select>
                     </div>
                 </div>
             </div>
@@ -204,15 +216,18 @@
                         </svg>
                     </div>
                     <div class="flex-1">
-                        <h3 class="font-bold text-lg text-gray-900 mb-2">📚 VARK - سبک یادگیری</h3>
+                        <h3 class="font-bold text-lg text-gray-900 mb-2">VARK - سبک یادگیری</h3>
                         <p class="text-sm text-gray-600 leading-relaxed">شناسایی سبک یادگیری شما (دیداری، شنیداری، خواندن/نوشتن، حرکتی)</p>
                     </div>
                 </div>
                 <div class="space-y-3">
                     <div class="flex gap-2">
                         <a href="http://maktabestan.ir/" target="_blank" 
-                           class="flex-1 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold py-3 px-4 rounded-lg transition-colors text-center">
-                            شروع آزمون 🇮🇷
+                           class="flex-1 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold py-3 px-4 rounded-lg transition-colors text-center flex items-center justify-center gap-2">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M3 6a3 3 0 013-3h10a1 1 0 01.8 1.6L14.25 8l2.55 3.4A1 1 0 0116 13H6a1 1 0 00-1 1v3a1 1 0 11-2 0V6z" clip-rule="evenodd"/>
+                            </svg>
+                            شروع آزمون
                         </a>
                         <a href="https://vark-learn.com/the-vark-questionnaire/" target="_blank" 
                            class="bg-green-100 hover:bg-green-200 text-green-700 text-sm font-semibold py-3 px-4 rounded-lg transition-colors">
@@ -220,9 +235,16 @@
                         </a>
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">نتیجه تست (مثال: Visual, Kinesthetic)</label>
-                        <input type="text" id="varkInput" placeholder="سبک یادگیری خود را وارد کنید" 
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">نتیجه تست</label>
+                        <select id="varkInput" 
                                class="w-full border-2 border-gray-300 rounded-lg py-3 px-4 focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition-all">
+                            <option value="">انتخاب کنید...</option>
+                            <option value="Visual">Visual - دیداری</option>
+                            <option value="Aural">Aural - شنیداری</option>
+                            <option value="Read/Write">Read/Write - خواندن/نوشتن</option>
+                            <option value="Kinesthetic">Kinesthetic - حرکتی/عملی</option>
+                            <option value="Multimodal">Multimodal - چندگانه</option>
+                        </select>
                     </div>
                 </div>
             </div>
@@ -236,15 +258,18 @@
                         </svg>
                     </div>
                     <div class="flex-1">
-                        <h3 class="font-bold text-lg text-gray-900 mb-2">🎯 AMS - انگیزش تحصیلی</h3>
+                        <h3 class="font-bold text-lg text-gray-900 mb-2">AMS - انگیزش تحصیلی</h3>
                         <p class="text-sm text-gray-600 leading-relaxed">سنجش انگیزه درونی و بیرونی برای یادگیری و پیشرفت تحصیلی</p>
                     </div>
                 </div>
                 <div class="space-y-3">
                     <div class="flex gap-2">
                         <a href="https://idrlabs.com/academic-motivation/test.php" target="_blank" 
-                           class="flex-1 bg-orange-600 hover:bg-orange-700 text-white text-sm font-semibold py-3 px-4 rounded-lg transition-colors text-center">
-                            شروع آزمون 🌐
+                           class="flex-1 bg-orange-600 hover:bg-orange-700 text-white text-sm font-semibold py-3 px-4 rounded-lg transition-colors text-center flex items-center justify-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
+                            </svg>
+                            شروع آزمون
                         </a>
                     </div>
                     <div>
@@ -264,7 +289,7 @@
                         </svg>
                     </div>
                     <div class="flex-1">
-                        <h3 class="font-bold text-lg text-gray-900 mb-2">🤝 توانایی همکاری</h3>
+                        <h3 class="font-bold text-lg text-gray-900 mb-2">توانایی همکاری</h3>
                         <p class="text-sm text-gray-600 leading-relaxed">سنجش مهارت‌های کار گروهی، تعامل و همکاری با دیگران</p>
                     </div>
                 </div>
@@ -284,7 +309,12 @@
         <!-- Preferences Section -->
         <div class="bg-white rounded-xl shadow-md p-6 mb-8">
             <div class="mb-6">
-                <h3 class="font-bold text-xl text-gray-900 mb-2">👥 ترجیحات همگروهی</h3>
+                <h3 class="font-bold text-xl text-gray-900 mb-2 flex items-center gap-2">
+                    <svg class="w-6 h-6 text-gray-700" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"/>
+                    </svg>
+                    ترجیحات همگروهی
+                </h3>
                 <p class="text-gray-600">می‌توانید حداکثر 4 نفر از همکلاسی‌های خود را که دوست دارید در یک گروه باشید انتخاب کنید (اختیاری)</p>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mb-4" id="preferredStudentsCheckbox">
@@ -296,14 +326,20 @@
         </div>
 
         <!-- Action Buttons -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="flex flex-col items-center gap-4">
             <button onclick="saveAllResults()" 
-                    class="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white py-4 px-6 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98] transition-all">
-                💾 ذخیره تمام اطلاعات
+                    class="w-full md:w-1/3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white py-4 px-6 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
+                </svg>
+                ذخیره تمام اطلاعات
             </button>
             <button onclick="viewGroup()" 
-                    class="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white py-4 px-6 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98] transition-all">
-                👥 مشاهده گروه من
+                    class="w-full md:w-1/3 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white py-4 px-6 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"/>
+                </svg>
+                مشاهده گروه من
             </button>
         </div>
     </div>
@@ -314,7 +350,7 @@
             <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
             </svg>
-            <span class="font-semibold">✅ اطلاعات با موفقیت ذخیره شد!</span>
+            <span class="font-semibold">اطلاعات با موفقیت ذخیره شد!</span>
         </div>
     </div>
 
@@ -328,11 +364,12 @@
         </div>
     </footer>
 
-    <script src="data.js"></script>
+    <script src="../assets/js/data.js"></script>
     <script>
         let currentStudent = null;
         let allStudents = [];
 
+        // Check if user is authenticated
         function checkAuth() {
             const studentNumber = sessionStorage.getItem('currentStudent');
             if (!studentNumber) {
@@ -360,7 +397,7 @@
             document.getElementById('navStudentName').textContent = currentStudent.name;
             document.getElementById('studentNumber').textContent = currentStudent.studentNumber;
             document.getElementById('navStudentNumber').textContent = currentStudent.studentNumber;
-            document.getElementById('gradeDisplay').textContent = currentStudent.grade + '%';
+            document.getElementById('gradeDisplay').textContent = currentStudent.grade;
             document.getElementById('groupStatus').textContent = currentStudent.group || 'هنوز تعیین نشده';
 
             // Count completed tests

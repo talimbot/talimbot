@@ -32,23 +32,67 @@
         }
     </script>
 </head>
-<body class="font-vazir bg-gray-50 pb-24">
+<body class="font-vazir bg-gray-50">
     <div class="min-h-screen">
-        <!-- Header -->
-        <header class="bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg sticky top-0 z-40">
-            <div class="max-w-7xl mx-auto px-4 py-6">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h1 class="text-2xl font-bold">پنل مدیریت معلم 👨‍🏫</h1>
-                        <p class="text-blue-100 text-sm mt-1">مدیریت گروه‌بندی دانش آموزان</p>
+        <!-- Top Navigation -->
+        <nav class="bg-white shadow-lg border-b border-gray-200 sticky top-0 z-50">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="flex justify-between items-center h-16">
+                    <!-- Logo -->
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg flex items-center justify-center text-white text-xl font-bold">
+                            T
+                        </div>
+                        <span class="text-xl font-bold text-gray-900">TalimBot</span>
                     </div>
-                    <button onclick="window.location.href='login.html'" 
-                            class="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg text-sm font-semibold transition-colors">
-                        خروج
-                    </button>
+
+                    <!-- Navigation Links -->
+                    <div class="hidden md:flex items-center gap-6">
+                        <a href="teacher-dashboard.html" class="text-blue-600 font-bold border-b-2 border-blue-600 pb-1">
+                            داشبورد
+                        </a>
+                        <a href="student-data.html" class="text-gray-700 hover:text-blue-600 font-medium transition-colors">
+                            ورود اطلاعات
+                        </a>
+                    </div>
+
+                    <!-- User Menu -->
+                    <div class="flex items-center gap-4">
+                        <div class="flex items-center gap-2">
+                            <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                                <svg class="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"/>
+                                    <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1z"/>
+                                </svg>
+                            </div>
+                            <div class="hidden md:block text-right">
+                                <p class="text-sm font-bold text-gray-900">استاد</p>
+                                <p class="text-xs text-gray-600">مدیر سیستم</p>
+                            </div>
+                        </div>
+                        <a href="login.html" class="text-gray-600 hover:text-red-600 transition-colors" title="خروج">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                            </svg>
+                        </a>
+                    </div>
                 </div>
             </div>
-        </header>
+        </nav>
+
+        <!-- Page Header -->
+        <div class="max-w-7xl mx-auto px-4 py-8">
+            <div class="mb-8">
+                <h1 class="text-4xl font-bold text-gray-900 mb-2 flex items-center gap-3">
+                    <svg class="w-10 h-10 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"/>
+                        <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1z"/>
+                    </svg>
+                    پنل مدیریت معلم
+                </h1>
+                <p class="text-gray-600">مدیریت گروه‌بندی دانش آموزان</p>
+            </div>
+        </div>
 
         <div class="max-w-7xl mx-auto px-4 py-6 space-y-6">
             <!-- Stats Grid -->
@@ -101,7 +145,9 @@
                 <!-- Course Name -->
                 <div class="bg-white rounded-2xl shadow-lg p-6">
                     <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                        <span class="text-2xl">📚</span>
+                        <svg class="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z"/>
+                        </svg>
                         اطلاعات درس
                     </h2>
                     <form id="courseForm" onsubmit="saveCourse(event)" class="space-y-4">
@@ -115,16 +161,23 @@
                                 required
                             >
                         </div>
-                        <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition-colors">
-                            💾 ذخیره نام درس
-                        </button>
+                        <div class="flex justify-center">
+                            <button type="submit" class="w-full md:w-1/3 bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition-colors flex items-center justify-center gap-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
+                                </svg>
+                                ذخیره نام درس
+                            </button>
+                        </div>
                     </form>
                 </div>
 
                 <!-- Grouping Status -->
                 <div class="bg-white rounded-2xl shadow-lg p-6">
                     <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                        <span class="text-2xl">📊</span>
+                        <svg class="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/>
+                        </svg>
                         وضعیت گروه‌بندی
                     </h2>
                     <div id="statusInfo" class="fade-in">
@@ -150,14 +203,20 @@
                         </p>
                     </div>
 
-                    <div id="groupingActions" class="flex gap-4">
+                    <div id="groupingActions" class="flex flex-col items-center gap-4">
                         <button onclick="startGrouping()" id="startGroupingBtn"
-                                class="flex-1 bg-gradient-to-r from-green-600 to-green-700 text-white py-4 rounded-xl font-bold text-lg hover:from-green-700 hover:to-green-800 transform hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg">
-                            🚀 شروع فرآیند گروه‌بندی
+                                class="w-full md:w-1/3 bg-gradient-to-r from-green-600 to-green-700 text-white py-4 rounded-xl font-bold text-lg hover:from-green-700 hover:to-green-800 transform hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg flex items-center justify-center gap-2">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                            </svg>
+                            شروع فرآیند گروه‌بندی
                         </button>
                         <button onclick="resetGrouping()" id="resetGroupingBtn"
-                                class="hidden flex-1 bg-gray-600 text-white py-4 rounded-xl font-bold text-lg hover:bg-gray-700 transform hover:scale-[1.02] active:scale-[0.98] transition-all">
-                            🔄 بازنشانی گروه‌بندی
+                                class="hidden w-full md:w-1/3 bg-gray-600 text-white py-4 rounded-xl font-bold text-lg hover:bg-gray-700 transform hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                            </svg>
+                            بازنشانی گروه‌بندی
                         </button>
                     </div>
 
@@ -168,19 +227,13 @@
                     </div>
 
                     <div id="groupingSuccess" class="hidden bg-green-50 border-r-4 border-green-500 p-4 rounded-lg">
-                        <p class="text-green-700 font-semibold">✅ گروه‌بندی با موفقیت انجام شد! دانش آموزان اکنون می‌توانند گروه‌های خود را مشاهده کنند.</p>
+                        <p class="text-green-700 font-semibold flex items-center gap-2">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                            گروه‌بندی با موفقیت انجام شد! دانش آموزان اکنون می‌توانند گروه‌های خود را مشاهده کنند.
+                        </p>
                     </div>
-                </div>
-            </div>
-
-            <!-- Group Results -->
-            <div id="groupResultsCard" class="hidden bg-white rounded-2xl shadow-lg p-6">
-                <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                    <span class="text-2xl">👥</span>
-                    نتایج گروه‌بندی
-                </h2>
-                <div id="groupResultsList" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- Populated by JS -->
                 </div>
             </div>
 
@@ -193,7 +246,7 @@
                 <div class="text-center mb-4">
                     <button onclick="toggleStudentList()" id="toggleStudentBtn"
                             class="bg-blue-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-blue-700 transition-colors">
-                        👁️ نمایش لیست دانش آموزان
+                        نمایش لیست دانش آموزان
                     </button>
                 </div>
                 <div id="studentListContainer" class="hidden">
@@ -217,45 +270,28 @@
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Bottom Navigation -->
-        <nav class="fixed bottom-0 left-0 right-0 bg-gray-900 h-20 border-t border-gray-800 z-50">
-            <div class="max-w-md mx-auto h-full flex items-center justify-around text-xs">
-                <a href="#" class="text-white flex flex-col items-center gap-1">
-                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
+            <!-- Group Results -->
+            <div id="groupResultsCard" class="hidden bg-white rounded-2xl shadow-lg p-6">
+                <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                    <svg class="w-6 h-6 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
                     </svg>
-                    <span>خانه</span>
-                    <div class="h-1 w-8 bg-blue-500 rounded-full"></div>
-                </a>
-                <a href="teacher-chat.html" class="text-gray-500 flex flex-col items-center gap-1 hover:text-gray-300">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
-                    </svg>
-                    <span>چت</span>
-                </a>
-                <a href="student-data.html" class="text-gray-500 flex flex-col items-center gap-1 hover:text-gray-300">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                    </svg>
-                    <span>داده‌ها</span>
-                </a>
-                <a href="login.html" class="text-gray-500 flex flex-col items-center gap-1 hover:text-gray-300">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
-                    </svg>
-                    <span>خروج</span>
-                </a>
+                    نتایج گروه‌بندی
+                </h2>
+                <div id="groupResultsList" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Populated by JS -->
+                </div>
             </div>
-        </nav>
+        </div>
     </div>
 
-    <script src="data.js"></script>
-    <script src="grouping.js"></script>
+    <script src="../assets/js/data.js"></script>
+    <script src="../assets/js/grouping.js"></script>
     <script>
         let isStudentListVisible = false;
 
+        // Check if user is authenticated as teacher
         function checkAuth() {
             const isTeacher = sessionStorage.getItem('isTeacher');
             if (!isTeacher) {
@@ -290,7 +326,12 @@
             if (stats.groupingComplete) {
                 statusDiv.innerHTML = `
                     <div class="bg-green-50 border-r-4 border-green-500 p-4 rounded-lg">
-                        <p class="font-bold text-green-700 mb-1">✅ گروه‌بندی انجام شد!</p>
+                        <p class="font-bold text-green-700 mb-1 flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                            گروه‌بندی انجام شد!
+                        </p>
                         <p class="text-sm text-green-600">${stats.studentsGrouped} دانش آموز در ${stats.groups.length} گروه برای درس <strong>${stats.courseName}</strong></p>
                     </div>
                 `;
@@ -408,7 +449,7 @@
             const btn = document.getElementById('toggleStudentBtn');
             
             container.classList.toggle('hidden', !isStudentListVisible);
-            btn.textContent = isStudentListVisible ? '🙈 مخفی کردن لیست' : '👁️ نمایش لیست دانش آموزان';
+            btn.textContent = isStudentListVisible ? 'مخفی کردن لیست' : 'نمایش لیست دانش آموزان';
         }
 
         function updateStudentTable() {
@@ -420,25 +461,139 @@
             allStudents.forEach((student, index) => {
                 const tr = document.createElement('tr');
                 tr.className = index % 2 === 0 ? 'bg-gray-50' : 'bg-white';
+                tr.id = `row-${student.studentNumber}`;
                 tr.innerHTML = `
                     <td class="p-3 text-sm">${student.studentNumber}</td>
-                    <td class="p-3 text-sm">${student.name}</td>
-                    <td class="p-3 text-sm text-center">${student.mbti || '-'}</td>
-                    <td class="p-3 text-sm text-center">${student.learningStyle || '-'}</td>
-                    <td class="p-3 text-sm text-center font-semibold">${student.grade}%</td>
+                    <td class="p-3 text-sm">
+                        <span class="view-mode">${student.name}</span>
+                        <input type="text" class="edit-mode hidden w-full p-1 border border-gray-300 rounded" value="${student.name}">
+                    </td>
+                    <td class="p-3 text-sm text-center">
+                        <span class="view-mode">${student.mbti || '-'}</span>
+                        <select class="edit-mode hidden w-full p-1 border border-gray-300 rounded text-xs">
+                            <option value="">انتخاب کنید</option>
+                            <option value="INTJ" ${student.mbti === 'INTJ' ? 'selected' : ''}>INTJ</option>
+                            <option value="INTP" ${student.mbti === 'INTP' ? 'selected' : ''}>INTP</option>
+                            <option value="ENTJ" ${student.mbti === 'ENTJ' ? 'selected' : ''}>ENTJ</option>
+                            <option value="ENTP" ${student.mbti === 'ENTP' ? 'selected' : ''}>ENTP</option>
+                            <option value="INFJ" ${student.mbti === 'INFJ' ? 'selected' : ''}>INFJ</option>
+                            <option value="INFP" ${student.mbti === 'INFP' ? 'selected' : ''}>INFP</option>
+                            <option value="ENFJ" ${student.mbti === 'ENFJ' ? 'selected' : ''}>ENFJ</option>
+                            <option value="ENFP" ${student.mbti === 'ENFP' ? 'selected' : ''}>ENFP</option>
+                            <option value="ISTJ" ${student.mbti === 'ISTJ' ? 'selected' : ''}>ISTJ</option>
+                            <option value="ISFJ" ${student.mbti === 'ISFJ' ? 'selected' : ''}>ISFJ</option>
+                            <option value="ESTJ" ${student.mbti === 'ESTJ' ? 'selected' : ''}>ESTJ</option>
+                            <option value="ESFJ" ${student.mbti === 'ESFJ' ? 'selected' : ''}>ESFJ</option>
+                            <option value="ISTP" ${student.mbti === 'ISTP' ? 'selected' : ''}>ISTP</option>
+                            <option value="ISFP" ${student.mbti === 'ISFP' ? 'selected' : ''}>ISFP</option>
+                            <option value="ESTP" ${student.mbti === 'ESTP' ? 'selected' : ''}>ESTP</option>
+                            <option value="ESFP" ${student.mbti === 'ESFP' ? 'selected' : ''}>ESFP</option>
+                        </select>
+                    </td>
+                    <td class="p-3 text-sm text-center">
+                        <span class="view-mode">${student.learningStyle || '-'}</span>
+                        <select class="edit-mode hidden w-full p-1 border border-gray-300 rounded text-xs">
+                            <option value="">Select</option>
+                            <option value="visual" ${student.learningStyle === 'visual' ? 'selected' : ''}>visual</option>
+                            <option value="auditory" ${student.learningStyle === 'auditory' ? 'selected' : ''}>auditory</option>
+                            <option value="kinesthetic" ${student.learningStyle === 'kinesthetic' ? 'selected' : ''}>kinesthetic</option>
+                        </select>
+                    </td>
+                    <td class="p-3 text-sm text-center font-semibold">
+                        <span class="view-mode">${student.grade}</span>
+                        <input type="number" class="edit-mode hidden w-20 p-1 border border-gray-300 rounded text-center" value="${student.grade}" min="0" max="20" step="0.1">
+                    </td>
                     <td class="p-3 text-sm text-center text-blue-600 font-bold">${student.group || '-'}</td>
                     <td class="p-3 text-center">
-                        <button onclick="alert('ویرایش: ${student.studentNumber}')" 
-                                class="bg-blue-600 text-white px-3 py-1 rounded-lg text-xs hover:bg-blue-700">
-                            ✏️ ویرایش
-                        </button>
+                        <div class="flex gap-1 justify-center">
+                            <button onclick="editStudent('${student.studentNumber}')" class="view-mode bg-blue-600 text-white px-3 py-1 rounded-lg text-xs hover:bg-blue-700">
+                                ✏️ ویرایش
+                            </button>
+                            <button onclick="saveStudent('${student.studentNumber}')" class="edit-mode hidden bg-green-600 text-white px-3 py-1 rounded-lg text-xs hover:bg-green-700">
+                                ✓ ذخیره
+                            </button>
+                            <button onclick="cancelEdit('${student.studentNumber}')" class="edit-mode hidden bg-gray-600 text-white px-3 py-1 rounded-lg text-xs hover:bg-gray-700">
+                                ✕ لغو
+                            </button>
+                            <button onclick="deleteStudent('${student.studentNumber}')" class="view-mode bg-red-600 text-white px-3 py-1 rounded-lg text-xs hover:bg-red-700">
+                                🗑️ حذف
+                            </button>
+                        </div>
                     </td>
                 `;
                 tbody.appendChild(tr);
             });
         }
 
+        function editStudent(studentNumber) {
+            const row = document.getElementById(`row-${studentNumber}`);
+            row.querySelectorAll('.view-mode').forEach(el => el.classList.add('hidden'));
+            row.querySelectorAll('.edit-mode').forEach(el => el.classList.remove('hidden'));
+        }
+
+        function cancelEdit(studentNumber) {
+            const row = document.getElementById(`row-${studentNumber}`);
+            row.querySelectorAll('.edit-mode').forEach(el => el.classList.add('hidden'));
+            row.querySelectorAll('.view-mode').forEach(el => el.classList.remove('hidden'));
+        }
+
+        function saveStudent(studentNumber) {
+            const row = document.getElementById(`row-${studentNumber}`);
+            
+            // Get specific input elements
+            const nameInput = row.querySelector('input[type="text"]');
+            const mbtiSelect = row.querySelectorAll('select')[0];
+            const learningStyleSelect = row.querySelectorAll('select')[1];
+            const gradeInput = row.querySelector('input[type="number"]');
+            
+            const updatedData = {
+                name: nameInput.value.trim(),
+                mbti: mbtiSelect.value,
+                learningStyle: learningStyleSelect.value,
+                grade: parseFloat(gradeInput.value)
+            };
+
+            if (!updatedData.name) {
+                alert('نام نمی‌تواند خالی باشد!');
+                return;
+            }
+
+            // Update student data
+            const allStudents = getAllStudents();
+            const student = allStudents.find(s => s.studentNumber === studentNumber);
+            if (student) {
+                student.name = updatedData.name;
+                student.mbti = updatedData.mbti;
+                student.learningStyle = updatedData.learningStyle;
+                student.grade = updatedData.grade;
+                
+                // Save to localStorage
+                localStorage.setItem('students', JSON.stringify(allStudents));
+                
+                alert('اطلاعات دانش آموز با موفقیت ذخیره شد!');
+                updateStudentTable();
+                loadDashboard();
+            }
+        }
+
+        function deleteStudent(studentNumber) {
+            if (!confirm(`آیا از حذف دانش آموز ${studentNumber} مطمئن هستید؟`)) {
+                return;
+            }
+
+            const allStudents = getAllStudents();
+            const filteredStudents = allStudents.filter(s => s.studentNumber !== studentNumber);
+            
+            localStorage.setItem('students', JSON.stringify(filteredStudents));
+            
+            alert('دانش آموز با موفقیت حذف شد!');
+            updateStudentTable();
+            loadDashboard();
+        }
+
         window.onload = loadDashboard;
     </script>
 </body>
 </html>
+
+
