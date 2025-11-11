@@ -87,6 +87,21 @@ function getAllStudents() {
     return data.students;
 }
 
+// Save all students (for batch updates)
+function saveStudents(students) {
+    const data = getData();
+    data.students = students;
+    saveData(data);
+}
+
+// Delete a student
+function deleteStudent(studentNumber) {
+    const data = getData();
+    data.students = data.students.filter(s => s.studentNumber !== studentNumber);
+    saveData(data);
+    return true;
+}
+
 // Get students with complete information
 function getStudentsWithCompleteInfo() {
     const data = getData();
@@ -140,6 +155,8 @@ if (typeof module !== 'undefined' && module.exports) {
         getStudent,
         updateStudent,
         getAllStudents,
+        saveStudents,
+        deleteStudent,
         getStudentsWithCompleteInfo,
         isGroupingComplete,
         setGroupingComplete,

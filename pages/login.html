@@ -38,20 +38,18 @@
     <!-- Split Layout -->
     <div class="min-h-screen flex flex-col md:flex-row">
         <!-- Left: Illustration Section -->
-        <div class="bg-gradient-to-br from-purple-500 via-purple-400 to-pink-400 p-8 md:p-12 flex flex-col items-center justify-center md:w-2/5">
+        <div class="bg-gradient-to-br from-teal-600 via-cyan-500 to-blue-500 p-8 md:p-12 flex flex-col items-center justify-center md:w-2/5">
             <div class="max-w-sm w-full">
                 <!-- Illustration Placeholder -->
                 <div class="bg-white/20 backdrop-blur-sm rounded-3xl p-8 mb-8 shadow-2xl">
                     <div class="text-center text-white">
-                        <svg class="w-32 h-32 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
-                        </svg>
+                        <img src="../Icons/logo/logo.png" alt="TalimBot Logo" class="w-32 h-32 mx-auto mb-4 rounded-2xl">
                         <h2 class="text-2xl font-bold mb-2">سیستم گروه‌بندی هوشمند</h2>
-                        <p class="text-purple-100 text-sm">مدیریت و گروه‌بندی دانش آموزان بر اساس شخصیت و سبک یادگیری</p>
+                        <p class="text-teal-100 text-sm">مدیریت و گروه‌بندی دانش آموزان بر اساس شخصیت و سبک یادگیری</p>
                     </div>
                 </div>
                 <h1 class="text-4xl font-extrabold text-white text-center drop-shadow-lg">
-                    ورود به پنل
+                   TalimBot
                 </h1>
             </div>
         </div>
@@ -69,14 +67,14 @@
                 <!-- Role Selector -->
                 <div class="grid grid-cols-2 gap-4">
                     <button type="button" id="studentRole" onclick="selectRole('student')" 
-                        class="role-card p-6 border-2 border-gray-200 rounded-2xl hover:border-purple-500 hover:bg-purple-50 transition-all duration-300 group">
+                        class="role-card p-6 border-2 border-gray-200 rounded-2xl hover:border-teal-500 hover:bg-teal-50 transition-all duration-300 group">
                         <img src="../Icons/studentIcon.png" alt="Student" class="w-24 h-24 mx-auto mb-3 object-cover">
-                        <h3 class="text-lg font-bold text-gray-800 group-hover:text-purple-600">دانش آموز</h3>
+                        <h3 class="text-lg font-bold text-gray-800 group-hover:text-teal-600">دانش آموز</h3>
                     </button>
                     <button type="button" id="teacherRole" onclick="selectRole('teacher')" 
-                        class="role-card p-6 border-2 border-gray-200 rounded-2xl hover:border-blue-500 hover:bg-blue-50 transition-all duration-300 group">
+                        class="role-card p-6 border-2 border-gray-200 rounded-2xl hover:border-cyan-500 hover:bg-cyan-50 transition-all duration-300 group">
                         <img src="../Icons/teacherIcon3.png" alt="Teacher" class="w-24 h-24 mx-auto mb-3 object-cover">
-                        <h3 class="text-lg font-bold text-gray-800 group-hover:text-blue-600">معلم</h3>
+                        <h3 class="text-lg font-bold text-gray-800 group-hover:text-cyan-600">معلم</h3>
                     </button>
                 </div>
 
@@ -129,7 +127,7 @@
                         type="submit" 
                         id="loginButton" 
                         disabled
-                        class="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-4 rounded-xl font-bold text-lg hover:from-blue-700 hover:to-blue-800 disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 shadow-lg disabled:shadow-none"
+                        class="w-full bg-gradient-to-r from-teal-600 to-cyan-600 text-white py-4 rounded-xl font-bold text-lg hover:from-teal-700 hover:to-cyan-700 disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 shadow-lg disabled:shadow-none"
                     >
                         ورود به سیستم
                     </button>
@@ -169,11 +167,11 @@
             teacherBtn.className = 'role-card p-6 border-2 rounded-2xl transition-all duration-300 group';
             
             if (role === 'student') {
-                studentBtn.className += ' border-purple-500 bg-purple-50 shadow-lg scale-105';
-                document.getElementById('loginButton').className = document.getElementById('loginButton').className.replace('from-blue-600 to-blue-700', 'from-purple-600 to-purple-700').replace('hover:from-blue-700 hover:to-blue-800', 'hover:from-purple-700 hover:to-purple-800');
+                studentBtn.className += ' border-teal-500 bg-teal-50 shadow-lg scale-105';
+                document.getElementById('loginButton').className = document.getElementById('loginButton').className.replace('from-teal-600 to-cyan-600', 'from-teal-600 to-teal-700').replace('hover:from-teal-700 hover:to-cyan-700', 'hover:from-teal-700 hover:to-teal-800');
             } else {
-                teacherBtn.className += ' border-blue-500 bg-blue-50 shadow-lg scale-105';
-                document.getElementById('loginButton').className = document.getElementById('loginButton').className.replace('from-purple-600 to-purple-700', 'from-blue-600 to-blue-700').replace('hover:from-purple-700 hover:to-purple-800', 'hover:from-blue-700 hover:to-blue-800');
+                teacherBtn.className += ' border-cyan-500 bg-cyan-50 shadow-lg scale-105';
+                document.getElementById('loginButton').className = document.getElementById('loginButton').className.replace('from-teal-600 to-teal-700', 'from-teal-600 to-cyan-600').replace('hover:from-teal-700 hover:to-teal-800', 'hover:from-teal-700 hover:to-cyan-700');
             }
             
             // Show appropriate form
