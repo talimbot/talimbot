@@ -237,9 +237,6 @@
 
     <script src="../assets/js/data.js"></script>
     <script>
-        // Student data storage
-        let students = [];
-
         // Check authentication on page load
         function checkAuth() {
             const isTeacher = sessionStorage.getItem('isTeacher');
@@ -256,7 +253,7 @@
         // Add student function
         function addStudent() {
             const name = document.getElementById('studentName').value.trim();
-            const studentId = document.getElementById('studentId').value.trim();
+            const studentId = document.getElementById('studentId').value.trim().toUpperCase();
             const grade = document.getElementById('studentGrade').value.trim();
 
             // Validation
@@ -272,41 +269,48 @@
                 alert('لطفاً نمره را وارد کنید');
                 return;
             }
-            if (parseInt(grade) < 0 || parseInt(grade) > 20) {
+            if (parseFloat(grade) < 0 || parseFloat(grade) > 20) {
                 alert('نمره باید بین 0 تا 20 باشد');
                 return;
             }
 
-            // Add student to array
-            students.push({
-                id: studentId,
-                name: name,
-                grade: parseInt(grade)
-            });
+            // Validate student number format (must be S followed by numbers)
+            if (!/^S\d+$/.test(studentId)) {
+                alert('⚠️ فرمت شماره دانش‌آموزی نادرست است!\n\nشماره باید با حرف S شروع شود و بعد از آن فقط اعداد باشد\n\nمثال‌های صحیح: S001, S031, S100');
+                return;
+            }
 
-            // Clear form
-            document.getElementById('studentName').value = '';
-            document.getElementById('studentId').value = '';
-            document.getElementById('studentGrade').value = '';
+            // Try to add student using data.js function
+            const result = addNewStudent(studentId, name, parseFloat(grade));
 
-            // Focus back on name field
-            document.getElementById('studentName').focus();
+            if (result.success) {
+                // Clear form
+                document.getElementById('studentName').value = '';
+                document.getElementById('studentId').value = '';
+                document.getElementById('studentGrade').value = '';
 
-            // Update the list display
-            updateStudentsList();
+                // Focus back on student ID field
+                document.getElementById('studentId').focus();
 
-            // Update stats
-            updateStats();
+                // Update the list display
+                updateStudentsList();
 
-            // Show success message
-            showToast('دانش‌آموز با موفقیت اضافه شد!');
+                // Update stats
+                updateStats();
+
+                // Show success message
+                showToast('✅ دانش‌آموز با موفقیت اضافه شد!\n' + name + ' (' + studentId + ')');
+            } else {
+                alert('❌ ' + result.message);
+            }
         }
 
         // Update students list display
         function updateStudentsList() {
             const tbody = document.getElementById('studentsList');
+            const allStudents = getAllStudents();
             
-            if (students.length === 0) {
+            if (allStudents.length === 0) {
                 tbody.innerHTML = `
                     <tr>
                         <td colspan="4" class="px-6 py-12 text-center text-gray-400">
@@ -322,7 +326,7 @@
             }
 
             tbody.innerHTML = '';
-            students.forEach((student, index) => {
+            allStudents.forEach((student, index) => {
                 const row = document.createElement('tr');
                 row.className = 'hover:bg-gray-50 transition-colors';
                 row.innerHTML = `
@@ -330,7 +334,7 @@
                         <span class="font-bold text-gray-700">${index + 1}</span>
                     </td>
                     <td class="px-6 py-4 text-center border-b border-gray-200">
-                        <span class="text-gray-600 font-medium">${student.id}</span>
+                        <span class="text-gray-600 font-medium">${student.studentNumber}</span>
                     </td>
                     <td class="px-6 py-4 text-center border-b border-gray-200">
                         <span class="text-gray-900 font-medium">${student.name}</span>
@@ -345,9 +349,10 @@
 
         // Update statistics
         function updateStats() {
-            document.getElementById('totalCount').textContent = students.length;
-            if (students.length > 0) {
-                document.getElementById('lastStudent').textContent = students[students.length - 1].name;
+            const allStudents = getAllStudents();
+            document.getElementById('totalCount').textContent = allStudents.length;
+            if (allStudents.length > 0) {
+                document.getElementById('lastStudent').textContent = allStudents[allStudents.length - 1].name;
             } else {
                 document.getElementById('lastStudent').textContent = '-';
             }

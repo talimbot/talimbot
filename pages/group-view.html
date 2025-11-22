@@ -323,7 +323,7 @@
 
             document.getElementById('myMbti').textContent = currentStudent.mbti || 'تنظیم نشده';
             document.getElementById('myLearningStyle').textContent = currentStudent.learningStyle || 'تنظیم نشده';
-            document.getElementById('myGrade').textContent = currentStudent.grade + '%';
+            document.getElementById('myGrade').textContent = currentStudent.grade;
 
             const membersList = document.getElementById('groupMembersList');
             membersList.innerHTML = '';
@@ -363,7 +363,7 @@
                                 <strong>سبک:</strong> ${member.learningStyle || 'ندارد'}
                             </span>
                             <span class="bg-white px-3 py-1 rounded-lg border border-gray-200">
-                                <strong>نمره:</strong> ${member.grade}%
+                                <strong>نمره:</strong> ${member.grade}
                             </span>
                         </div>
                     </div>

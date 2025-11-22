@@ -88,11 +88,10 @@
                         <input 
                             type="text" 
                             id="studentNumber" 
-                            placeholder="مثال: S001"
-                            pattern="S\d{3}"
-                            class="w-full p-4 border-2 border-gray-300 rounded-xl text-center text-lg focus:border-teal-500 focus:ring-2 focus:ring-teal-200 outline-none transition-all"
+                            placeholder="مثال: S001 یا S031"
+                            class="w-full p-4 border-2 border-gray-300 rounded-xl text-center text-lg focus:border-teal-500 focus:ring-2 focus:ring-teal-200 outline-none transition-all uppercase"
                         >
-                        <p class="text-xs text-gray-500 mt-2 text-center">شماره دانش آموزی باید در فرمت S001 تا S030 باشد</p>
+                        <p class="text-xs text-gray-500 mt-2 text-center">شماره دانش‌آموزی که معلم برای شما ثبت کرده است را وارد کنید</p>
                     </div>
 
                     <!-- Teacher Login -->
@@ -201,14 +200,15 @@
                 const studentNumber = document.getElementById('studentNumber').value.trim().toUpperCase();
                 
                 if (!studentNumber) {
-                    showError('لطفاً شماره دانشجویی خود را وارد کنید');
+                    showError('لطفاً شماره دانش‌آموزی خود را وارد کنید');
                     return;
                 }
                 
+                // Check if student exists in the system (teacher must have registered them)
                 const student = getStudent(studentNumber);
                 
                 if (!student) {
-                    showError('شماره دانشجویی نامعتبر است. لطفاً یک شماره معتبر (S001-S030) وارد کنید');
+                    showError('این شماره دانش‌آموزی در سیستم ثبت نشده است. لطفاً با معلم خود تماس بگیرید.');
                     return;
                 }
                 
@@ -219,7 +219,7 @@
                 const password = document.getElementById('teacherPassword').value;
                 
                 if (!password) {
-                    showError('لطفاً رمز عبور استاد را وارد کنید');
+                    showError('لطفاً رمز عبور را وارد کنید');
                     return;
                 }
                 
