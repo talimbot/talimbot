@@ -194,13 +194,33 @@
                 </h2>
                 <div class="space-y-4">
                     <div class="bg-blue-50 border border-blue-200 rounded-xl p-4">
+                        <h4 class="font-bold text-blue-900 mb-2 flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                            </svg>
+                            آماده گروه‌بندی
+                        </h4>
                         <p class="text-gray-700 mb-2">
                             <strong class="text-2xl text-blue-600" id="readyStudentsCount">0</strong> 
                             دانش آموز آماده گروه‌بندی هستند.
                         </p>
-                        <p class="text-sm text-gray-600 leading-relaxed">
-                            الگوریتم گروه‌بندی موارد زیر را در نظر می‌گیرد: انواع شخصیت MBTI، سبک‌های یادگیری، نمرات، انگیزش، توانایی همکاری و ترجیحات دانش آموزان
-                        </p>
+                        <div class="text-sm text-gray-700 space-y-1 bg-white rounded-lg p-3 mt-2">
+                            <p class="font-semibold text-gray-800 mb-2">🎯 معیارهای گروه‌بندی هوشمند (به ترتیب اولویت):</p>
+                            <div class="mr-4 space-y-1">
+                                <p><strong>1. سازگاری MBTI (35%):</strong> ترکیب شخصیت‌های مکمل برای تیم متعادل</p>
+                                <p><strong>2. تنوع سبک یادگیری (25%):</strong> ترکیب سبک‌های دیداری، شنیداری و حرکتی</p>
+                                <p><strong>3. توازن نمرات (20%):</strong> توزیع عادلانه نمرات بالا، متوسط و پایین</p>
+                                <p><strong>4. مناسبت با درس (10%):</strong> <span id="courseNameInCriteria">انتخاب بر اساس نیاز درس</span></p>
+                                <p><strong>5. انگیزش و همکاری (10%):</strong> ترکیب دانش‌آموزان با انگیزه و مهارت کار تیمی</p>
+                                <p class="text-orange-600 italic"><strong>⚠️ ترجیحات دانش‌آموزان:</strong> فقط در صورت عدم تضاد با معیارهای بالا لحاظ می‌شود</p>
+                            </div>
+                        </div>
+                        <div class="bg-amber-50 border border-amber-300 rounded-lg p-3 mt-3">
+                            <p class="text-sm text-amber-800 font-medium">
+                                ⚡ نکته مهم: فقط دانش‌آموزانی که MBTI و سبک یادگیری خود را تکمیل کرده‌اند در گروه‌بندی شرکت می‌کنند. 
+                                اگر دانش‌آموزی دوستان خود را انتخاب کرده ولی آن دوستان فرم را تکمیل نکرده‌اند، این انتخاب در نظر گرفته نمی‌شود.
+                            </p>
+                        </div>
                     </div>
 
                     <div id="groupingActions" class="flex flex-col items-center gap-4">
@@ -348,6 +368,11 @@
 
             if (courseName) {
                 document.getElementById('courseNameInput').value = courseName;
+                // Update the course name in the criteria description
+                const courseNameEl = document.getElementById('courseNameInCriteria');
+                if (courseNameEl) {
+                    courseNameEl.textContent = `انتخاب بر اساس نیاز درس "${courseName}"`;
+                }
             }
 
             updateStatus(stats);
@@ -391,6 +416,11 @@
             
             if (courseName) {
                 setCourseName(courseName);
+                // Update the display immediately
+                const courseNameEl = document.getElementById('courseNameInCriteria');
+                if (courseNameEl) {
+                    courseNameEl.textContent = `انتخاب بر اساس نیاز درس "${courseName}"`;
+                }
                 alert('نام درس با موفقیت ذخیره شد!');
             }
         }
@@ -438,9 +468,25 @@
         }
 
         function resetGrouping() {
-            if (!confirm('آیا مطمئن هستید؟')) return;
-            window.resetGrouping();
-            alert('گروه‌بندی بازنشانی شد!');
+            if (!confirm('آیا مطمئن هستید که می‌خواهید گروه‌بندی را بازنشانی کنید؟\n\nتمام گروه‌ها حذف می‌شوند و می‌توانید دوباره گروه‌بندی انجام دهید.')) return;
+            
+            // Get the data and reset grouping
+            const data = getData();
+            
+            data.students.forEach(student => {
+                student.group = null;
+            });
+            
+            data.groupingComplete = false;
+            data.courseName = '';
+            data.groupingResults = null;
+            
+            saveData(data);
+            
+            // Hide success message
+            document.getElementById('groupingSuccess').classList.add('hidden');
+            
+            alert('گروه‌بندی با موفقیت بازنشانی شد!');
             loadDashboard();
         }
 
