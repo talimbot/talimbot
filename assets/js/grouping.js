@@ -7,10 +7,9 @@
 /**
  * Main grouping function - calls backend API
  * @param {string} courseName - The name of the course
- * @param {string} apiKey - OpenRouter API key (optional, prompts if not provided)
  * @returns {Promise<Object>} - Grouping results
  */
-async function performGrouping(courseName, apiKey = null) {
+async function performGrouping(courseName) {
     try {
         console.log(`Requesting grouping from backend for course: ${courseName}`);
         
@@ -20,8 +19,7 @@ async function performGrouping(courseName, apiKey = null) {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({ 
-                courseName,
-                apiKey: apiKey
+                courseName
             })
         });
 

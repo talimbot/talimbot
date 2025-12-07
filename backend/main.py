@@ -5,6 +5,10 @@ from typing import List, Optional, Dict, Any
 import json
 import os
 from pathlib import Path
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 app = FastAPI()
 
@@ -141,13 +145,20 @@ def update_student(student_number: str, updates: StudentUpdate):
     save_data(data)
     return {"success": True, "student": student}
 
-class GroupingRequestWithKey(BaseModel):
+class GroupingRequest(BaseModel):
     courseName: str
-    apiKey: Optional[str] = None
 
 @app.post("/api/grouping/perform")
-async def perform_grouping(request: GroupingRequestWithKey):
+async def perform_grouping(request: GroupingRequest):
     data = load_data()
+    
+    # Get API key from environment variable
+    api_key = os.getenv("OPENROUTER_API_KEY")
+    if not api_key:
+        raise HTTPException(
+            status_code=500, 
+            detail="OpenRouter API key not configured. Please set OPENROUTER_API_KEY in .env file"
+        )
     
     # Get students with complete info (mbti and learningStyle required)
     students_with_info = [s for s in data.students if s.mbti and s.learningStyle]
@@ -168,7 +179,7 @@ async def perform_grouping(request: GroupingRequestWithKey):
         with ThreadPoolExecutor() as executor:
             grouping_result = await loop.run_in_executor(
                 executor,
-                lambda: group_students_with_ai(students_with_info, request.courseName, request.apiKey)
+                lambda: group_students_with_ai(students_with_info, request.courseName, api_key)
             )
         
         # Apply grouping to students

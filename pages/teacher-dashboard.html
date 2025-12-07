@@ -230,14 +230,6 @@
                             شروع فرآیند گروه‌بندی
                         </button>
                         
-                        <button onclick="manageApiKey()" id="manageApiKeyBtn"
-                                class="w-full md:w-1/3 bg-purple-600 text-white py-3 rounded-xl font-medium text-sm hover:bg-purple-700 transform hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
-                            </svg>
-                            <span id="apiKeyStatus">مدیریت کلید API</span>
-                        </button>
-                        
                         <button onclick="handleResetGrouping()" id="resetGroupingBtn"
                                 class="hidden w-full md:w-1/3 bg-gray-600 text-white py-4 rounded-xl font-bold text-lg hover:bg-gray-700 transform hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -388,9 +380,6 @@
             document.getElementById('studentsGrouped').textContent = stats.studentsGrouped;
             document.getElementById('readyStudentsCount').textContent = stats.studentsWithCompleteInfo;
 
-            // Update API key status button
-            updateApiKeyStatus();
-
             if (courseName) {
                 document.getElementById('courseNameInput').value = courseName;
                 // Update the course name in the criteria description
@@ -484,37 +473,6 @@
                 return;
             }
 
-            // Check for API key in localStorage
-            let apiKey = localStorage.getItem('openrouterApiKey');
-            
-            if (!apiKey) {
-                // Prompt teacher to enter API key
-                apiKey = prompt(
-                    '🔑 لطفاً کلید API خود را از OpenRouter وارد کنید:\n\n' +
-                    'برای دریافت کلید رایگان:\n' +
-                    '1. به https://openrouter.ai بروید\n' +
-                    '2. وارد شوید (Sign In)\n' +
-                    '3. بخش Keys → Create Key\n' +
-                    '4. کلید را کپی کنید (شروع با sk-or-v1-)\n\n' +
-                    'این کلید فقط یکبار نیاز است و ذخیره می‌شود.'
-                );
-                
-                if (!apiKey || apiKey.trim() === '') {
-                    alert('❌ کلید API الزامی است! بدون آن گروه‌بندی امکان‌پذیر نیست.');
-                    return;
-                }
-                
-                // Validate key format
-                if (!apiKey.startsWith('sk-or-v1-')) {
-                    alert('⚠️ فرمت کلید نامعتبر است! کلید باید با sk-or-v1- شروع شود.');
-                    return;
-                }
-                
-                // Save to localStorage for future use
-                localStorage.setItem('openrouterApiKey', apiKey.trim());
-                alert('✅ کلید با موفقیت ذخیره شد! از این به بعد نیازی به وارد کردن مجدد نیست.');
-            }
-
             const confirmed = confirm(`آماده گروه‌بندی ${stats.studentsWithCompleteInfo} دانش آموز؟`);
             if (!confirmed) return;
 
@@ -522,7 +480,7 @@
             document.getElementById('groupingProgress').classList.remove('hidden');
 
             try {
-                const groupingResult = await performGrouping(courseName, apiKey);
+                const groupingResult = await performGrouping(courseName);
                 
                 document.getElementById('groupingProgress').classList.add('hidden');
                 document.getElementById('groupingSuccess').classList.remove('hidden');
@@ -534,17 +492,7 @@
                 
             } catch (error) {
                 let errorMsg = 'خطا در گروه‌بندی: ' + error.message;
-                
-                // Check if error is about invalid API key
-                if (error.message.includes('401') || error.message.includes('API key')) {
-                    errorMsg += '\n\n💡 احتمالاً کلید API نامعتبر است. آیا می‌خواهید کلید جدیدی وارد کنید؟';
-                    if (confirm(errorMsg)) {
-                        localStorage.removeItem('openrouterApiKey');
-                        alert('کلید قبلی حذف شد. لطفاً دوباره تلاش کنید و کلید جدید را وارد کنید.');
-                    }
-                } else {
-                    alert(errorMsg);
-                }
+                alert(errorMsg);
                 
                 document.getElementById('groupingProgress').classList.add('hidden');
                 document.getElementById('groupingActions').classList.remove('hidden');
@@ -786,68 +734,6 @@
                     alert('خطا در بازنشانی: ' + error.message);
                 }
             }
-        }
-
-        function updateApiKeyStatus() {
-            const apiKey = localStorage.getItem('openrouterApiKey');
-            const statusBtn = document.getElementById('apiKeyStatus');
-            
-            if (apiKey) {
-                const maskedKey = 'sk-or-v1-...' + apiKey.slice(-8);
-                statusBtn.textContent = `کلید ذخیره شده: ${maskedKey}`;
-            } else {
-                statusBtn.textContent = 'مدیریت کلید API';
-            }
-        }
-
-        function manageApiKey() {
-            const currentKey = localStorage.getItem('openrouterApiKey');
-            
-            let message = '🔑 مدیریت کلید OpenRouter API\n\n';
-            
-            if (currentKey) {
-                const maskedKey = 'sk-or-v1-...' + currentKey.slice(-8);
-                message += `کلید فعلی: ${maskedKey}\n\n`;
-                message += 'گزینه‌ها:\n';
-                message += '1. برای تغییر کلید، یک کلید جدید وارد کنید\n';
-                message += '2. برای حذف کلید، کادر را خالی بگذارید و OK کنید\n';
-                message += '3. برای لغو، Cancel کنید';
-            } else {
-                message += 'کلیدی ذخیره نشده است.\n\n';
-                message += 'برای دریافت کلید رایگان:\n';
-                message += '1. به https://openrouter.ai بروید\n';
-                message += '2. وارد شوید (Sign In)\n';
-                message += '3. بخش Keys → Create Key\n';
-                message += '4. کلید را کپی کنید (شروع با sk-or-v1-)';
-            }
-            
-            const newKey = prompt(message, currentKey || '');
-            
-            if (newKey === null) {
-                // User clicked cancel
-                return;
-            }
-            
-            if (newKey.trim() === '') {
-                // User wants to remove the key
-                if (confirm('آیا مطمئن هستید که می‌خواهید کلید API را حذف کنید؟')) {
-                    localStorage.removeItem('openrouterApiKey');
-                    alert('✅ کلید با موفقیت حذف شد.');
-                    updateApiKeyStatus();
-                }
-                return;
-            }
-            
-            // Validate key format
-            if (!newKey.startsWith('sk-or-v1-')) {
-                alert('⚠️ فرمت کلید نامعتبر است! کلید باید با sk-or-v1- شروع شود.');
-                return;
-            }
-            
-            // Save the new key
-            localStorage.setItem('openrouterApiKey', newKey.trim());
-            alert('✅ کلید با موفقیت ذخیره شد!');
-            updateApiKeyStatus();
         }
 
         async function downloadAllData() {
