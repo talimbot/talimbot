@@ -81,17 +81,32 @@
                 <!-- Login Form -->
                 <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-6">
                     <!-- Student Login -->
-                    <div id="studentLogin" class="hidden">
-                        <label for="studentNumber" class="block text-sm font-semibold text-gray-700 mb-2">
-                            شماره دانش آموزی
-                        </label>
-                        <input 
-                            type="text" 
-                            id="studentNumber" 
-                            placeholder="مثال: S001 یا S031"
-                            class="w-full p-4 border-2 border-gray-300 rounded-xl text-center text-lg focus:border-teal-500 focus:ring-2 focus:ring-teal-200 outline-none transition-all uppercase"
-                        >
-                        <p class="text-xs text-gray-500 mt-2 text-center">شماره دانش‌آموزی که معلم برای شما ثبت کرده است را وارد کنید</p>
+                    <div id="studentLogin" class="hidden space-y-4">
+                        <div>
+                            <label for="studentNumber" class="block text-sm font-semibold text-gray-700 mb-2">
+                                شماره دانش آموزی
+                            </label>
+                            <input 
+                                type="text" 
+                                id="studentNumber" 
+                                placeholder="مثال: S001"
+                                class="w-full p-4 border-2 border-gray-300 rounded-xl text-center text-lg focus:border-teal-500 focus:ring-2 focus:ring-teal-200 outline-none transition-all uppercase"
+                            >
+                        </div>
+                        <div>
+                            <label for="nationalCode" class="block text-sm font-semibold text-gray-700 mb-2">
+                                کد ملی
+                            </label>
+                            <input 
+                                type="text" 
+                                id="nationalCode" 
+                                placeholder="کد ملی ۹ رقمی"
+                                maxlength="10"
+                                class="w-full p-4 border-2 border-gray-300 rounded-xl text-center text-lg focus:border-teal-500 focus:ring-2 focus:ring-teal-200 outline-none transition-all"
+                                dir="ltr"
+                            >
+                            <p class="text-xs text-gray-500 mt-2 text-center">کد ملی ۹ رقمی خود را وارد کنید</p>
+                        </div>
                     </div>
 
                     <!-- Teacher Login -->
@@ -153,7 +168,6 @@
     <script src="../assets/js/data.js"></script>
     <script>
         let selectedRole = null;
-        initializeData();
 
         function selectRole(role) {
             selectedRole = role;
@@ -190,7 +204,7 @@
             input.type = type;
         }
 
-        function handleLogin(event) {
+        async function handleLogin(event) {
             event.preventDefault();
             
             const errorDiv = document.getElementById('errorMessage');
@@ -198,22 +212,53 @@
             
             if (selectedRole === 'student') {
                 const studentNumber = document.getElementById('studentNumber').value.trim().toUpperCase();
+                const nationalCode = document.getElementById('nationalCode').value.trim();
                 
                 if (!studentNumber) {
                     showError('لطفاً شماره دانش‌آموزی خود را وارد کنید');
                     return;
                 }
                 
-                // Check if student exists in the system (teacher must have registered them)
-                const student = getStudent(studentNumber);
-                
-                if (!student) {
-                    showError('این شماره دانش‌آموزی در سیستم ثبت نشده است. لطفاً با معلم خود تماس بگیرید.');
+                if (!nationalCode) {
+                    showError('لطفاً کد ملی خود را وارد کنید');
                     return;
                 }
                 
-                sessionStorage.setItem('currentStudent', studentNumber);
-                window.location.href = 'student-dashboard.html';
+                if (nationalCode.length < 9 || nationalCode.length > 10) {
+                    showError('کد ملی باید ۹ یا ۱۰ رقم باشد');
+                    return;
+                }
+                
+                try {
+                    // Authenticate student with backend
+                    const response = await fetch('http://localhost:8000/api/auth/student', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ studentNumber, nationalCode })
+                    });
+                    
+                    if (!response.ok) {
+                        const error = await response.json();
+                        if (error.detail.includes('not found')) {
+                            showError('این شماره دانش‌آموزی در سیستم ثبت نشده است');
+                        } else if (error.detail.includes('Invalid')) {
+                            showError('کد ملی نادرست است');
+                        } else {
+                            showError('خطا در ورود. دوباره تلاش کنید');
+                        }
+                        return;
+                    }
+                    
+                    const result = await response.json();
+                    sessionStorage.setItem('currentStudent', studentNumber);
+                    sessionStorage.setItem('studentName', result.student.name);
+                    window.location.href = 'student-dashboard.html';
+                } catch (error) {
+                    showError('خطا در اتصال به سرور. لطفاً اطمینان حاصل کنید که سرور در حال اجرا است');
+                    console.error('Login error:', error);
+                }
                 
             } else if (selectedRole === 'teacher') {
                 const password = document.getElementById('teacherPassword').value;
@@ -223,13 +268,19 @@
                     return;
                 }
                 
-                if (!checkTeacherPassword(password)) {
-                    showError('رمز عبور نادرست است. دوباره تلاش کنید.');
-                    return;
+                try {
+                    const isValid = await checkTeacherPassword(password);
+                    if (!isValid) {
+                        showError('رمز عبور نادرست است. دوباره تلاش کنید.');
+                        return;
+                    }
+                    
+                    sessionStorage.setItem('isTeacher', 'true');
+                    window.location.href = 'teacher-dashboard.html';
+                } catch (error) {
+                    showError('خطا در اتصال به سرور');
+                    console.error('Login error:', error);
                 }
-                
-                sessionStorage.setItem('isTeacher', 'true');
-                window.location.href = 'teacher-dashboard.html';
             }
         }
 

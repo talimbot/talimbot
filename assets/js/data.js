@@ -1,168 +1,206 @@
 // Student Grouping System - Data Management
-// This file handles all data operations using localStorage
+// This file handles all data operations using Backend API
 
-const STORAGE_KEY = 'studentGroupingData';
+// Backend API Configuration
+const API_BASE_URL = 'http://localhost:8000/api';
 
-// Initial 30 students data
-const initialStudents = [
-    { studentNumber: 'S001', name: 'Emma Johnson', mbti: null, learningStyle: null, ams: null, cooperative: null, grade: 17, preferredStudents: [], group: null },
-    { studentNumber: 'S002', name: 'Liam Smith', mbti: null, learningStyle: null, ams: null, cooperative: null, grade: 15.6, preferredStudents: [], group: null },
-    { studentNumber: 'S003', name: 'Olivia Williams', mbti: null, learningStyle: null, ams: null, cooperative: null, grade: 18.4, preferredStudents: [], group: null },
-    { studentNumber: 'S004', name: 'Noah Brown', mbti: null, learningStyle: null, ams: null, cooperative: null, grade: 17.6, preferredStudents: [], group: null },
-    { studentNumber: 'S005', name: 'Ava Jones', mbti: null, learningStyle: null, ams: null, cooperative: null, grade: 19, preferredStudents: [], group: null },
-    { studentNumber: 'S006', name: 'Ethan Garcia', mbti: null, learningStyle: null, ams: null, cooperative: null, grade: 16.4, preferredStudents: [], group: null },
-    { studentNumber: 'S007', name: 'Sophia Martinez', mbti: null, learningStyle: null, ams: null, cooperative: null, grade: 18, preferredStudents: [], group: null },
-    { studentNumber: 'S008', name: 'Mason Rodriguez', mbti: null, learningStyle: null, ams: null, cooperative: null, grade: 15.2, preferredStudents: [], group: null },
-    { studentNumber: 'S009', name: 'Isabella Hernandez', mbti: null, learningStyle: null, ams: null, cooperative: null, grade: 17.8, preferredStudents: [], group: null },
-    { studentNumber: 'S010', name: 'James Lopez', mbti: null, learningStyle: null, ams: null, cooperative: null, grade: 16.8, preferredStudents: [], group: null },
-    { studentNumber: 'S011', name: 'Mia Gonzalez', mbti: null, learningStyle: null, ams: null, cooperative: null, grade: 18.2, preferredStudents: [], group: null },
-    { studentNumber: 'S012', name: 'Benjamin Wilson', mbti: null, learningStyle: null, ams: null, cooperative: null, grade: 15.8, preferredStudents: [], group: null },
-    { studentNumber: 'S013', name: 'Charlotte Anderson', mbti: null, learningStyle: null, ams: null, cooperative: null, grade: 17.4, preferredStudents: [], group: null },
-    { studentNumber: 'S014', name: 'Lucas Thomas', mbti: null, learningStyle: null, ams: null, cooperative: null, grade: 18.6, preferredStudents: [], group: null },
-    { studentNumber: 'S015', name: 'Amelia Taylor', mbti: null, learningStyle: null, ams: null, cooperative: null, grade: 17.2, preferredStudents: [], group: null },
-    { studentNumber: 'S016', name: 'Henry Moore', mbti: null, learningStyle: null, ams: null, cooperative: null, grade: 16, preferredStudents: [], group: null },
-    { studentNumber: 'S017', name: 'Evelyn Jackson', mbti: null, learningStyle: null, ams: null, cooperative: null, grade: 18.8, preferredStudents: [], group: null },
-    { studentNumber: 'S018', name: 'Alexander Martin', mbti: null, learningStyle: null, ams: null, cooperative: null, grade: 15.4, preferredStudents: [], group: null },
-    { studentNumber: 'S019', name: 'Harper Lee', mbti: null, learningStyle: null, ams: null, cooperative: null, grade: 17.6, preferredStudents: [], group: null },
-    { studentNumber: 'S020', name: 'Michael White', mbti: null, learningStyle: null, ams: null, cooperative: null, grade: 16.6, preferredStudents: [], group: null },
-    { studentNumber: 'S021', name: 'Abigail Harris', mbti: null, learningStyle: null, ams: null, cooperative: null, grade: 18, preferredStudents: [], group: null },
-    { studentNumber: 'S022', name: 'Daniel Clark', mbti: null, learningStyle: null, ams: null, cooperative: null, grade: 16.2, preferredStudents: [], group: null },
-    { studentNumber: 'S023', name: 'Emily Lewis', mbti: null, learningStyle: null, ams: null, cooperative: null, grade: 17.8, preferredStudents: [], group: null },
-    { studentNumber: 'S024', name: 'Matthew Robinson', mbti: null, learningStyle: null, ams: null, cooperative: null, grade: 15, preferredStudents: [], group: null },
-    { studentNumber: 'S025', name: 'Elizabeth Walker', mbti: null, learningStyle: null, ams: null, cooperative: null, grade: 18.4, preferredStudents: [], group: null },
-    { studentNumber: 'S026', name: 'David Young', mbti: null, learningStyle: null, ams: null, cooperative: null, grade: 17.4, preferredStudents: [], group: null },
-    { studentNumber: 'S027', name: 'Sofia Allen', mbti: null, learningStyle: null, ams: null, cooperative: null, grade: 16.8, preferredStudents: [], group: null },
-    { studentNumber: 'S028', name: 'Joseph King', mbti: null, learningStyle: null, ams: null, cooperative: null, grade: 18.2, preferredStudents: [], group: null },
-    { studentNumber: 'S029', name: 'Avery Wright', mbti: null, learningStyle: null, ams: null, cooperative: null, grade: 17.2, preferredStudents: [], group: null },
-    { studentNumber: 'S030', name: 'Samuel Scott', mbti: null, learningStyle: null, ams: null, cooperative: null, grade: 15.6, preferredStudents: [], group: null }
-];
-
-// Initialize data if not exists
-function initializeData() {
-    const data = localStorage.getItem(STORAGE_KEY);
-    if (!data) {
-        const initialData = {
-            students: initialStudents,
-            courseName: '',
-            groupingComplete: false,
-            teacherPassword: 'teacher123' // Simple password for demo
-        };
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(initialData));
-        return initialData;
+// Utility function for API calls
+async function apiCall(endpoint, options = {}) {
+    try {
+        const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+            ...options,
+            headers: {
+                'Content-Type': 'application/json',
+                ...options.headers
+            }
+        });
+        
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.detail || 'API request failed');
+        }
+        
+        return await response.json();
+    } catch (error) {
+        console.error('API Error:', error);
+        throw error;
     }
-    return JSON.parse(data);
 }
 
-// Get all data
-function getData() {
-    return initializeData();
-}
-
-// Save data
-function saveData(data) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+// Get all data (for backward compatibility)
+async function getData() {
+    const students = await getAllStudents();
+    const status = await getGroupingStats();
+    return {
+        students: students,
+        courseName: status.courseName,
+        groupingComplete: status.groupingComplete,
+        resultsVisible: status.resultsVisible,
+        teacherPassword: 'teacher123'
+    };
 }
 
 // Get student by student number
-function getStudent(studentNumber) {
-    const data = getData();
-    return data.students.find(s => s.studentNumber === studentNumber);
+async function getStudent(studentNumber) {
+    try {
+        return await apiCall(`/student/${studentNumber}`);
+    } catch (error) {
+        return null;
+    }
 }
 
 // Update student information
-function updateStudent(studentNumber, updates) {
-    const data = getData();
-    const studentIndex = data.students.findIndex(s => s.studentNumber === studentNumber);
-    if (studentIndex !== -1) {
-        data.students[studentIndex] = { ...data.students[studentIndex], ...updates };
-        saveData(data);
-        return true;
+async function updateStudent(studentNumber, updates) {
+    try {
+        const result = await apiCall(`/student/${studentNumber}`, {
+            method: 'PUT',
+            body: JSON.stringify(updates)
+        });
+        return result.success;
+    } catch (error) {
+        return false;
     }
-    return false;
 }
 
 // Get all students
-function getAllStudents() {
-    const data = getData();
-    return data.students;
+async function getAllStudents() {
+    const result = await apiCall('/students');
+    return result.students;
 }
 
-// Save all students (for batch updates)
-function saveStudents(students) {
-    const data = getData();
-    data.students = students;
-    saveData(data);
+// Check if a student number exists in the system
+async function studentExists(studentNumber) {
+    const student = await getStudent(studentNumber);
+    return student !== null;
 }
 
-// Delete a student
-function deleteStudent(studentNumber) {
-    const data = getData();
-    data.students = data.students.filter(s => s.studentNumber !== studentNumber);
-    saveData(data);
-    return true;
+// Get students with complete information (REQUIRED fields only: MBTI and Learning Style)
+async function getStudentsWithCompleteInfo() {
+    const students = await getAllStudents();
+    return students.filter(s => s.mbti && s.learningStyle);
 }
 
-// Get students with complete information
-function getStudentsWithCompleteInfo() {
-    const data = getData();
-    return data.students.filter(s => s.mbti && s.learningStyle);
+// Check if a student has complete profile (all fields filled)
+async function hasCompleteProfile(studentNumber) {
+    const student = await getStudent(studentNumber);
+    if (!student) return false;
+    
+    return !!(student.mbti && student.learningStyle && 
+              student.ams !== null && student.cooperative !== null);
+}
+
+// Get completion percentage for a student
+async function getProfileCompletion(studentNumber) {
+    const student = await getStudent(studentNumber);
+    if (!student) return 0;
+    
+    let completed = 0;
+    const total = 4;
+    
+    if (student.mbti) completed++;
+    if (student.learningStyle) completed++;
+    if (student.ams !== null) completed++;
+    if (student.cooperative !== null) completed++;
+    
+    return Math.round((completed / total) * 100);
+}
+
+// Get grouping statistics
+async function getGroupingStats() {
+    return await apiCall('/grouping/status');
 }
 
 // Check if grouping is complete
-function isGroupingComplete() {
-    const data = getData();
-    return data.groupingComplete;
-}
-
-// Set grouping status
-function setGroupingComplete(status) {
-    const data = getData();
-    data.groupingComplete = status;
-    saveData(data);
+async function isGroupingComplete() {
+    const stats = await getGroupingStats();
+    return stats.groupingComplete;
 }
 
 // Get course name
-function getCourseName() {
-    const data = getData();
-    return data.courseName;
-}
-
-// Set course name
-function setCourseName(name) {
-    const data = getData();
-    data.courseName = name;
-    saveData(data);
-}
-
-// Reset all data (for testing)
-function resetData() {
-    localStorage.removeItem(STORAGE_KEY);
-    initializeData();
+async function getCourseName() {
+    const stats = await getGroupingStats();
+    return stats.courseName;
 }
 
 // Check teacher password
-function checkTeacherPassword(password) {
-    const data = getData();
-    return password === data.teacherPassword;
+async function checkTeacherPassword(password) {
+    try {
+        const result = await apiCall('/auth/teacher', {
+            method: 'POST',
+            body: JSON.stringify({ password })
+        });
+        return result.valid;
+    } catch (error) {
+        return false;
+    }
+}
+
+// Get student's group (only if results are visible)
+async function getStudentGroup(studentNumber) {
+    try {
+        return await apiCall(`/student/${studentNumber}/group`);
+    } catch (error) {
+        if (error.message.includes('not yet visible')) {
+            return { error: 'results_not_visible', message: 'نتایج هنوز توسط معلم نمایش داده نشده است.' };
+        }
+        if (error.message.includes('not assigned')) {
+            return { error: 'not_assigned', message: 'شما هنوز به گروهی اختصاص داده نشده‌اید.' };
+        }
+        throw error;
+    }
+}
+
+// Legacy functions for backward compatibility (these are handled by backend now)
+function saveData(data) {
+    console.warn('saveData is deprecated - data is automatically saved to backend');
+}
+
+function initializeData() {
+    console.log('Data is managed by backend');
+    return true;
+}
+
+function addNewStudent(studentNumber, name, grade = 15) {
+    console.warn('addNewStudent should be done through admin panel');
+    return { success: false, message: 'Use backend API for adding students' };
+}
+
+function saveStudents(students) {
+    console.warn('saveStudents is deprecated - use backend API');
+}
+
+function deleteStudent(studentNumber) {
+    console.warn('deleteStudent should be done through admin panel');
+    return false;
+}
+
+function setGroupingComplete(status) {
+    console.warn('setGroupingComplete is handled by backend');
+}
+
+function setCourseName(name) {
+    console.warn('setCourseName is handled by backend');
+}
+
+function resetData() {
+    console.warn('resetData should be done through teacher dashboard');
 }
 
 // Export functions for use in other files
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = {
-        initializeData,
         getData,
-        saveData,
         getStudent,
         updateStudent,
         getAllStudents,
-        saveStudents,
-        deleteStudent,
+        studentExists,
         getStudentsWithCompleteInfo,
+        hasCompleteProfile,
+        getProfileCompletion,
         isGroupingComplete,
-        setGroupingComplete,
         getCourseName,
-        setCourseName,
-        resetData,
-        checkTeacherPassword
+        checkTeacherPassword,
+        getGroupingStats,
+        getStudentGroup
     };
 }

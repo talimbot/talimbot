@@ -379,42 +379,48 @@
             return studentNumber;
         }
 
-        function loadStudentData() {
+        async function loadStudentData() {
             const studentNumber = checkAuth();
             if (!studentNumber) return;
 
-            currentStudent = getStudent(studentNumber);
-            allStudents = getAllStudents();
+            try {
+                currentStudent = await getStudent(studentNumber);
+                allStudents = await getAllStudents();
 
-            if (!currentStudent) {
-                alert('دانش آموز یافت نشد');
-                window.location.href = 'login.html';
-                return;
+                if (!currentStudent) {
+                    alert('دانش آموز یافت نشد');
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                // Update nav and page info with Persian name
+                const displayName = currentStudent.name || studentNumber;
+                document.getElementById('studentName').textContent = `خوش آمدید، ${displayName}`;
+                document.getElementById('navStudentName').textContent = displayName;
+                document.getElementById('studentNumber').textContent = currentStudent.studentNumber;
+                document.getElementById('navStudentNumber').textContent = currentStudent.studentNumber;
+                document.getElementById('gradeDisplay').textContent = currentStudent.grade.toFixed(2);
+                document.getElementById('groupStatus').textContent = currentStudent.group || 'هنوز تعیین نشده';
+
+                // Count completed tests
+                let testsCompleted = 0;
+                if (currentStudent.mbti) testsCompleted++;
+                if (currentStudent.learningStyle) testsCompleted++;
+                if (currentStudent.ams) testsCompleted++;
+                if (currentStudent.cooperative) testsCompleted++;
+                document.getElementById('testsCompleted').textContent = testsCompleted;
+
+                // Load existing data
+                if (currentStudent.mbti) document.getElementById('mbtiInput').value = currentStudent.mbti;
+                if (currentStudent.learningStyle) document.getElementById('varkInput').value = currentStudent.learningStyle;
+                if (currentStudent.ams) document.getElementById('amsInput').value = currentStudent.ams;
+                if (currentStudent.cooperative) document.getElementById('cooperativeInput').value = currentStudent.cooperative;
+
+                populatePreferredStudents();
+            } catch (error) {
+                console.error('Error loading student data:', error);
+                alert('خطا در بارگذاری اطلاعات. لطفاً دوباره تلاش کنید');
             }
-
-            // Update nav and page info
-            document.getElementById('studentName').textContent = currentStudent.name;
-            document.getElementById('navStudentName').textContent = currentStudent.name;
-            document.getElementById('studentNumber').textContent = currentStudent.studentNumber;
-            document.getElementById('navStudentNumber').textContent = currentStudent.studentNumber;
-            document.getElementById('gradeDisplay').textContent = currentStudent.grade;
-            document.getElementById('groupStatus').textContent = currentStudent.group || 'هنوز تعیین نشده';
-
-            // Count completed tests
-            let testsCompleted = 0;
-            if (currentStudent.mbti) testsCompleted++;
-            if (currentStudent.learningStyle) testsCompleted++;
-            if (currentStudent.ams) testsCompleted++;
-            if (currentStudent.cooperative) testsCompleted++;
-            document.getElementById('testsCompleted').textContent = testsCompleted;
-
-            // Load existing data
-            if (currentStudent.mbti) document.getElementById('mbtiInput').value = currentStudent.mbti;
-            if (currentStudent.learningStyle) document.getElementById('varkInput').value = currentStudent.learningStyle;
-            if (currentStudent.ams) document.getElementById('amsInput').value = currentStudent.ams;
-            if (currentStudent.cooperative) document.getElementById('cooperativeInput').value = currentStudent.cooperative;
-
-            populatePreferredStudents();
         }
 
         function populatePreferredStudents() {

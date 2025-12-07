@@ -113,8 +113,8 @@
                     <svg class="w-24 h-24 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-3">گروه‌بندی هنوز انجام نشده است</h3>
-                    <p class="text-gray-600 mb-2">معلم هنوز فرآیند گروه‌بندی را تکمیل نکرده است.</p>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-3" id="notGroupedTitle">گروه‌بندی هنوز انجام نشده است</h3>
+                    <p class="text-gray-600 mb-2" id="notGroupedMessage">معلم هنوز فرآیند گروه‌بندی را تکمیل نکرده است.</p>
                     <p class="text-gray-500">لطفاً بعداً دوباره بررسی کنید یا با معلم خود تماس بگیرید.</p>
                 </div>
                 <div class="flex gap-4 justify-center">
@@ -246,6 +246,7 @@
     </footer>
 
     <script src="../assets/js/data.js"></script>
+    <script src="../assets/js/grouping.js"></script>
     <script>
         let currentStudent = null;
 
@@ -270,47 +271,64 @@
             }
         }
 
-        function loadGroupInfo() {
+        async function loadGroupInfo() {
             showState('loadingState');
 
             const studentNumber = checkAuth();
             if (!studentNumber) return;
 
-            currentStudent = getStudent(studentNumber);
+            try {
+                currentStudent = await getStudent(studentNumber);
 
-            if (!currentStudent) {
+                if (!currentStudent) {
+                    showState('errorState');
+                    document.getElementById('errorMessage').textContent = 'دانشجو یافت نشد. لطفاً دوباره وارد شوید.';
+                    return;
+                }
+
+                // Update nav
+                document.getElementById('navStudentName').textContent = currentStudent.name;
+                document.getElementById('navStudentNumber').textContent = currentStudent.studentNumber;
+
+                if (!currentStudent.mbti || !currentStudent.learningStyle) {
+                    showState('errorState');
+                    document.getElementById('errorMessage').textContent = 'لطفاً ابتدا پروفایل خود را در داشبورد تکمیل کنید.';
+                    return;
+                }
+
+                const status = await getGroupingStats();
+
+                if (!status.groupingComplete || !currentStudent.group) {
+                    showState('notGroupedState');
+                    document.getElementById('notGroupedTitle').textContent = 'گروه‌بندی هنوز انجام نشده است';
+                    document.getElementById('notGroupedMessage').textContent = 'معلم هنوز فرآیند گروه‌بندی را تکمیل نکرده است.';
+                    return;
+                }
+
+                // Check if teacher has made results visible
+                if (!status.resultsVisible) {
+                    showState('notGroupedState');
+                    document.getElementById('notGroupedTitle').textContent = 'نتایج گروه‌بندی هنوز نمایش داده نشده';
+                    document.getElementById('notGroupedMessage').textContent = 'معلم گروه‌بندی را انجام داده است اما هنوز آن را برای دانش‌آموزان نمایش نداده است.';
+                    return;
+                }
+
+                await displayGroupInfo();
+            } catch (error) {
+                console.error('Error loading group info:', error);
                 showState('errorState');
-                document.getElementById('errorMessage').textContent = 'دانشجو یافت نشد. لطفاً دوباره وارد شوید.';
-                return;
+                document.getElementById('errorMessage').textContent = 'خطا در بارگذاری اطلاعات. لطفاً اطمینان حاصل کنید که سرور در حال اجرا است.';
             }
-
-            // Update nav
-            document.getElementById('navStudentName').textContent = currentStudent.name;
-            document.getElementById('navStudentNumber').textContent = currentStudent.studentNumber;
-
-            if (!currentStudent.mbti || !currentStudent.learningStyle) {
-                showState('errorState');
-                document.getElementById('errorMessage').textContent = 'لطفاً ابتدا پروفایل خود را در داشبورد تکمیل کنید.';
-                return;
-            }
-
-            const groupingComplete = isGroupingComplete();
-
-            if (!groupingComplete || !currentStudent.group) {
-                showState('notGroupedState');
-                return;
-            }
-
-            displayGroupInfo();
         }
 
-        function displayGroupInfo() {
-            const allStudents = getAllStudents();
+        async function displayGroupInfo() {
+            const allStudents = await getAllStudents();
             const groupMembers = allStudents.filter(s => s.group === currentStudent.group);
 
             document.getElementById('headerSubtext').textContent = `شما در گروه ${currentStudent.group} قرار دارید`;
 
-            const courseName = getCourseName();
+            const status = await getGroupingStats();
+            const courseName = status.courseName;
             if (courseName) {
                 document.getElementById('courseInfo').classList.remove('hidden');
                 document.getElementById('courseName').textContent = courseName;
@@ -323,7 +341,7 @@
 
             document.getElementById('myMbti').textContent = currentStudent.mbti || 'تنظیم نشده';
             document.getElementById('myLearningStyle').textContent = currentStudent.learningStyle || 'تنظیم نشده';
-            document.getElementById('myGrade').textContent = currentStudent.grade;
+            document.getElementById('myGrade').textContent = currentStudent.grade.toFixed(2);
 
             const membersList = document.getElementById('groupMembersList');
             membersList.innerHTML = '';
@@ -363,7 +381,7 @@
                                 <strong>سبک:</strong> ${member.learningStyle || 'ندارد'}
                             </span>
                             <span class="bg-white px-3 py-1 rounded-lg border border-gray-200">
-                                <strong>نمره:</strong> ${member.grade}
+                                <strong>نمره:</strong> ${member.grade.toFixed(2)}
                             </span>
                         </div>
                     </div>

@@ -231,12 +231,20 @@
                             </svg>
                             شروع فرآیند گروه‌بندی
                         </button>
-                        <button onclick="resetGrouping()" id="resetGroupingBtn"
+                        <button onclick="handleResetGrouping()" id="resetGroupingBtn"
                                 class="hidden w-full md:w-1/3 bg-gray-600 text-white py-4 rounded-xl font-bold text-lg hover:bg-gray-700 transform hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
                             </svg>
                             بازنشانی گروه‌بندی
+                        </button>
+                        <button onclick="toggleVisibility()" id="toggleVisibilityBtn"
+                                class="hidden w-full md:w-1/3 bg-blue-600 text-white py-4 rounded-xl font-bold text-lg hover:bg-blue-700 transform hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                            </svg>
+                            <span id="visibilityButtonText">نمایش نتایج به دانش‌آموزان</span>
                         </button>
                     </div>
 
@@ -356,11 +364,11 @@
             return true;
         }
 
-        function loadDashboard() {
+        async function loadDashboard() {
             if (!checkAuth()) return;
 
-            const stats = getGroupingStats();
-            const courseName = getCourseName();
+            const stats = await getGroupingStats();
+            const courseName = await getCourseName();
 
             document.getElementById('totalStudents').textContent = stats.totalStudents;
             document.getElementById('studentsWithInfo').textContent = stats.studentsWithCompleteInfo;
@@ -376,12 +384,14 @@
                 }
             }
 
-            updateStatus(stats);
-            updateStudentTable();
+            await updateStatus(stats);
+            await updateStudentTable();
         }
 
-        function updateStatus(stats) {
+        async function updateStatus(stats) {
             const statusDiv = document.getElementById('statusInfo');
+            const toggleBtn = document.getElementById('toggleVisibilityBtn');
+            const toggleBtnText = document.getElementById('visibilityButtonText');
 
             if (stats.groupingComplete) {
                 statusDiv.innerHTML = `
@@ -393,11 +403,27 @@
                             گروه‌بندی انجام شد!
                         </p>
                         <p class="text-sm text-green-600">${stats.studentsGrouped} دانش آموز در ${stats.groups.length} گروه برای درس <strong>${stats.courseName}</strong></p>
+                        ${stats.resultsVisible ? 
+                            '<p class="text-sm text-blue-600 mt-2">✅ نتایج برای دانش‌آموزان نمایش داده می‌شود</p>' : 
+                            '<p class="text-sm text-orange-600 mt-2">⚠️ نتایج هنوز برای دانش‌آموزان مخفی است</p>'}
                     </div>
                 `;
                 document.getElementById('startGroupingBtn').classList.add('hidden');
                 document.getElementById('resetGroupingBtn').classList.remove('hidden');
-                displayGroupResults(stats.groups);
+                toggleBtn.classList.remove('hidden');
+                
+                // Update button text based on visibility status
+                if (stats.resultsVisible) {
+                    toggleBtnText.textContent = 'مخفی کردن نتایج از دانش‌آموزان';
+                    toggleBtn.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+                    toggleBtn.classList.add('bg-orange-600', 'hover:bg-orange-700');
+                } else {
+                    toggleBtnText.textContent = 'نمایش نتایج به دانش‌آموزان';
+                    toggleBtn.classList.remove('bg-orange-600', 'hover:bg-orange-700');
+                    toggleBtn.classList.add('bg-blue-600', 'hover:bg-blue-700');
+                }
+                
+                await displayGroupResults(stats.groups);
             } else {
                 statusDiv.innerHTML = `
                     <div class="bg-blue-50 border-r-4 border-blue-500 p-4 rounded-lg">
@@ -407,6 +433,7 @@
                 `;
                 document.getElementById('startGroupingBtn').classList.remove('hidden');
                 document.getElementById('resetGroupingBtn').classList.add('hidden');
+                toggleBtn.classList.add('hidden');
                 document.getElementById('groupResultsCard').classList.add('hidden');
             }
         }
@@ -427,14 +454,14 @@
         }
 
         async function startGrouping() {
-            const courseName = getCourseName();
+            const courseName = document.getElementById('courseNameInput').value.trim();
             
             if (!courseName) {
                 alert('لطفاً ابتدا نام درس را وارد کنید!');
                 return;
             }
 
-            const stats = getGroupingStats();
+            const stats = await getGroupingStats();
             
             if (stats.studentsWithCompleteInfo === 0) {
                 alert('هیچ دانش آموزی پروفایل خود را تکمیل نکرده است!');
@@ -448,10 +475,7 @@
             document.getElementById('groupingProgress').classList.remove('hidden');
 
             try {
-                await new Promise(resolve => setTimeout(resolve, 2000));
                 const groupingResult = await performGrouping(courseName);
-                
-                applyGrouping(groupingResult, courseName);
                 
                 document.getElementById('groupingProgress').classList.add('hidden');
                 document.getElementById('groupingSuccess').classList.remove('hidden');
@@ -468,37 +492,59 @@
             }
         }
 
-        function resetGrouping() {
+        async function handleResetGrouping() {
             if (!confirm('آیا مطمئن هستید که می‌خواهید گروه‌بندی را بازنشانی کنید؟\n\nتمام گروه‌ها حذف می‌شوند و می‌توانید دوباره گروه‌بندی انجام دهید.')) return;
             
-            // Get the data and reset grouping
-            const data = getData();
-            
-            data.students.forEach(student => {
-                student.group = null;
-            });
-            
-            data.groupingComplete = false;
-            data.courseName = '';
-            data.groupingResults = null;
-            
-            saveData(data);
-            
-            // Hide success message
-            document.getElementById('groupingSuccess').classList.add('hidden');
-            
-            alert('گروه‌بندی با موفقیت بازنشانی شد!');
-            loadDashboard();
+            const password = prompt('لطفاً رمز عبور استاد را وارد کنید:');
+            if (!password) return;
+
+            try {
+                await resetGrouping(password);
+                // Hide success message
+                document.getElementById('groupingSuccess').classList.add('hidden');
+                alert('گروه‌بندی با موفقیت بازنشانی شد!');
+                loadDashboard();
+            } catch (error) {
+                if (error.message.includes('Invalid password')) {
+                    alert('رمز عبور اشتباه است!');
+                } else {
+                    alert('خطا در بازنشانی: ' + error.message);
+                }
+            }
         }
 
-        function displayGroupResults(groups) {
+        async function toggleVisibility() {
+            const password = prompt('لطفاً رمز عبور استاد را وارد کنید:');
+            if (!password) return;
+
+            try {
+                const result = await toggleResultsVisibility(password);
+                if (result.success) {
+                    const message = result.resultsVisible ? 
+                        'نتایج اکنون برای دانش‌آموزان قابل مشاهده است! ✅' : 
+                        'نتایج از دانش‌آموزان مخفی شد! 🔒';
+                    alert(message);
+                    loadDashboard();
+                } else {
+                    alert('خطا در تغییر وضعیت نمایش');
+                }
+            } catch (error) {
+                if (error.message.includes('Invalid password')) {
+                    alert('رمز عبور اشتباه است!');
+                } else {
+                    alert('خطا: ' + error.message);
+                }
+            }
+        }
+
+        async function displayGroupResults(groups) {
             const card = document.getElementById('groupResultsCard');
             const container = document.getElementById('groupResultsList');
             
             card.classList.remove('hidden');
             container.innerHTML = '';
 
-            const allStudents = getAllStudents();
+            const allStudents = await getAllStudents();
 
             groups.forEach(group => {
                 const groupDiv = document.createElement('div');
@@ -533,11 +579,11 @@
             btn.textContent = isStudentListVisible ? 'مخفی کردن لیست' : 'نمایش لیست دانش آموزان';
         }
 
-        function updateStudentTable() {
+        async function updateStudentTable() {
             const tbody = document.getElementById('studentTableBody');
             tbody.innerHTML = '';
 
-            const allStudents = getAllStudents();
+            const allStudents = await getAllStudents();
 
             allStudents.forEach((student, index) => {
                 const tr = document.createElement('tr');
@@ -615,7 +661,7 @@
             row.querySelectorAll('.view-mode').forEach(el => el.classList.remove('hidden'));
         }
 
-        function saveStudent(studentNumber) {
+        async function saveStudent(studentNumber) {
             const row = document.getElementById(`row-${studentNumber}`);
             
             // Get specific input elements
@@ -637,24 +683,36 @@
             }
 
             // Update student using the proper data.js function
-            const success = updateStudent(studentNumber, updatedData);
+            const success = await updateStudent(studentNumber, updatedData);
             
             if (success) {
                 alert('اطلاعات دانش آموز با موفقیت ذخیره شد!');
                 cancelEdit(studentNumber);
-                updateStudentTable();
-                loadDashboard();
+                await updateStudentTable();
+                await loadDashboard();
             } else {
                 alert('خطا در ذخیره اطلاعات!');
             }
         }
 
-        function resetAllData() {
-            if (confirm('⚠️ هشدار: این عملیات غیرقابل بازگشت است!\n\nآیا مطمئن هستید که می‌خواهید تمام داده‌ها را بازنشانی کنید؟\n\n• همه 30 دانش‌آموز به حالت اولیه برمی‌گردند\n• تمام تغییرات حذف می‌شوند\n• گروه‌بندی‌ها پاک می‌شوند\n• نام درس حذف می‌شود')) {
-                localStorage.removeItem('studentGroupingData');
-                initializeData();
+        async function resetAllData() {
+            if (!confirm('⚠️ هشدار: این عملیات غیرقابل بازگشت است!\n\nآیا مطمئن هستید که می‌خواهید تمام داده‌ها را بازنشانی کنید؟\n\n• همه 30 دانش‌آموز به حالت اولیه برمی‌گردند\n• تمام تغییرات حذف می‌شوند\n• گروه‌بندی‌ها پاک می‌شوند\n• نام درس حذف می‌شود')) {
+                return;
+            }
+
+            const password = prompt('لطفاً رمز عبور استاد را وارد کنید:');
+            if (!password) return;
+
+            try {
+                await resetGrouping(password);
                 alert('✅ تمام داده‌ها با موفقیت بازنشانی شدند!\n\nهمه 30 دانش‌آموز (S001 تا S030) بازگردانده شدند.');
                 window.location.reload();
+            } catch (error) {
+                if (error.message.includes('Invalid password')) {
+                    alert('رمز عبور اشتباه است!');
+                } else {
+                    alert('خطا در بازنشانی: ' + error.message);
+                }
             }
         }
 
