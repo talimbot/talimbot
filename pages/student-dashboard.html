@@ -474,7 +474,7 @@
             });
         }
 
-        function saveAllResults() {
+        async function saveAllResults() {
             const mbti = document.getElementById('mbtiInput').value.trim().toUpperCase();
             const vark = document.getElementById('varkInput').value.trim();
             const ams = document.getElementById('amsInput').value.trim();
@@ -483,11 +483,11 @@
             const checkboxes = document.querySelectorAll('#preferredStudentsCheckbox input[type="checkbox"]:checked');
             const preferredStudents = Array.from(checkboxes).map(cb => cb.value);
 
-            const success = updateStudent(currentStudent.studentNumber, {
+            const success = await updateStudent(currentStudent.studentNumber, {
                 mbti: mbti || null,
                 learningStyle: vark || null,
-                ams: ams ? Number(ams) : null,
-                cooperative: cooperative ? Number(cooperative) : null,
+                ams: ams || null,
+                cooperative: cooperative || null,
                 preferredStudents: preferredStudents
             });
 
@@ -495,7 +495,7 @@
                 const toast = document.getElementById('successToast');
                 toast.classList.remove('hidden');
                 setTimeout(() => toast.classList.add('hidden'), 3000);
-                loadStudentData();
+                await loadStudentData();
             } else {
                 alert('خطا در ذخیره اطلاعات!');
             }

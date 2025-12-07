@@ -141,8 +141,12 @@ def update_student(student_number: str, updates: StudentUpdate):
     save_data(data)
     return {"success": True, "student": student}
 
+class GroupingRequestWithKey(BaseModel):
+    courseName: str
+    apiKey: Optional[str] = None
+
 @app.post("/api/grouping/perform")
-async def perform_grouping(request: GroupingRequest):
+async def perform_grouping(request: GroupingRequestWithKey):
     data = load_data()
     
     # Get students with complete info (mbti and learningStyle required)
@@ -154,7 +158,18 @@ async def perform_grouping(request: GroupingRequest):
     try:
         # Import grouping logic
         from grouping_logic import group_students_with_ai
-        grouping_result = await group_students_with_ai(students_with_info, request.courseName)
+        
+        # group_students_with_ai is now synchronous (uses requests library)
+        # Run it in a thread pool to avoid blocking
+        import asyncio
+        from concurrent.futures import ThreadPoolExecutor
+        
+        loop = asyncio.get_event_loop()
+        with ThreadPoolExecutor() as executor:
+            grouping_result = await loop.run_in_executor(
+                executor,
+                lambda: group_students_with_ai(students_with_info, request.courseName, request.apiKey)
+            )
         
         # Apply grouping to students
         for student in data.students:
@@ -193,10 +208,13 @@ def get_grouping_status():
         "groups": data.groupingResults.get("groups", []) if data.groupingResults else []
     }
 
+class PasswordRequest(BaseModel):
+    password: str
+
 @app.post("/api/grouping/toggle-visibility")
-def toggle_results_visibility(password: str):
+def toggle_results_visibility(request: PasswordRequest):
     data = load_data()
-    if password != data.teacherPassword:
+    if request.password != data.teacherPassword:
         raise HTTPException(status_code=403, detail="Invalid password")
     
     data.resultsVisible = not data.resultsVisible
@@ -204,9 +222,9 @@ def toggle_results_visibility(password: str):
     return {"success": True, "resultsVisible": data.resultsVisible}
 
 @app.post("/api/grouping/reset")
-def reset_grouping(password: str):
+def reset_grouping(request: PasswordRequest):
     data = load_data()
-    if password != data.teacherPassword:
+    if request.password != data.teacherPassword:
         raise HTTPException(status_code=403, detail="Invalid password")
     
     for student in data.students:
@@ -268,6 +286,12 @@ def get_student_group(student_number: str):
         "reasoning": group_info.get("reasoning", "") if group_info else "",
         "courseName": data.courseName
     }
+
+@app.get("/api/data/backup")
+def get_data_backup():
+    """Download complete student data as JSON backup for safekeeping"""
+    data = load_data()
+    return data.dict()
 
 if __name__ == "__main__":
     import uvicorn

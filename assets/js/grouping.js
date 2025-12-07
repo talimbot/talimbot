@@ -1,14 +1,16 @@
 // Grouping Logic with Backend API Integration
 // This file handles the student grouping process through the backend
 
-const API_BASE_URL = 'http://localhost:8000/api';
+// API_BASE_URL is defined in data.js (loaded first)
+// No need to redeclare it here to avoid "already been declared" error
 
 /**
  * Main grouping function - calls backend API
  * @param {string} courseName - The name of the course
+ * @param {string} apiKey - OpenRouter API key (optional, prompts if not provided)
  * @returns {Promise<Object>} - Grouping results
  */
-async function performGrouping(courseName) {
+async function performGrouping(courseName, apiKey = null) {
     try {
         console.log(`Requesting grouping from backend for course: ${courseName}`);
         
@@ -17,7 +19,10 @@ async function performGrouping(courseName) {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ courseName })
+            body: JSON.stringify({ 
+                courseName,
+                apiKey: apiKey
+            })
         });
 
         if (!response.ok) {

@@ -51,9 +51,7 @@
                         <a href="teacher-dashboard.html" class="text-white font-bold border-b-2 border-white pb-1">
                             داشبورد
                         </a>
-                        <a href="student-data.html" class="text-white/80 hover:text-white font-medium transition-colors">
-                            ورود اطلاعات
-                        </a>
+                        <!-- student-data.html removed - all 30 students already exist -->
                     </div>
 
                     <!-- User Menu -->
@@ -231,6 +229,15 @@
                             </svg>
                             شروع فرآیند گروه‌بندی
                         </button>
+                        
+                        <button onclick="manageApiKey()" id="manageApiKeyBtn"
+                                class="w-full md:w-1/3 bg-purple-600 text-white py-3 rounded-xl font-medium text-sm hover:bg-purple-700 transform hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
+                            </svg>
+                            <span id="apiKeyStatus">مدیریت کلید API</span>
+                        </button>
+                        
                         <button onclick="handleResetGrouping()" id="resetGroupingBtn"
                                 class="hidden w-full md:w-1/3 bg-gray-600 text-white py-4 rounded-xl font-bold text-lg hover:bg-gray-700 transform hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -272,10 +279,14 @@
                     لیست تمام دانش آموزان
                 </h2>
                 
-                <div class="text-center mb-4">
+                <div class="text-center mb-4 flex gap-3 justify-center">
                     <button onclick="toggleStudentList()" id="toggleStudentBtn"
                             class="bg-blue-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-blue-700 transition-colors">
                         نمایش لیست دانش آموزان
+                    </button>
+                    <button onclick="downloadAllData()" 
+                            class="bg-green-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-green-700 transition-colors">
+                        📥 دانلود همه داده‌ها (JSON)
                     </button>
                 </div>
                 <div id="studentListContainer" class="hidden">
@@ -287,6 +298,8 @@
                                     <th class="p-3 text-right text-sm font-bold text-gray-700">نام</th>
                                     <th class="p-3 text-center text-sm font-bold text-gray-700">MBTI</th>
                                     <th class="p-3 text-center text-sm font-bold text-gray-700">سبک یادگیری</th>
+                                    <th class="p-3 text-center text-sm font-bold text-gray-700">AMS</th>
+                                    <th class="p-3 text-center text-sm font-bold text-gray-700">همکاری</th>
                                     <th class="p-3 text-center text-sm font-bold text-gray-700">نمره</th>
                                     <th class="p-3 text-center text-sm font-bold text-gray-700">گروه</th>
                                     <th class="p-3 text-center text-sm font-bold text-gray-700">عملیات</th>
@@ -374,6 +387,9 @@
             document.getElementById('studentsWithInfo').textContent = stats.studentsWithCompleteInfo;
             document.getElementById('studentsGrouped').textContent = stats.studentsGrouped;
             document.getElementById('readyStudentsCount').textContent = stats.studentsWithCompleteInfo;
+
+            // Update API key status button
+            updateApiKeyStatus();
 
             if (courseName) {
                 document.getElementById('courseNameInput').value = courseName;
@@ -468,6 +484,37 @@
                 return;
             }
 
+            // Check for API key in localStorage
+            let apiKey = localStorage.getItem('openrouterApiKey');
+            
+            if (!apiKey) {
+                // Prompt teacher to enter API key
+                apiKey = prompt(
+                    '🔑 لطفاً کلید API خود را از OpenRouter وارد کنید:\n\n' +
+                    'برای دریافت کلید رایگان:\n' +
+                    '1. به https://openrouter.ai بروید\n' +
+                    '2. وارد شوید (Sign In)\n' +
+                    '3. بخش Keys → Create Key\n' +
+                    '4. کلید را کپی کنید (شروع با sk-or-v1-)\n\n' +
+                    'این کلید فقط یکبار نیاز است و ذخیره می‌شود.'
+                );
+                
+                if (!apiKey || apiKey.trim() === '') {
+                    alert('❌ کلید API الزامی است! بدون آن گروه‌بندی امکان‌پذیر نیست.');
+                    return;
+                }
+                
+                // Validate key format
+                if (!apiKey.startsWith('sk-or-v1-')) {
+                    alert('⚠️ فرمت کلید نامعتبر است! کلید باید با sk-or-v1- شروع شود.');
+                    return;
+                }
+                
+                // Save to localStorage for future use
+                localStorage.setItem('openrouterApiKey', apiKey.trim());
+                alert('✅ کلید با موفقیت ذخیره شد! از این به بعد نیازی به وارد کردن مجدد نیست.');
+            }
+
             const confirmed = confirm(`آماده گروه‌بندی ${stats.studentsWithCompleteInfo} دانش آموز؟`);
             if (!confirmed) return;
 
@@ -475,7 +522,7 @@
             document.getElementById('groupingProgress').classList.remove('hidden');
 
             try {
-                const groupingResult = await performGrouping(courseName);
+                const groupingResult = await performGrouping(courseName, apiKey);
                 
                 document.getElementById('groupingProgress').classList.add('hidden');
                 document.getElementById('groupingSuccess').classList.remove('hidden');
@@ -486,7 +533,19 @@
                 }, 2000);
                 
             } catch (error) {
-                alert('خطا در گروه‌بندی: ' + error.message);
+                let errorMsg = 'خطا در گروه‌بندی: ' + error.message;
+                
+                // Check if error is about invalid API key
+                if (error.message.includes('401') || error.message.includes('API key')) {
+                    errorMsg += '\n\n💡 احتمالاً کلید API نامعتبر است. آیا می‌خواهید کلید جدیدی وارد کنید؟';
+                    if (confirm(errorMsg)) {
+                        localStorage.removeItem('openrouterApiKey');
+                        alert('کلید قبلی حذف شد. لطفاً دوباره تلاش کنید و کلید جدید را وارد کنید.');
+                    }
+                } else {
+                    alert(errorMsg);
+                }
+                
                 document.getElementById('groupingProgress').classList.add('hidden');
                 document.getElementById('groupingActions').classList.remove('hidden');
             }
@@ -626,6 +685,14 @@
                             <option value="kinesthetic" ${student.learningStyle === 'kinesthetic' ? 'selected' : ''}>kinesthetic</option>
                         </select>
                     </td>
+                    <td class="p-3 text-sm text-center">
+                        <span class="view-mode">${student.ams || '-'}</span>
+                        <input type="text" class="edit-mode hidden w-full p-1 border border-gray-300 rounded text-xs" value="${student.ams || ''}">
+                    </td>
+                    <td class="p-3 text-sm text-center">
+                        <span class="view-mode">${student.cooperative || '-'}</span>
+                        <input type="text" class="edit-mode hidden w-full p-1 border border-gray-300 rounded text-xs" value="${student.cooperative || ''}">
+                    </td>
                     <td class="p-3 text-sm text-center font-semibold">
                         <span class="view-mode">${student.grade}</span>
                         <input type="number" class="edit-mode hidden w-20 p-1 border border-gray-300 rounded text-center" value="${student.grade}" min="0" max="20" step="0.1">
@@ -664,8 +731,11 @@
         async function saveStudent(studentNumber) {
             const row = document.getElementById(`row-${studentNumber}`);
             
-            // Get specific input elements
-            const nameInput = row.querySelector('input[type="text"]');
+            // Get specific input elements - order matters!
+            const textInputs = row.querySelectorAll('input[type="text"]');
+            const nameInput = textInputs[0];  // First text input is name
+            const amsInput = textInputs[1];   // Second text input is AMS
+            const cooperativeInput = textInputs[2];  // Third text input is cooperative
             const mbtiSelect = row.querySelectorAll('select')[0];
             const learningStyleSelect = row.querySelectorAll('select')[1];
             const gradeInput = row.querySelector('input[type="number"]');
@@ -674,6 +744,8 @@
                 name: nameInput.value.trim(),
                 mbti: mbtiSelect.value,
                 learningStyle: learningStyleSelect.value,
+                ams: amsInput.value.trim(),
+                cooperative: cooperativeInput.value.trim(),
                 grade: parseFloat(gradeInput.value)
             };
 
@@ -713,6 +785,105 @@
                 } else {
                     alert('خطا در بازنشانی: ' + error.message);
                 }
+            }
+        }
+
+        function updateApiKeyStatus() {
+            const apiKey = localStorage.getItem('openrouterApiKey');
+            const statusBtn = document.getElementById('apiKeyStatus');
+            
+            if (apiKey) {
+                const maskedKey = 'sk-or-v1-...' + apiKey.slice(-8);
+                statusBtn.textContent = `کلید ذخیره شده: ${maskedKey}`;
+            } else {
+                statusBtn.textContent = 'مدیریت کلید API';
+            }
+        }
+
+        function manageApiKey() {
+            const currentKey = localStorage.getItem('openrouterApiKey');
+            
+            let message = '🔑 مدیریت کلید OpenRouter API\n\n';
+            
+            if (currentKey) {
+                const maskedKey = 'sk-or-v1-...' + currentKey.slice(-8);
+                message += `کلید فعلی: ${maskedKey}\n\n`;
+                message += 'گزینه‌ها:\n';
+                message += '1. برای تغییر کلید، یک کلید جدید وارد کنید\n';
+                message += '2. برای حذف کلید، کادر را خالی بگذارید و OK کنید\n';
+                message += '3. برای لغو، Cancel کنید';
+            } else {
+                message += 'کلیدی ذخیره نشده است.\n\n';
+                message += 'برای دریافت کلید رایگان:\n';
+                message += '1. به https://openrouter.ai بروید\n';
+                message += '2. وارد شوید (Sign In)\n';
+                message += '3. بخش Keys → Create Key\n';
+                message += '4. کلید را کپی کنید (شروع با sk-or-v1-)';
+            }
+            
+            const newKey = prompt(message, currentKey || '');
+            
+            if (newKey === null) {
+                // User clicked cancel
+                return;
+            }
+            
+            if (newKey.trim() === '') {
+                // User wants to remove the key
+                if (confirm('آیا مطمئن هستید که می‌خواهید کلید API را حذف کنید؟')) {
+                    localStorage.removeItem('openrouterApiKey');
+                    alert('✅ کلید با موفقیت حذف شد.');
+                    updateApiKeyStatus();
+                }
+                return;
+            }
+            
+            // Validate key format
+            if (!newKey.startsWith('sk-or-v1-')) {
+                alert('⚠️ فرمت کلید نامعتبر است! کلید باید با sk-or-v1- شروع شود.');
+                return;
+            }
+            
+            // Save the new key
+            localStorage.setItem('openrouterApiKey', newKey.trim());
+            alert('✅ کلید با موفقیت ذخیره شد!');
+            updateApiKeyStatus();
+        }
+
+        async function downloadAllData() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/data/backup`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch data');
+                }
+                
+                const data = await response.json();
+                
+                // Create a blob with the JSON data
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                
+                // Create download link
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                
+                // Generate filename with current date/time
+                const now = new Date();
+                const dateStr = now.toISOString().replace(/[:.]/g, '-').slice(0, -5);
+                a.download = `talimbot-data-${dateStr}.json`;
+                
+                // Trigger download
+                document.body.appendChild(a);
+                a.click();
+                
+                // Cleanup
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+                
+                alert('✅ داده‌ها با موفقیت دانلود شد!');
+            } catch (error) {
+                console.error('Download error:', error);
+                alert('❌ خطا در دانلود داده‌ها: ' + error.message);
             }
         }
 

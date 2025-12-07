@@ -1,9 +1,10 @@
 import aiohttp
+import requests
 import json
-from typing import List, Dict, Any
+import os
+from typing import List, Dict, Any, Optional
 
 # API Configuration
-OPENROUTER_API_KEY = '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'
 OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions'
 
 def analyze_mbti(mbti: str) -> Dict[str, str]:
@@ -19,10 +20,28 @@ def analyze_mbti(mbti: str) -> Dict[str, str]:
         "structure": 'Judging' if m[3] == 'J' else 'Perceiving'
     }
 
-async def group_students_with_ai(students: List[Any], course_name: str) -> Dict[str, Any]:
+def group_students_with_ai(students: List[Any], course_name: str, api_key: Optional[str] = None) -> Dict[str, Any]:
     """
     Group students using OpenRouter API (ChatGPT)
+    Args:
+        students: List of student objects
+        course_name: Name of the course
+        api_key: OpenRouter API key (optional, falls back to env var)
     """
+    # Get API key from parameter or environment variable
+    openrouter_key = api_key or os.getenv('OPENROUTER_API_KEY', '')
+    
+    # Clean the API key - remove any whitespace
+    if openrouter_key:
+        openrouter_key = openrouter_key.strip()
+    
+    if not openrouter_key or openrouter_key == '':
+        raise Exception(
+            "OpenRouter API key not provided! "
+            "Please provide your API key when performing grouping. "
+            "Get your free key at: https://openrouter.ai/keys"
+        )
+    
     # Sanitization & Data Enrichment
     valid_student_ids = set(s.studentNumber for s in students)
     
@@ -74,38 +93,48 @@ OUTPUT FORMAT (JSON):
   ]
 }}"""
 
-    # Make API call
-    async with aiohttp.ClientSession() as session:
-        async with session.post(
-            OPENROUTER_API_URL,
-            headers={
-                'Content-Type': 'application/json',
-                'Authorization': f'Bearer {OPENROUTER_API_KEY}',
-                'HTTP-Referer': 'https://talimbot.github.io',
-                'X-Title': 'TalimBot'
+    # Make API call using requests library (aiohttp has issues with OpenRouter)
+    headers = {
+        'Content-Type': 'application/json',
+        'Authorization': f'Bearer {openrouter_key}',
+        'HTTP-Referer': 'http://localhost:8000',
+        'X-Title': 'TalimBot'
+    }
+    
+    payload = {
+        'model': 'openai/gpt-3.5-turbo',
+        'messages': [
+            {
+                'role': 'system',
+                'content': 'You are a precise algorithmic grouping assistant. You MUST output ONLY valid JSON. You rely on the explicit "mbti_analysis" fields provided in the user prompt for your reasoning.'
             },
-            json={
-                'model': 'openai/gpt-4o-mini',
-                'messages': [
-                    {
-                        'role': 'system',
-                        'content': 'You are a precise algorithmic grouping assistant. You output strictly valid JSON. You rely on the explicit "mbti_analysis" fields provided in the user prompt for your reasoning.'
-                    },
-                    {
-                        'role': 'user',
-                        'content': prompt
-                    }
-                ],
-                'temperature': 0.1,
-                'response_format': {'type': 'json_object'}
+            {
+                'role': 'user',
+                'content': prompt
             }
-        ) as response:
-            if not response.ok:
-                error_text = await response.text()
-                raise Exception(f"API request failed: {response.status} - {error_text}")
-            
-            data = await response.json()
-            content = data['choices'][0]['message']['content']
+        ],
+        'temperature': 0.1
+    }
+    
+    print(f"🔍 DEBUG: Sending request to OpenRouter...")
+    print(f"🔍 DEBUG: Using API key ending in: ...{openrouter_key[-8:]}")
+    print(f"🔍 DEBUG: Model: {payload['model']}")
+    
+    response = requests.post(
+        OPENROUTER_API_URL,
+        headers=headers,
+        json=payload,
+        timeout=60
+    )
+    
+    print(f"🔍 DEBUG: Response status: {response.status_code}")
+    
+    if not response.ok:
+        raise Exception(f"API request failed: {response.status} - {response.text}")
+    
+    data = response.json()
+    content = data['choices'][0]['message']['content']
+    print(f"🔍 DEBUG: Got response content, length: {len(content)}")
     
     # Parse Result
     try:
