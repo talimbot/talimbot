@@ -2,7 +2,20 @@
 // This file handles all data operations using Backend API
 
 // Backend API Configuration
-const API_BASE_URL = 'http://localhost:8000/api';
+// Auto-detects if running on GitHub Pages or localhost
+function getApiBaseUrl() {
+    // Check if running on GitHub Pages
+    if (window.location.hostname === 'talimbot.github.io') {
+        // PRODUCTION: Update this URL after deploying backend to Render.com!
+        // Get your URL from: https://dashboard.render.com
+        return 'https://YOUR-RENDER-URL-HERE.onrender.com/api';
+    }
+    
+    // DEVELOPMENT: Running locally
+    return 'http://localhost:8000/api';
+}
+
+const API_BASE_URL = getApiBaseUrl();
 
 // Utility function for API calls
 async function apiCall(endpoint, options = {}) {
