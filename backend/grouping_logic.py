@@ -30,15 +30,27 @@ def group_students_with_ai(students: List[Any], course_name: str, api_key: Optio
     # Get API key from parameter or environment variable
     openrouter_key = api_key or os.getenv('OPENROUTER_API_KEY', '')
     
-    # Clean the API key - remove any whitespace
+    # Clean the API key - remove any whitespace and newlines
     if openrouter_key:
-        openrouter_key = openrouter_key.strip()
+        openrouter_key = openrouter_key.strip().replace('\n', '').replace('\r', '')
+    
+    print(f"🔍 DEBUG: API key exists: {bool(openrouter_key)}")
+    print(f"🔍 DEBUG: API key length: {len(openrouter_key) if openrouter_key else 0}")
+    print(f"🔍 DEBUG: API key starts with: {openrouter_key[:10] if openrouter_key and len(openrouter_key) > 10 else 'N/A'}")
     
     if not openrouter_key or openrouter_key == '':
         raise Exception(
-            "OpenRouter API key not provided! "
-            "Please provide your API key when performing grouping. "
+            "OpenRouter API key not configured! "
+            "Please add OPENROUTER_API_KEY in Railway Variables tab. "
             "Get your free key at: https://openrouter.ai/keys"
+        )
+    
+    # Validate API key format
+    if not openrouter_key.startswith('sk-or-v1-'):
+        raise Exception(
+            f"Invalid API key format. OpenRouter keys should start with 'sk-or-v1-'. "
+            f"Current key starts with: {openrouter_key[:10]}... "
+            f"Please check your OPENROUTER_API_KEY in Railway Variables."
         )
     
     # Sanitization & Data Enrichment
@@ -127,6 +139,15 @@ OUTPUT FORMAT (JSON):
     )
     
     print(f"🔍 DEBUG: Response status: {response.status_code}")
+    
+    if response.status_code == 401:
+        error_data = response.json() if response.text else {}
+        error_msg = error_data.get('error', {}).get('message', 'Unauthorized')
+        raise Exception(
+            f"Authentication failed (401): {error_msg}. "
+            f"Please verify your OPENROUTER_API_KEY in Railway Variables tab is correct. "
+            f"Get a valid key at: https://openrouter.ai/keys"
+        )
     
     if not response.ok:
         raise Exception(f"API request failed: {response.status_code} - {response.text}")
