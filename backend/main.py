@@ -157,12 +157,6 @@ async def perform_grouping(request: GroupingRequest):
     # Get API key from environment variable
     api_key = os.getenv("OPENROUTER_API_KEY")
     
-    # Debug logging
-    print(f"🔍 DEBUG in main.py: API key exists: {bool(api_key)}")
-    print(f"🔍 DEBUG in main.py: API key length: {len(api_key) if api_key else 0}")
-    if api_key:
-        print(f"🔍 DEBUG in main.py: API key starts with: {api_key[:15]}...")
-    
     if not api_key:
         raise HTTPException(
             status_code=500, 
@@ -312,17 +306,6 @@ def get_data_backup():
     """Download complete student data as JSON backup for safekeeping"""
     data = load_data()
     return data.dict()
-
-@app.get("/api/debug/env")
-def debug_env():
-    """Debug endpoint to check if environment variables are loaded"""
-    api_key = os.getenv("OPENROUTER_API_KEY")
-    return {
-        "api_key_exists": bool(api_key),
-        "api_key_length": len(api_key) if api_key else 0,
-        "api_key_prefix": api_key[:15] + "..." if api_key and len(api_key) > 15 else "NOT_SET",
-        "all_env_vars": list(os.environ.keys())
-    }
 
 # ============================================
 # STATIC FILE SERVING (Frontend HTML/CSS/JS)

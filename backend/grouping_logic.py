@@ -34,10 +34,6 @@ def group_students_with_ai(students: List[Any], course_name: str, api_key: Optio
     if openrouter_key:
         openrouter_key = openrouter_key.strip().replace('\n', '').replace('\r', '')
     
-    print(f"🔍 DEBUG: API key exists: {bool(openrouter_key)}")
-    print(f"🔍 DEBUG: API key length: {len(openrouter_key) if openrouter_key else 0}")
-    print(f"🔍 DEBUG: API key starts with: {openrouter_key[:10] if openrouter_key and len(openrouter_key) > 10 else 'N/A'}")
-    
     if not openrouter_key or openrouter_key == '':
         raise Exception(
             "OpenRouter API key not configured! "
@@ -45,11 +41,10 @@ def group_students_with_ai(students: List[Any], course_name: str, api_key: Optio
             "Get your free key at: https://openrouter.ai/keys"
         )
     
-    # Validate API key format
+    # Validate API key format (but don't log the key)
     if not openrouter_key.startswith('sk-or-v1-'):
         raise Exception(
             f"Invalid API key format. OpenRouter keys should start with 'sk-or-v1-'. "
-            f"Current key starts with: {openrouter_key[:10]}... "
             f"Please check your OPENROUTER_API_KEY in Railway Variables."
         )
     
@@ -127,9 +122,7 @@ OUTPUT FORMAT (JSON):
         'temperature': 0.1
     }
     
-    print(f"🔍 DEBUG: Sending request to OpenRouter...")
-    print(f"🔍 DEBUG: Using API key ending in: ...{openrouter_key[-8:]}")
-    print(f"🔍 DEBUG: Model: {payload['model']}")
+    print(f"Sending request to OpenRouter API...")
     
     response = requests.post(
         OPENROUTER_API_URL,
@@ -138,8 +131,8 @@ OUTPUT FORMAT (JSON):
         timeout=60
     )
     
-    print(f"🔍 DEBUG: Response status: {response.status_code}")
-    print(f"🔍 DEBUG: Response text: {response.text[:500]}")
+    print(f"Response status: {response.status_code}")
+    print(f"Response preview: {response.text[:200]}")
     
     if response.status_code == 401:
         try:
