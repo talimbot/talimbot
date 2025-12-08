@@ -231,7 +231,7 @@
                 
                 try {
                     // Authenticate student with backend
-                    const response = await fetch('http://localhost:8000/api/auth/student', {
+                    const response = await fetch('/api/auth/student', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'

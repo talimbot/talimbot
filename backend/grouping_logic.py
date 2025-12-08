@@ -1,4 +1,3 @@
-import aiohttp
 import requests
 import json
 import os
@@ -93,11 +92,11 @@ OUTPUT FORMAT (JSON):
   ]
 }}"""
 
-    # Make API call using requests library (aiohttp has issues with OpenRouter)
+    # Make API call using requests library
     headers = {
         'Content-Type': 'application/json',
         'Authorization': f'Bearer {openrouter_key}',
-        'HTTP-Referer': 'http://localhost:8000',
+        'HTTP-Referer': 'https://talimbot.up.railway.app',
         'X-Title': 'TalimBot'
     }
     
