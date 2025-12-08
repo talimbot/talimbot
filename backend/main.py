@@ -1,5 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from typing import List, Optional, Dict, Any
 import json
@@ -7,15 +9,18 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 
-# Load environment variables from .env file
+# Load environment variables from .env file (for local development)
 load_dotenv()
+
+# Get API key from environment
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 
 app = FastAPI()
 
-# CORS configuration for GitHub Pages
+# CORS configuration - allow all origins for flexibility
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # For production, replace with your GitHub Pages URL
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -303,6 +308,26 @@ def get_data_backup():
     """Download complete student data as JSON backup for safekeeping"""
     data = load_data()
     return data.dict()
+
+# ============================================
+# STATIC FILE SERVING (Frontend HTML/CSS/JS)
+# ============================================
+
+# Define static directory path
+STATIC_DIR = Path(__file__).parent / "static"
+
+# Serve index.html at root path
+@app.get("/")
+async def read_root():
+    """Serve the main index.html page"""
+    index_file = STATIC_DIR / "index.html"
+    if index_file.exists():
+        return FileResponse(index_file)
+    return {"message": "TalimBot API is running. Frontend files not found."}
+
+# Mount static files (CSS, JS, Images, other HTML pages)
+# This allows accessing /assets/css/styles.css, /pages/login.html, etc.
+app.mount("/", StaticFiles(directory=str(STATIC_DIR), html=True), name="static")
 
 if __name__ == "__main__":
     import uvicorn
