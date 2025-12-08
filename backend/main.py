@@ -12,9 +12,6 @@ from dotenv import load_dotenv
 # Load environment variables from .env file (for local development)
 load_dotenv()
 
-# Get API key from environment
-OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
-
 app = FastAPI()
 
 # CORS configuration - allow all origins for flexibility
