@@ -313,17 +313,7 @@ def get_data_backup():
 # Define static directory path
 STATIC_DIR = Path(__file__).parent / "static"
 
-# Serve index.html at root path
-@app.get("/")
-async def read_root():
-    """Serve the main index.html page"""
-    index_file = STATIC_DIR / "index.html"
-    if index_file.exists():
-        return FileResponse(index_file)
-    return {"message": "TalimBot API is running. Frontend files not found."}
-
-# Mount static files (CSS, JS, Images, other HTML pages)
-# This allows accessing /assets/css/styles.css, /pages/login.html, etc.
+# Mount static files FIRST - this handles all non-API routes
 app.mount("/", StaticFiles(directory=str(STATIC_DIR), html=True), name="static")
 
 if __name__ == "__main__":
