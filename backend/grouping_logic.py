@@ -129,7 +129,7 @@ OUTPUT FORMAT (JSON):
     print(f"🔍 DEBUG: Response status: {response.status_code}")
     
     if not response.ok:
-        raise Exception(f"API request failed: {response.status} - {response.text}")
+        raise Exception(f"API request failed: {response.status_code} - {response.text}")
     
     data = response.json()
     content = data['choices'][0]['message']['content']
