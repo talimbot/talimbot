@@ -139,18 +139,37 @@ OUTPUT FORMAT (JSON):
     )
     
     print(f"🔍 DEBUG: Response status: {response.status_code}")
+    print(f"🔍 DEBUG: Response text: {response.text[:500]}")
     
     if response.status_code == 401:
-        error_data = response.json() if response.text else {}
-        error_msg = error_data.get('error', {}).get('message', 'Unauthorized')
+        try:
+            error_data = response.json()
+            error_msg = error_data.get('error', {}).get('message', 'Unauthorized')
+        except:
+            error_msg = response.text
+        
         raise Exception(
-            f"Authentication failed (401): {error_msg}. "
-            f"Please verify your OPENROUTER_API_KEY in Railway Variables tab is correct. "
-            f"Get a valid key at: https://openrouter.ai/keys"
+            f"OpenRouter Authentication Error: {error_msg}. "
+            f"Your API key is configured but invalid. Please:\n"
+            f"1. Go to https://openrouter.ai/keys\n"
+            f"2. Check if your key is active and has credits\n"
+            f"3. Create a NEW key if needed\n"
+            f"4. Update OPENROUTER_API_KEY in Railway Variables"
+        )
+    
+    if response.status_code == 402:
+        raise Exception(
+            "OpenRouter Payment Required: Your account has no credits. "
+            "Add credits at https://openrouter.ai/credits"
         )
     
     if not response.ok:
-        raise Exception(f"API request failed: {response.status_code} - {response.text}")
+        try:
+            error_data = response.json()
+            error_detail = error_data.get('error', {}).get('message', response.text)
+        except:
+            error_detail = response.text
+        raise Exception(f"API request failed ({response.status_code}): {error_detail}")
     
     data = response.json()
     content = data['choices'][0]['message']['content']
