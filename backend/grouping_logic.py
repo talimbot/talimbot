@@ -174,7 +174,7 @@ OUTPUT FORMAT (Valid JSON Only):
     }
     
     payload = {
-        'model': 'openai/gpt-3.5-turbo',
+        'model': 'openai/gpt-4o-mini', # 'openai/gpt-3.5-turbo',
         'messages': [
             {
                 'role': 'system',
