@@ -180,7 +180,7 @@ OUTPUT FORMAT (Valid JSON Only):
         'messages': [
             {
                 'role': 'system',
-                'content': 'You are a precise algorithmic grouping assistant. You MUST output ONLY valid JSON. CRITICAL RULE: Each student can appear in EXACTLY ONE group - no duplicates allowed. You rely on the explicit "mbti_analysis" fields provided in the user prompt for your reasoning. Verify that all student IDs appear exactly once across all groups.'
+                'content': 'You are a precise algorithmic grouping assistant. You MUST output ONLY valid JSON - no markdown, no code blocks, no extra text. Start directly with { and end with }. CRITICAL RULE: Each student can appear in EXACTLY ONE group - no duplicates allowed. You rely on the explicit "mbti_analysis" fields provided in the user prompt for your reasoning. Verify that all student IDs appear exactly once across all groups.'
             },
             {
                 'role': 'user',
@@ -236,12 +236,36 @@ OUTPUT FORMAT (Valid JSON Only):
     content = data['choices'][0]['message']['content']
     print(f"🔍 DEBUG: Got response content, length: {len(content)}")
     
-    # Parse Result
+    # Parse Result - Extract JSON from markdown code blocks if present
     try:
+        # Try direct JSON parse first
         grouping_result = json.loads(content)
     except json.JSONDecodeError as e:
-        print(f"Failed to parse API JSON response: {content}")
-        raise Exception("Invalid JSON from API")
+        # Try to extract JSON from markdown code blocks
+        import re
+        
+        # Look for JSON in ```json ... ``` or ``` ... ``` blocks
+        json_match = re.search(r'```(?:json)?\s*(\{.*?\})\s*```', content, re.DOTALL)
+        if json_match:
+            try:
+                grouping_result = json.loads(json_match.group(1))
+                print(f"✅ Extracted JSON from markdown code block")
+            except json.JSONDecodeError:
+                print(f"Failed to parse JSON from code block: {json_match.group(1)[:200]}")
+                raise Exception("Invalid JSON from API (even after markdown extraction)")
+        else:
+            # Try to find JSON object in the content
+            json_match = re.search(r'\{.*"groups".*\}', content, re.DOTALL)
+            if json_match:
+                try:
+                    grouping_result = json.loads(json_match.group(0))
+                    print(f"✅ Extracted JSON object from response")
+                except json.JSONDecodeError:
+                    print(f"Failed to parse extracted JSON: {json_match.group(0)[:200]}")
+                    raise Exception("Invalid JSON from API (extraction failed)")
+            else:
+                print(f"❌ No JSON found in response. Full content:\n{content}")
+                raise Exception("Invalid JSON from API - no valid JSON structure found")
     
     # Failsafe: Add missing students if AI messed up
     assigned_students = set()
