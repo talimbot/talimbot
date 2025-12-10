@@ -153,6 +153,8 @@ CRITICAL RULES:
 ✓ Each group needs grade diversity: Mix high (>18) with medium (16-18) performers
 ✓ Prioritize complementary MBTI types over similar types
 ✓ Use provided data fields - DO NOT invent values
+✓ **ABSOLUTELY CRITICAL**: Each student ID can appear in EXACTLY ONE group. NO DUPLICATES. Verify this before outputting.
+✓ Double-check: Count total students in all groups = input students count
 
 OUTPUT FORMAT (Valid JSON Only):
 {{
@@ -174,18 +176,18 @@ OUTPUT FORMAT (Valid JSON Only):
     }
     
     payload = {
-        'model': 'openai/gpt-4o-mini', # 'openai/gpt-3.5-turbo',
+        'model': 'openai/gpt-4o',  # Using GPT-4o for better accuracy and reasoning
         'messages': [
             {
                 'role': 'system',
-                'content': 'You are a precise algorithmic grouping assistant. You MUST output ONLY valid JSON. You rely on the explicit "mbti_analysis" fields provided in the user prompt for your reasoning.'
+                'content': 'You are a precise algorithmic grouping assistant. You MUST output ONLY valid JSON. CRITICAL RULE: Each student can appear in EXACTLY ONE group - no duplicates allowed. You rely on the explicit "mbti_analysis" fields provided in the user prompt for your reasoning. Verify that all student IDs appear exactly once across all groups.'
             },
             {
                 'role': 'user',
                 'content': prompt
             }
         ],
-        'temperature': 0.1
+        'temperature': 0.2  # Lower temperature for more consistent, logical grouping
     }
     
     print(f"Sending request to OpenRouter API...")

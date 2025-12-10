@@ -334,6 +334,36 @@
                 </div>
             </div>
 
+            <!-- Test Data Generator Section -->
+            <div class="bg-white rounded-2xl shadow-lg p-6 border-r-4 border-green-500">
+                <div class="flex items-start gap-4">
+                    <div class="flex-shrink-0">
+                        <svg class="w-8 h-8 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM14 11a1 1 0 011 1v1h1a1 1 0 110 2h-1v1a1 1 0 11-2 0v-1h-1a1 1 0 110-2h1v-1a1 1 0 011-1z"/>
+                        </svg>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-lg font-bold text-gray-900 mb-2">پر کردن داده‌های تست</h3>
+                        <p class="text-sm text-gray-600 mb-4">
+                            برای تست سیستم گروه‌بندی، 10 دانش‌آموز اول (S001 تا S010) را با داده‌های کامل و تصادفی پر کنید. 
+                            این شامل MBTI، VARK، نمرات AMS و Cooperative و ترجیحات دانش‌آموزی می‌شود.
+                        </p>
+                        <div class="flex gap-3">
+                            <button onclick="fillTestData()" id="fillTestDataBtn" class="bg-green-600 hover:bg-green-700 text-white py-3 px-6 rounded-xl font-semibold transition-colors flex items-center gap-2">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM14 11a1 1 0 011 1v1h1a1 1 0 110 2h-1v1a1 1 0 11-2 0v-1h-1a1 1 0 110-2h1v-1a1 1 0 011-1z"/>
+                                </svg>
+                                پر کردن داده‌های تست
+                            </button>
+                            <div id="testDataProgress" class="hidden flex items-center gap-2 text-sm text-gray-600">
+                                <div class="inline-block w-5 h-5 border-2 border-green-600 border-t-transparent rounded-full animate-spin"></div>
+                                <span id="testDataProgressText">در حال پردازش...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Group Results -->
             <div id="groupResultsCard" class="hidden bg-white rounded-2xl shadow-lg p-6">
                 <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
@@ -749,6 +779,74 @@
                 } else {
                     alert('خطا در بازنشانی: ' + error.message);
                 }
+            }
+        }
+
+        // Test data generator
+        async function fillTestData() {
+            if (!confirm('آیا می‌خواهید 10 دانش‌آموز اول (S001 تا S010) را با داده‌های تست کامل پر کنید؟\n\nاین عملیات داده‌های موجود این دانش‌آموزان را جایگزین می‌کند.')) {
+                return;
+            }
+
+            const MBTI_TYPES = ['INTJ', 'INTP', 'ENTJ', 'ENTP', 'INFJ', 'INFP', 'ENFJ', 'ENFP', 
+                               'ISTJ', 'ISFJ', 'ESTJ', 'ESFJ', 'ISTP', 'ISFP', 'ESTP', 'ESFP'];
+            const VARK_STYLES = ['Visual', 'Aural', 'Read/Write', 'Kinesthetic'];
+
+            function randomChoice(arr) {
+                return arr[Math.floor(Math.random() * arr.length)];
+            }
+
+            function randomInt(min, max) {
+                return Math.floor(Math.random() * (max - min + 1)) + min;
+            }
+
+            const btn = document.getElementById('fillTestDataBtn');
+            const progress = document.getElementById('testDataProgress');
+            const progressText = document.getElementById('testDataProgressText');
+
+            btn.disabled = true;
+            progress.classList.remove('hidden');
+
+            let successCount = 0;
+
+            try {
+                for (let i = 1; i <= 10; i++) {
+                    const studentId = `S${String(i).padStart(3, '0')}`;
+                    progressText.textContent = `در حال پردازش ${studentId}... (${successCount}/10)`;
+
+                    // Generate 2-3 random preferred students (excluding self)
+                    const allStudents = Array.from({length: 30}, (_, idx) => `S${String(idx + 1).padStart(3, '0')}`);
+                    const otherStudents = allStudents.filter(s => s !== studentId);
+                    const numPreferred = randomInt(2, 3);
+                    const preferred = [];
+                    for (let j = 0; j < numPreferred; j++) {
+                        const randomStudent = otherStudents[Math.floor(Math.random() * otherStudents.length)];
+                        if (!preferred.includes(randomStudent)) {
+                            preferred.push(randomStudent);
+                        }
+                    }
+
+                    const testData = {
+                        mbti: randomChoice(MBTI_TYPES),
+                        vark: randomChoice(VARK_STYLES),
+                        ams: randomInt(80, 180),
+                        cooperative: randomInt(60, 120),
+                        preferred_students: preferred
+                    };
+
+                    await updateStudent(studentId, testData);
+                    successCount++;
+                    progressText.textContent = `${studentId} انجام شد... (${successCount}/10)`;
+                }
+
+                progress.classList.add('hidden');
+                alert(`✅ موفق!\n\n10 دانش‌آموز با داده‌های تست پر شدند:\n• MBTI: تصادفی از 16 نوع\n• VARK: ${VARK_STYLES.join(', ')}\n• AMS: 80-180\n• Cooperative: 60-120\n• ترجیحات: 2-3 دانش‌آموز برای هر نفر\n\nحالا می‌توانید گروه‌بندی را تست کنید!`);
+                window.location.reload();
+            } catch (error) {
+                progress.classList.add('hidden');
+                alert('خطا در پر کردن داده‌های تست: ' + error.message);
+            } finally {
+                btn.disabled = false;
             }
         }
 
