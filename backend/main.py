@@ -253,6 +253,29 @@ def reset_grouping(request: PasswordRequest):
     save_data(data)
     return {"success": True}
 
+@app.post("/api/data/reset-all")
+def reset_all_data(request: PasswordRequest):
+    data = load_data()
+    if request.password != data.teacherPassword:
+        raise HTTPException(status_code=403, detail="Invalid password")
+    
+    # Clear ALL student data fields AND grouping
+    for student in data.students:
+        student.group = None
+        student.mbti = None
+        student.learningStyle = None
+        student.ams = None
+        student.cooperative = None
+        student.preferredStudents = []
+    
+    data.groupingComplete = False
+    data.groupingResults = None
+    data.resultsVisible = False
+    data.courseName = ""
+    
+    save_data(data)
+    return {"success": True}
+
 @app.post("/api/auth/teacher")
 def check_teacher_password(request: TeacherAuthRequest):
     data = load_data()

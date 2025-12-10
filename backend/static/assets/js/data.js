@@ -164,6 +164,30 @@ async function getStudentGroup(studentNumber) {
     }
 }
 
+// Reset grouping only (keep student data)
+async function resetGrouping(password) {
+    return await apiCall('/grouping/reset', {
+        method: 'POST',
+        body: JSON.stringify({ password })
+    });
+}
+
+// Reset ALL data (student profiles + grouping)
+async function resetAllData(password) {
+    return await apiCall('/data/reset-all', {
+        method: 'POST',
+        body: JSON.stringify({ password })
+    });
+}
+
+// Toggle results visibility
+async function toggleResultsVisibility(password) {
+    return await apiCall('/grouping/toggle-visibility', {
+        method: 'POST',
+        body: JSON.stringify({ password })
+    });
+}
+
 // Legacy functions for backward compatibility (these are handled by backend now)
 function saveData(data) {
     console.warn('saveData is deprecated - data is automatically saved to backend');

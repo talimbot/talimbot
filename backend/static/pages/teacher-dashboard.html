@@ -794,7 +794,7 @@
         }
 
         async function resetAllData() {
-            if (!confirm('⚠️ هشدار: این عملیات غیرقابل بازگشت است!\n\nآیا مطمئن هستید که می‌خواهید تمام داده‌ها را بازنشانی کنید؟\n\n• همه 30 دانش‌آموز به حالت اولیه برمی‌گردند\n• تمام تغییرات حذف می‌شوند\n• گروه‌بندی‌ها پاک می‌شوند\n• نام درس حذف می‌شود')) {
+            if (!confirm('⚠️ هشدار: این عملیات غیرقابل بازگشت است!\n\nآیا مطمئن هستید که می‌خواهید تمام داده‌ها را بازنشانی کنید؟\n\n• همه اطلاعات دانش‌آموزان (MBTI، VARK، AMS، Cooperative، ترجیحات) حذف می‌شوند\n• تمام گروه‌بندی‌ها پاک می‌شوند\n• نام درس حذف می‌شود\n• سیستم به حالت اولیه برمی‌گردد')) {
                 return;
             }
 
@@ -802,11 +802,21 @@
             if (!password) return;
 
             try {
-                await resetGrouping(password);
-                alert('✅ تمام داده‌ها با موفقیت بازنشانی شدند!\n\nهمه 30 دانش‌آموز (S001 تا S030) بازگردانده شدند.');
+                const result = await fetch(`${API_BASE_URL}/data/reset-all`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password })
+                });
+                
+                if (!result.ok) {
+                    const error = await result.json();
+                    throw new Error(error.detail || 'Reset failed');
+                }
+                
+                alert('✅ تمام داده‌ها با موفقیت بازنشانی شدند!\n\nسیستم به حالت اولیه بازگردانده شد.');
                 window.location.reload();
             } catch (error) {
-                if (error.message.includes('Invalid password')) {
+                if (error.message.includes('Invalid password') || error.message.includes('403')) {
                     alert('رمز عبور اشتباه است!');
                 } else {
                     alert('خطا در بازنشانی: ' + error.message);
