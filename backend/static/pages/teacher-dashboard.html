@@ -828,10 +828,10 @@
 
                     const testData = {
                         mbti: randomChoice(MBTI_TYPES),
-                        vark: randomChoice(VARK_STYLES),
-                        ams: randomInt(80, 180),
-                        cooperative: randomInt(60, 120),
-                        preferred_students: preferred
+                        learningStyle: randomChoice(VARK_STYLES),
+                        ams: String(randomInt(80, 180)),
+                        cooperative: String(randomInt(60, 120)),
+                        preferredStudents: preferred
                     };
 
                     await updateStudent(studentId, testData);
