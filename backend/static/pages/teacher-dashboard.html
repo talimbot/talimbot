@@ -291,14 +291,13 @@
                         <table class="w-full">
                             <thead class="bg-gray-100 sticky top-0">
                                 <tr class="border-b-2 border-blue-500">
-                                    <th class="p-3 text-right text-sm font-bold text-gray-700">شماره</th>
+                                    <th class="p-3 text-right text-sm font-bold text-gray-700">شماره دانش آموز</th>
                                     <th class="p-3 text-right text-sm font-bold text-gray-700">نام</th>
                                     <th class="p-3 text-center text-sm font-bold text-gray-700">MBTI</th>
                                     <th class="p-3 text-center text-sm font-bold text-gray-700">سبک یادگیری</th>
                                     <th class="p-3 text-center text-sm font-bold text-gray-700">AMS</th>
-                                    <th class="p-3 text-center text-sm font-bold text-gray-700">همکاری</th>
-                                    <th class="p-3 text-center text-sm font-bold text-gray-700">نمره</th>
-                                    <th class="p-3 text-center text-sm font-bold text-gray-700">گروه</th>
+                                    <th class="p-3 text-center text-sm font-bold text-gray-700">Cooperative</th>
+                                    <th class="p-3 text-center text-sm font-bold text-gray-700">معدل</th>
                                     <th class="p-3 text-center text-sm font-bold text-gray-700">عملیات</th>
                                 </tr>
                             </thead>
@@ -358,6 +357,38 @@
                             <div id="testDataProgress" class="hidden flex items-center gap-2 text-sm text-gray-600">
                                 <div class="inline-block w-5 h-5 border-2 border-green-600 border-t-transparent rounded-full animate-spin"></div>
                                 <span id="testDataProgressText">در حال پردازش...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Import JSON Data Section -->
+            <div class="bg-white rounded-2xl shadow-lg p-6 border-r-4 border-blue-500">
+                <div class="flex items-start gap-4">
+                    <div class="flex-shrink-0">
+                        <svg class="w-8 h-8 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-lg font-bold text-gray-900 mb-2">وارد کردن داده‌ها از JSON</h3>
+                        <p class="text-sm text-gray-600 mb-4">
+                            یک فایل JSON حاوی اطلاعات دانش‌آموزان را انتخاب کنید. فایل باید شامل آرایه‌ای از دانش‌آموزان با فیلدهای 
+                            mbti، learningStyle، ams، cooperative و preferredStudents باشد.
+                        </p>
+                        <div class="flex gap-3 items-center">
+                            <input type="file" id="jsonFileInput" accept=".json" class="hidden">
+                            <button onclick="document.getElementById('jsonFileInput').click()" class="bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-xl font-semibold transition-colors flex items-center gap-2">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                انتخاب فایل JSON
+                            </button>
+                            <span id="jsonFileName" class="text-sm text-gray-600"></span>
+                            <div id="jsonImportProgress" class="hidden flex items-center gap-2 text-sm text-gray-600">
+                                <div class="inline-block w-5 h-5 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                                <span id="jsonImportProgressText">در حال پردازش...</span>
                             </div>
                         </div>
                     </div>
@@ -681,7 +712,6 @@
                         <span class="view-mode">${student.grade}</span>
                         <input type="number" class="edit-mode hidden w-20 p-1 border border-gray-300 rounded text-center" value="${student.grade}" min="0" max="20" step="0.1">
                     </td>
-                    <td class="p-3 text-sm text-center text-blue-600 font-bold">${student.group || '-'}</td>
                     <td class="p-3 text-center">
                         <div class="flex gap-1 justify-center">
                             <button onclick="editStudent('${student.studentNumber}')" class="view-mode bg-blue-600 text-white px-3 py-1 rounded-lg text-xs hover:bg-blue-700">
@@ -849,6 +879,81 @@
                 btn.disabled = false;
             }
         }
+
+        // JSON file import handler
+        document.getElementById('jsonFileInput').addEventListener('change', async function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            document.getElementById('jsonFileName').textContent = file.name;
+
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                try {
+                    const jsonData = JSON.parse(e.target.result);
+                    
+                    // Validate JSON structure
+                    if (!Array.isArray(jsonData)) {
+                        alert('خطا: فایل JSON باید یک آرایه از دانش‌آموزان باشد.');
+                        return;
+                    }
+
+                    if (!confirm(`آیا می‌خواهید داده‌های ${jsonData.length} دانش‌آموز را از فایل JSON وارد کنید؟\n\nاین عملیات داده‌های موجود را جایگزین می‌کند.`)) {
+                        return;
+                    }
+
+                    const progress = document.getElementById('jsonImportProgress');
+                    const progressText = document.getElementById('jsonImportProgressText');
+                    
+                    progress.classList.remove('hidden');
+                    let successCount = 0;
+                    let errorCount = 0;
+
+                    for (const student of jsonData) {
+                        // Validate required field
+                        if (!student.studentNumber) {
+                            console.warn('Student missing studentNumber, skipping:', student);
+                            errorCount++;
+                            continue;
+                        }
+
+                        progressText.textContent = `در حال پردازش ${student.studentNumber}... (${successCount}/${jsonData.length})`;
+
+                        // Build update object with only provided fields
+                        const updates = {};
+                        if (student.mbti) updates.mbti = student.mbti;
+                        if (student.learningStyle) updates.learningStyle = student.learningStyle;
+                        if (student.ams !== undefined && student.ams !== null) updates.ams = String(student.ams);
+                        if (student.cooperative !== undefined && student.cooperative !== null) updates.cooperative = String(student.cooperative);
+                        if (student.preferredStudents) updates.preferredStudents = student.preferredStudents;
+
+                        try {
+                            await updateStudent(student.studentNumber, updates);
+                            successCount++;
+                        } catch (error) {
+                            console.error(`Error updating ${student.studentNumber}:`, error);
+                            errorCount++;
+                        }
+                    }
+
+                    progress.classList.add('hidden');
+                    
+                    let message = `✅ موفق!\n\n${successCount} دانش‌آموز با موفقیت به‌روزرسانی شدند.`;
+                    if (errorCount > 0) {
+                        message += `\n\n⚠️ ${errorCount} دانش‌آموز دارای خطا بودند.`;
+                    }
+                    
+                    alert(message);
+                    window.location.reload();
+
+                } catch (error) {
+                    alert('خطا در خواندن فایل JSON: ' + error.message);
+                    document.getElementById('jsonImportProgress').classList.add('hidden');
+                }
+            };
+
+            reader.readAsText(file);
+        });
 
         async function downloadAllData() {
             try {
