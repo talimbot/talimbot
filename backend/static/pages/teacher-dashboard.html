@@ -298,6 +298,7 @@
                                     <th class="p-3 text-center text-sm font-bold text-gray-700">AMS</th>
                                     <th class="p-3 text-center text-sm font-bold text-gray-700">Cooperative</th>
                                     <th class="p-3 text-center text-sm font-bold text-gray-700">معدل</th>
+                                    <th class="p-3 text-center text-sm font-bold text-gray-700">گروه</th>
                                     <th class="p-3 text-center text-sm font-bold text-gray-700">عملیات</th>
                                 </tr>
                             </thead>
@@ -712,6 +713,7 @@
                         <span class="view-mode">${student.grade}</span>
                         <input type="number" class="edit-mode hidden w-20 p-1 border border-gray-300 rounded text-center" value="${student.grade}" min="0" max="20" step="0.1">
                     </td>
+                    <td class="p-3 text-sm text-center text-blue-600 font-bold">${student.group || '-'}</td>
                     <td class="p-3 text-center">
                         <div class="flex gap-1 justify-center">
                             <button onclick="editStudent('${student.studentNumber}')" class="view-mode bg-blue-600 text-white px-3 py-1 rounded-lg text-xs hover:bg-blue-700">
@@ -892,13 +894,18 @@
                 try {
                     const jsonData = JSON.parse(e.target.result);
                     
-                    // Validate JSON structure
-                    if (!Array.isArray(jsonData)) {
-                        alert('خطا: فایل JSON باید یک آرایه از دانش‌آموزان باشد.');
+                    // Accept both formats: direct array or {students: [...]} object
+                    let studentsArray;
+                    if (Array.isArray(jsonData)) {
+                        studentsArray = jsonData;
+                    } else if (jsonData.students && Array.isArray(jsonData.students)) {
+                        studentsArray = jsonData.students;
+                    } else {
+                        alert('خطا: فایل JSON باید شامل آرایه students باشد یا یک آرایه مستقیم از دانش‌آموزان.');
                         return;
                     }
 
-                    if (!confirm(`آیا می‌خواهید داده‌های ${jsonData.length} دانش‌آموز را از فایل JSON وارد کنید؟\n\nاین عملیات داده‌های موجود را جایگزین می‌کند.`)) {
+                    if (!confirm(`آیا می‌خواهید داده‌های ${studentsArray.length} دانش‌آموز را از فایل JSON وارد کنید؟\n\nاین عملیات داده‌های موجود را جایگزین می‌کند.`)) {
                         return;
                     }
 
@@ -909,7 +916,7 @@
                     let successCount = 0;
                     let errorCount = 0;
 
-                    for (const student of jsonData) {
+                    for (const student of studentsArray) {
                         // Validate required field
                         if (!student.studentNumber) {
                             console.warn('Student missing studentNumber, skipping:', student);
@@ -917,7 +924,7 @@
                             continue;
                         }
 
-                        progressText.textContent = `در حال پردازش ${student.studentNumber}... (${successCount}/${jsonData.length})`;
+                        progressText.textContent = `در حال پردازش ${student.studentNumber}... (${successCount}/${studentsArray.length})`;
 
                         // Build update object with only provided fields
                         const updates = {};
