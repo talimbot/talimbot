@@ -3,6 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <!-- Version: 2.1 - Fixed AMS/Cooperative field preservation -->
     <title>داشبورد دانش آموز - سیستم گروه‌بندی</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -438,6 +442,8 @@
                 // Restore any unsaved form data from sessionStorage (in case user navigated away without saving)
                 const unsavedMbti = sessionStorage.getItem('unsavedMbti');
                 const unsavedVark = sessionStorage.getItem('unsavedVark');
+                const unsavedAms = sessionStorage.getItem('unsavedAms');
+                const unsavedCooperative = sessionStorage.getItem('unsavedCooperative');
                 
                 if (unsavedMbti) {
                     document.getElementById('mbtiInput').value = unsavedMbti;
@@ -447,6 +453,16 @@
                 if (unsavedVark) {
                     document.getElementById('varkInput').value = unsavedVark;
                     sessionStorage.removeItem('unsavedVark');
+                }
+                
+                if (unsavedAms) {
+                    document.getElementById('amsInput').value = unsavedAms;
+                    sessionStorage.removeItem('unsavedAms');
+                }
+                
+                if (unsavedCooperative) {
+                    document.getElementById('cooperativeInput').value = unsavedCooperative;
+                    sessionStorage.removeItem('unsavedCooperative');
                 }
 
                 populatePreferredStudents();
@@ -545,10 +561,14 @@
         function saveFormState() {
             const mbti = document.getElementById('mbtiInput').value.trim();
             const vark = document.getElementById('varkInput').value.trim();
+            const ams = document.getElementById('amsInput').value.trim();
+            const cooperative = document.getElementById('cooperativeInput').value.trim();
             
             // Only save to sessionStorage if values exist
             if (mbti) sessionStorage.setItem('unsavedMbti', mbti);
             if (vark) sessionStorage.setItem('unsavedVark', vark);
+            if (ams) sessionStorage.setItem('unsavedAms', ams);
+            if (cooperative) sessionStorage.setItem('unsavedCooperative', cooperative);
         }
 
         // Add click listeners to questionnaire links to save form state
