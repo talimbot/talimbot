@@ -415,13 +415,13 @@
                 if (currentStudent.cooperative) testsCompleted++;
                 document.getElementById('testsCompleted').textContent = testsCompleted;
 
-                // Load existing data
+                // Load existing data from backend
                 if (currentStudent.mbti) document.getElementById('mbtiInput').value = currentStudent.mbti;
                 if (currentStudent.learningStyle) document.getElementById('varkInput').value = currentStudent.learningStyle;
                 if (currentStudent.ams) document.getElementById('amsInput').value = currentStudent.ams;
                 if (currentStudent.cooperative) document.getElementById('cooperativeInput').value = currentStudent.cooperative;
 
-                // Check for scores from questionnaires in sessionStorage
+                // Check for scores from questionnaires in sessionStorage (takes priority)
                 const amsScore = sessionStorage.getItem('amsScore');
                 const cooperativeScore = sessionStorage.getItem('cooperativeScore');
                 
@@ -433,6 +433,20 @@
                 if (cooperativeScore) {
                     document.getElementById('cooperativeInput').value = cooperativeScore;
                     sessionStorage.removeItem('cooperativeScore');
+                }
+
+                // Restore any unsaved form data from sessionStorage (in case user navigated away without saving)
+                const unsavedMbti = sessionStorage.getItem('unsavedMbti');
+                const unsavedVark = sessionStorage.getItem('unsavedVark');
+                
+                if (unsavedMbti) {
+                    document.getElementById('mbtiInput').value = unsavedMbti;
+                    sessionStorage.removeItem('unsavedMbti');
+                }
+                
+                if (unsavedVark) {
+                    document.getElementById('varkInput').value = unsavedVark;
+                    sessionStorage.removeItem('unsavedVark');
                 }
 
                 populatePreferredStudents();
@@ -502,13 +516,16 @@
             const checkboxes = document.querySelectorAll('#preferredStudentsCheckbox input[type="checkbox"]:checked');
             const preferredStudents = Array.from(checkboxes).map(cb => cb.value);
 
-            const success = await updateStudent(currentStudent.studentNumber, {
-                mbti: mbti || null,
-                learningStyle: vark || null,
-                ams: ams || null,
-                cooperative: cooperative || null,
-                preferredStudents: preferredStudents
-            });
+            // Build update object with only non-empty values to prevent overwriting existing data
+            const updates = {};
+            if (mbti) updates.mbti = mbti;
+            if (vark) updates.learningStyle = vark;
+            if (ams) updates.ams = ams;
+            if (cooperative) updates.cooperative = cooperative;
+            // Always update preferred students (can be empty array)
+            updates.preferredStudents = preferredStudents;
+
+            const success = await updateStudent(currentStudent.studentNumber, updates);
 
             if (success) {
                 const toast = document.getElementById('successToast');
@@ -524,7 +541,32 @@
             window.location.href = 'group-view.html';
         }
 
-        window.onload = loadStudentData;
+        // Preserve unsaved form data when navigating to questionnaire pages
+        function saveFormState() {
+            const mbti = document.getElementById('mbtiInput').value.trim();
+            const vark = document.getElementById('varkInput').value.trim();
+            
+            // Only save to sessionStorage if values exist
+            if (mbti) sessionStorage.setItem('unsavedMbti', mbti);
+            if (vark) sessionStorage.setItem('unsavedVark', vark);
+        }
+
+        // Add click listeners to questionnaire links to save form state
+        window.onload = function() {
+            loadStudentData();
+            
+            // Save form state when clicking on questionnaire links
+            const amsLink = document.querySelector('a[href="ams-questionnaire.html"]');
+            const cooperativeLink = document.querySelector('a[href="cooperative-questionnaire.html"]');
+            
+            if (amsLink) {
+                amsLink.addEventListener('click', saveFormState);
+            }
+            
+            if (cooperativeLink) {
+                cooperativeLink.addEventListener('click', saveFormState);
+            }
+        };
     </script>
 </body>
 </html>
