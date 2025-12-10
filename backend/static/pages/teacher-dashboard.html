@@ -628,9 +628,10 @@
                         <span class="view-mode">${student.learningStyle || '-'}</span>
                         <select class="edit-mode hidden w-full p-1 border border-gray-300 rounded text-xs">
                             <option value="">انتخاب کنید</option>
-                            <option value="visual" ${student.learningStyle === 'visual' ? 'selected' : ''}>visual</option>
-                            <option value="auditory" ${student.learningStyle === 'auditory' ? 'selected' : ''}>auditory</option>
-                            <option value="kinesthetic" ${student.learningStyle === 'kinesthetic' ? 'selected' : ''}>kinesthetic</option>
+                            <option value="Visual" ${student.learningStyle === 'Visual' ? 'selected' : ''}>Visual (دیداری)</option>
+                            <option value="Aural" ${student.learningStyle === 'Aural' ? 'selected' : ''}>Aural (شنیداری)</option>
+                            <option value="Read/Write" ${student.learningStyle === 'Read/Write' ? 'selected' : ''}>Read/Write (خواندن/نوشتن)</option>
+                            <option value="Kinesthetic" ${student.learningStyle === 'Kinesthetic' ? 'selected' : ''}>Kinesthetic (حرکتی/عملی)</option>
                         </select>
                     </td>
                     <td class="p-3 text-sm text-center">
