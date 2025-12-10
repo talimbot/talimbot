@@ -73,13 +73,33 @@ def group_students_with_ai(students: List[Any], course_name: str, api_key: Optio
     elif total_students < 8:
         size_guidance = "groups of 3-4 students"
     else:
-        size_guidance = "groups of 4-5 students"
+        # Prefer groups of 5, but use groups of 4 if needed to avoid very small groups
+        # Examples: 30 students = 6 groups of 5
+        #          27 students = 5 groups of 5 + 1 group of 2 (bad) → instead: 3 groups of 5 + 3 groups of 4 (good)
+        #          25 students = 5 groups of 5
+        #          22 students = 4 groups of 5 + 1 group of 2 (bad) → instead: 2 groups of 5 + 3 groups of 4 (good)
+        remainder = total_students % 5
+        if remainder == 1:
+            # e.g., 21 students: would be 4 groups of 5 + 1 of 1 → instead make 3 groups of 5 + 2 groups of 3
+            size_guidance = "groups of 5 students, with some groups of 3-4 if needed to avoid groups smaller than 3"
+        elif remainder == 2:
+            # e.g., 22 students: would be 4 groups of 5 + 1 of 2 → instead make 2 groups of 5 + 3 groups of 4
+            size_guidance = "groups of 5 students, with some groups of 4 if needed to avoid groups of 2"
+        else:
+            size_guidance = "groups of 5 students"
     
     # The Enhanced Prompt
     prompt = f"""You are an expert educational psychologist specializing in adolescent team formation and Vygotsky's Zone of Proximal Development (ZPD). Create optimal learning groups for "{course_name}" course with 15-16 year old students.
 
 INPUT DATA:
 {json.dumps(student_data, ensure_ascii=False, indent=2)}
+
+TOTAL STUDENTS: {total_students}
+GROUPING STRATEGY: Prefer {size_guidance}. IMPORTANT: Avoid creating groups with only 1-2 students. If the math doesn't work out evenly with groups of 5, adjust by creating some groups of 4 to balance the numbers. For example:
+- 30 students = 6 groups of 5 ✓
+- 27 students = 3 groups of 5 + 3 groups of 4 ✓ (NOT 5 groups of 5 + 1 group of 2 ✗)
+- 25 students = 5 groups of 5 ✓
+- 22 students = 2 groups of 5 + 3 groups of 4 ✓ (NOT 4 groups of 5 + 1 group of 2 ✗)
 
 STUDENT AGE CONTEXT (15-16 years - Adolescence):
 - High need for peer acceptance and social belonging
@@ -148,7 +168,9 @@ GROUPING FRAMEWORK - PRIORITY ORDER:
 
 CRITICAL RULES:
 ✓ ALL students MUST be assigned to a group
-✓ Create {size_guidance}
+✓ PREFER groups of 5 students to minimize total number of groups
+✓ Adjust group sizes (use groups of 4) to avoid creating groups with only 1-2 students
+✓ Each group should have 3-5 students (never 1-2 students alone)
 ✓ Each group needs MBTI balance: 2-3 Introverts + 2-3 Extroverts
 ✓ Each group needs grade diversity: Mix high (>18) with medium (16-18) performers
 ✓ Prioritize complementary MBTI types over similar types
