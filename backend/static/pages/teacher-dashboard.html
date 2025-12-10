@@ -567,7 +567,7 @@
         }
 
         async function handleResetGrouping() {
-            if (!confirm('آیا مطمئن هستید که می‌خواهید گروه‌بندی را بازنشانی کنید؟\n\nتمام گروه‌ها حذف می‌شوند و می‌توانید دوباره گروه‌بندی انجام دهید.')) return;
+            if (!confirm('آیا مطمئن هستید که می‌خواهید گروه‌بندی را بازنشانی کنید؟\n\n✓ گروه‌بندی‌های فعلی حذف می‌شوند\n✓ اطلاعات دانش‌آموزان (MBTI، VARK، AMS، Cooperative) حفظ می‌مانند\n✓ می‌توانید دوباره گروه‌بندی انجام دهید')) return;
             
             const password = prompt('لطفاً رمز عبور استاد را وارد کنید:');
             if (!password) return;
@@ -576,7 +576,7 @@
                 await resetGrouping(password);
                 // Hide success message
                 document.getElementById('groupingSuccess').classList.add('hidden');
-                alert('گروه‌بندی با موفقیت بازنشانی شد!');
+                alert('✅ گروه‌بندی با موفقیت بازنشانی شد!\n\nاطلاعات دانش‌آموزان حفظ شده و می‌توانید دوباره گروه‌بندی کنید.');
                 loadDashboard();
             } catch (error) {
                 if (error.message.includes('Invalid password')) {

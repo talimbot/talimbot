@@ -241,14 +241,9 @@ def reset_grouping(request: PasswordRequest):
     if request.password != data.teacherPassword:
         raise HTTPException(status_code=403, detail="Invalid password")
     
-    # Clear all student data fields
+    # Clear ONLY grouping-related data, keep student profiles intact
     for student in data.students:
         student.group = None
-        student.mbti = None
-        student.learningStyle = None
-        student.ams = None
-        student.cooperative = None
-        student.preferredStudents = []
     
     data.groupingComplete = False
     data.groupingResults = None
