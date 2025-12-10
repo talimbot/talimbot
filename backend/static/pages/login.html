@@ -83,29 +83,18 @@
                     <!-- Student Login -->
                     <div id="studentLogin" class="hidden space-y-4">
                         <div>
-                            <label for="studentNumber" class="block text-sm font-semibold text-gray-700 mb-2">
-                                شماره دانش آموزی
-                            </label>
-                            <input 
-                                type="text" 
-                                id="studentNumber" 
-                                placeholder="مثال: S001"
-                                class="w-full p-4 border-2 border-gray-300 rounded-xl text-center text-lg focus:border-teal-500 focus:ring-2 focus:ring-teal-200 outline-none transition-all uppercase"
-                            >
-                        </div>
-                        <div>
                             <label for="nationalCode" class="block text-sm font-semibold text-gray-700 mb-2">
                                 کد ملی
                             </label>
                             <input 
                                 type="text" 
                                 id="nationalCode" 
-                                placeholder="کد ملی ۹ رقمی"
+                                placeholder="کد ملی ۱۰ رقمی خود را وارد کنید"
                                 maxlength="10"
                                 class="w-full p-4 border-2 border-gray-300 rounded-xl text-center text-lg focus:border-teal-500 focus:ring-2 focus:ring-teal-200 outline-none transition-all"
                                 dir="ltr"
                             >
-                            <p class="text-xs text-gray-500 mt-2 text-center">کد ملی ۹ رقمی خود را وارد کنید</p>
+                            <p class="text-xs text-gray-500 mt-2 text-center">کد ملی ۱۰ رقمی خود را وارد کنید</p>
                         </div>
                     </div>
 
@@ -211,48 +200,41 @@
             errorDiv.classList.add('hidden');
             
             if (selectedRole === 'student') {
-                const studentNumber = document.getElementById('studentNumber').value.trim().toUpperCase();
-                const nationalCode = document.getElementById('nationalCode').value.trim();
-                
-                if (!studentNumber) {
-                    showError('لطفاً شماره دانش‌آموزی خود را وارد کنید');
-                    return;
-                }
+                let nationalCode = document.getElementById('nationalCode').value.trim();
                 
                 if (!nationalCode) {
                     showError('لطفاً کد ملی خود را وارد کنید');
                     return;
                 }
                 
-                if (nationalCode.length < 9 || nationalCode.length > 10) {
-                    showError('کد ملی باید ۹ یا ۱۰ رقم باشد');
+                if (nationalCode.length !== 10) {
+                    showError('کد ملی باید ۱۰ رقم باشد');
                     return;
                 }
                 
+                // Remove leading zero if present
+                if (nationalCode.startsWith('0')) {
+                    nationalCode = nationalCode.substring(1);
+                }
+                
                 try {
-                    // Authenticate student with backend
-                    const response = await fetch('/api/auth/student', {
+                    // Authenticate student with backend using national code only
+                    const response = await fetch('/api/auth/student-by-nationalcode', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify({ studentNumber, nationalCode })
+                        body: JSON.stringify({ nationalCode })
                     });
                     
                     if (!response.ok) {
                         const error = await response.json();
-                        if (error.detail.includes('not found')) {
-                            showError('این شماره دانش‌آموزی در سیستم ثبت نشده است');
-                        } else if (error.detail.includes('Invalid')) {
-                            showError('کد ملی نادرست است');
-                        } else {
-                            showError('خطا در ورود. دوباره تلاش کنید');
-                        }
+                        showError(error.detail || 'خطا در ورود');
                         return;
                     }
                     
                     const result = await response.json();
-                    sessionStorage.setItem('currentStudent', studentNumber);
+                    sessionStorage.setItem('currentStudent', result.student.studentNumber);
                     sessionStorage.setItem('studentName', result.student.name);
                     window.location.href = 'student-dashboard.html';
                 } catch (error) {

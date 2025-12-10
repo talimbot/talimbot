@@ -241,8 +241,14 @@ def reset_grouping(request: PasswordRequest):
     if request.password != data.teacherPassword:
         raise HTTPException(status_code=403, detail="Invalid password")
     
+    # Clear all student data fields
     for student in data.students:
         student.group = None
+        student.mbti = None
+        student.learningStyle = None
+        student.ams = None
+        student.cooperative = None
+        student.preferredStudents = []
     
     data.groupingComplete = False
     data.groupingResults = None
@@ -266,6 +272,19 @@ def authenticate_student(request: StudentAuthRequest):
     
     if student.nationalCode != request.nationalCode:
         raise HTTPException(status_code=401, detail="Invalid national code")
+    
+    return {"valid": True, "student": student}
+
+class NationalCodeAuthRequest(BaseModel):
+    nationalCode: str
+
+@app.post("/api/auth/student-by-nationalcode")
+def authenticate_student_by_nationalcode(request: NationalCodeAuthRequest):
+    data = load_data()
+    # Find student by national code (without leading zero)
+    student = next((s for s in data.students if s.nationalCode == request.nationalCode), None)
+    if not student:
+        raise HTTPException(status_code=404, detail="کد ملی در سیستم یافت نشد")
     
     return {"valid": True, "student": student}
 
