@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>پر کردن داده‌های تست</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Vazirmatn', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex items-center justify-center p-4">
+    <div class="max-w-2xl w-full bg-white rounded-2xl shadow-2xl p-8">
+        <h1 class="text-3xl font-bold text-gray-900 mb-4 text-center">🎲 پر کردن داده‌های تست</h1>
+        <p class="text-gray-600 text-center mb-6">با یک کلیک، 10 دانش‌آموز اول را با داده‌های کامل پر کنید</p>
+        
+        <div class="bg-blue-50 border-r-4 border-blue-500 p-4 rounded-lg mb-6">
+            <p class="text-sm text-blue-800">
+                <strong>این صفحه چه کاری انجام می‌دهد؟</strong><br>
+                دانش‌آموزان S001 تا S010 را با داده‌های تصادفی اما واقع‌بینانه پر می‌کند:
+            </p>
+            <ul class="text-sm text-blue-800 mr-4 mt-2 list-disc">
+                <li>MBTI: تیپ‌های شخصیتی تصادفی</li>
+                <li>VARK: سبک‌های یادگیری متنوع</li>
+                <li>AMS: نمرات 80-180</li>
+                <li>Cooperative: نمرات 60-120</li>
+                <li>ترجیحات: 2-3 دوست برای هر دانش‌آموز</li>
+            </ul>
+        </div>
+
+        <button onclick="fillTestData()" id="fillBtn"
+                class="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white py-4 px-6 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98] transition-all">
+            🎯 پر کردن داده‌های تست
+        </button>
+
+        <div id="progress" class="hidden mt-6">
+            <div class="text-center py-4">
+                <div class="inline-block w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-3"></div>
+                <p class="text-gray-700 font-semibold">در حال پر کردن داده‌ها...</p>
+                <p class="text-sm text-gray-500" id="progressText">0/10 تکمیل شد</p>
+            </div>
+        </div>
+
+        <div id="success" class="hidden mt-6 bg-green-50 border-r-4 border-green-500 p-4 rounded-lg">
+            <p class="text-green-700 font-semibold mb-2">✅ موفقیت آمیز!</p>
+            <p class="text-sm text-green-600 mb-4">10 دانش‌آموز با داده‌های کامل پر شدند.</p>
+            <div id="results" class="text-xs text-gray-700 bg-white p-3 rounded max-h-60 overflow-y-auto"></div>
+        </div>
+
+        <div id="error" class="hidden mt-6 bg-red-50 border-r-4 border-red-500 p-4 rounded-lg">
+            <p class="text-red-700 font-semibold">❌ خطا</p>
+            <p class="text-sm text-red-600" id="errorText"></p>
+        </div>
+    </div>
+
+    <script src="../assets/js/data.js"></script>
+    <script>
+        const MBTI_TYPES = ['INTJ', 'INTP', 'ENTJ', 'ENTP', 'INFJ', 'INFP', 'ENFJ', 'ENFP', 
+                           'ISTJ', 'ISFJ', 'ESTJ', 'ESFJ', 'ISTP', 'ISFP', 'ESTP', 'ESFP'];
+        const VARK_STYLES = ['Visual', 'Aural', 'Read/Write', 'Kinesthetic'];
+
+        function randomChoice(arr) {
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
+
+        function randomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        async function fillTestData() {
+            const fillBtn = document.getElementById('fillBtn');
+            const progress = document.getElementById('progress');
+            const success = document.getElementById('success');
+            const error = document.getElementById('error');
+            const results = document.getElementById('results');
+            const progressText = document.getElementById('progressText');
+
+            fillBtn.disabled = true;
+            fillBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            progress.classList.remove('hidden');
+            success.classList.add('hidden');
+            error.classList.add('hidden');
+
+            try {
+                const studentNumbers = ['S001', 'S002', 'S003', 'S004', 'S005', 
+                                      'S006', 'S007', 'S008', 'S009', 'S010'];
+                
+                let completed = 0;
+                const resultsList = [];
+
+                for (const studentNum of studentNumbers) {
+                    // Generate random data
+                    const testData = {
+                        mbti: randomChoice(MBTI_TYPES),
+                        learningStyle: randomChoice(VARK_STYLES),
+                        ams: String(randomInt(80, 180)),
+                        cooperative: String(randomInt(60, 120)),
+                        preferredStudents: studentNumbers
+                            .filter(s => s !== studentNum)
+                            .sort(() => Math.random() - 0.5)
+                            .slice(0, randomInt(2, 3))
+                    };
+
+                    // Update student
+                    const updated = await updateStudent(studentNum, testData);
+                    
+                    if (updated) {
+                        completed++;
+                        progressText.textContent = `${completed}/10 تکمیل شد`;
+                        resultsList.push(`${studentNum}: ${testData.mbti}, ${testData.learningStyle}, AMS=${testData.ams}, Coop=${testData.cooperative}`);
+                    }
+                }
+
+                progress.classList.add('hidden');
+                success.classList.remove('hidden');
+                
+                results.innerHTML = resultsList.map(r => `<p class="mb-1">✓ ${r}</p>`).join('');
+
+                setTimeout(() => {
+                    alert('✅ اتمام! حالا به داشبورد معلم بروید و گروه‌بندی را امتحان کنید!');
+                }, 500);
+
+            } catch (err) {
+                progress.classList.add('hidden');
+                error.classList.remove('hidden');
+                document.getElementById('errorText').textContent = err.message;
+            } finally {
+                fillBtn.disabled = false;
+                fillBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+        }
+    </script>
+</body>
+</html>
