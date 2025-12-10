@@ -21,7 +21,7 @@ def analyze_mbti(mbti: str) -> Dict[str, str]:
 
 def group_students_with_ai(students: List[Any], course_name: str, api_key: Optional[str] = None) -> Dict[str, Any]:
     """
-    Group students using OpenRouter API (ChatGPT)
+    Group students using OpenRouter API (ChatGPT) with advanced educational psychology principles
     Args:
         students: List of student objects
         course_name: Name of the course
@@ -60,6 +60,8 @@ def group_students_with_ai(students: List[Any], course_name: str, api_key: Optio
             "mbti": s.mbti,
             "mbti_analysis": mbti_details,
             "learningStyle": s.learningStyle,
+            "ams": s.ams if hasattr(s, 'ams') else None,
+            "cooperative": s.cooperative if hasattr(s, 'cooperative') else None,
             "grade": s.grade,
             "preferredStudents": [id for id in (s.preferredStudents or []) if id in valid_student_ids]
         })
@@ -73,28 +75,92 @@ def group_students_with_ai(students: List[Any], course_name: str, api_key: Optio
     else:
         size_guidance = "groups of 4-5 students"
     
-    # The Prompt
-    prompt = f"""You are an expert educational AI consultant. Group these students for a "{course_name}" course.
+    # The Enhanced Prompt
+    prompt = f"""You are an expert educational psychologist specializing in adolescent team formation and Vygotsky's Zone of Proximal Development (ZPD). Create optimal learning groups for "{course_name}" course with 15-16 year old students.
 
 INPUT DATA:
 {json.dumps(student_data, ensure_ascii=False, indent=2)}
 
-RULES:
-1. **USE PROVIDED DATA**: Use the "mbti_analysis" fields provided in the input to determine Introvert/Extrovert counts. Do NOT guess.
-2. **ALL INCLUDED**: Every student ID listed above must be assigned to a group.
-3. **SIZE**: Create {size_guidance}.
+STUDENT AGE CONTEXT (15-16 years - Adolescence):
+- High need for peer acceptance and social belonging
+- Developing abstract thinking and metacognition
+- Identity formation through social interactions
+- Sensitivity to feedback from peers
+- Collaborative learning enhances engagement
 
-CRITERIA WEIGHTS:
-- 70% Effectiveness: Mix MBTI (E vs I, T vs F), Mix Learning Styles, Balance Grades.
-- 30% Preferences: Keep friends together ONLY if it doesn't hurt the balance.
+GROUPING FRAMEWORK - PRIORITY ORDER:
 
-OUTPUT FORMAT (JSON):
+1. **ZPD OPTIMIZATION (Zone of Proximal Development)** - 30%
+   - Mix academic performance (grade field) to create ZPD scaffolding
+   - Place high performers (معدل بالا) with medium performers for peer tutoring
+   - Avoid grouping all high or all low performers together
+   - Target: Each group should have grade variance of 1-2 points to maximize learning
+
+2. **MBTI COMPLEMENTARITY (NOT Similarity)** - 25%
+   Research-based MBTI pairings for adolescent teamwork:
+   - ENFP + INTJ: Visionary creativity with strategic planning
+   - ENTP + INFJ: Innovation meets deep insight and empathy
+   - ENTJ + INFP: Leadership with values-driven creativity
+   - ESTJ + ISFP: Organization with practical creativity
+   - ESFJ + INTP: Social cohesion with analytical thinking
+   - ESTP + ISFJ: Action-oriented with detail consciousness
+   - ENFJ + ISTP: Motivational leadership with technical problem-solving
+   - ESFP + ISTJ: Enthusiasm with reliability and structure
+   
+   KEY PRINCIPLES:
+   - Balance E (Extrovert) and I (Introvert): 2-3 of each per group
+   - Complement T (Thinking) with F (Feeling) for balanced decision-making
+   - Mix N (Intuitive) with S (Sensing) for big-picture + detail focus
+   - Combine J (Judging) with P (Perceiving) for structure + flexibility
+
+3. **VARK DIVERSITY (Learning Styles)** - 20%
+   - Include different learning styles in each group:
+     * Visual (دیداری): Diagrams, charts, spatial understanding
+     * Aural (شنیداری): Discussions, verbal explanations
+     * Read/Write: Text-based learning, note-taking
+     * Kinesthetic (حرکتی): Hands-on, experiential learning
+   - Diversity ensures multiple teaching approaches within group
+   - Adolescents learn best when exposed to varied learning methods
+
+4. **ACADEMIC MOTIVATION (AMS Score)** - 15%
+   - AMS field: Academic Motivation Scale (0-196)
+   - Balance high and moderate motivation levels
+   - High motivation students (>140) can inspire others
+   - Avoid grouping all low-motivation (<100) students together
+   - Target: Each group has at least one high-motivation member
+
+5. **COOPERATIVE LEARNING SKILLS** - 10%
+   - Cooperative field: Cooperation ability (0-125)
+   - High cooperation students (>88) act as social facilitators
+   - Mix cooperation levels for peer modeling
+   - Students with strong cooperation skills help integrate introverts
+
+6. **COURSE-SPECIFIC REQUIREMENTS** - Based on "{course_name}":
+   - Math/Science: Prioritize T (Thinking) types, Visual/Kinesthetic learners
+   - Literature/Humanities: Include F (Feeling) types, Read/Write learners
+   - Projects/Labs: Need high Kinesthetic and ESTP/ISTP types
+   - Discussion-based: Ensure Aural learners and E (Extrovert) types
+
+7. **STUDENT PREFERENCES** - 5% (Secondary consideration)
+   - Honor "preferredStudents" field ONLY if it doesn't compromise above criteria
+   - Adolescents benefit from working outside comfort zones
+   - Strategic separation can reduce cliques and expand social circles
+
+CRITICAL RULES:
+✓ ALL students MUST be assigned to a group
+✓ Create {size_guidance}
+✓ Each group needs MBTI balance: 2-3 Introverts + 2-3 Extroverts
+✓ Each group needs grade diversity: Mix high (>18) with medium (16-18) performers
+✓ Prioritize complementary MBTI types over similar types
+✓ Use provided data fields - DO NOT invent values
+
+OUTPUT FORMAT (Valid JSON Only):
 {{
   "groups": [
     {{
       "groupNumber": 1,
-      "students": ["S001", "S002"...],
-      "reasoning": "Write a Detailed Persian (Farsi) explanation. Explicitly mention the count of Introverts and Extroverts based on the input data. Example: 'این گروه شامل ۲ درون‌گرا (S001, S002) و ۳ برون‌گرا (S003...) است...'"
+      "students": ["S001", "S002", "S003", "S004"],
+      "reasoning": "توضیحات کامل به فارسی - شامل: (1) تحلیل ZPD: معدل‌ها و چگونگی یادگیری همیاری (2) تکمیل MBTI: چرا این تیپ‌ها با هم سازگارند (3) تنوع VARK (4) سطح انگیزش و همکاری (5) مناسب بودن برای درس {course_name}. مثال: 'این گروه دارای ZPD مطلوب است: S001 (معدل 19.5) و S002 (معدل 17.2) به S003 (معدل 16) کمک می‌کنند. تکمیل MBTI: ENFP (S001) با خلاقیت و INTJ (S002) با برنامه‌ریزی استراتژیک همکاری می‌کنند. تنوع یادگیری: 2 Visual، 1 Aural، 1 Kinesthetic. انگیزش بالا (AMS>150) در S001 الهام‌بخش است.'"
     }}
   ]
 }}"""
