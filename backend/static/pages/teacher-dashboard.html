@@ -689,19 +689,29 @@
             const learningStyleSelect = row.querySelectorAll('select')[1];
             const gradeInput = row.querySelector('input[type="number"]');
             
-            const updatedData = {
-                name: nameInput.value.trim(),
-                mbti: mbtiSelect.value,
-                learningStyle: learningStyleSelect.value,
-                ams: amsInput.value.trim(),
-                cooperative: cooperativeInput.value.trim(),
-                grade: parseFloat(gradeInput.value)
-            };
+            // Build update object with only non-empty values to prevent overwriting existing data
+            const updatedData = {};
+            
+            const name = nameInput.value.trim();
+            const mbti = mbtiSelect.value;
+            const learningStyle = learningStyleSelect.value;
+            const ams = amsInput.value.trim();
+            const cooperative = cooperativeInput.value.trim();
+            const grade = gradeInput.value;
 
-            if (!updatedData.name) {
+            // Name is required
+            if (!name) {
                 alert('نام نمی‌تواند خالی باشد!');
                 return;
             }
+            updatedData.name = name;
+
+            // Only include other fields if they have values
+            if (mbti) updatedData.mbti = mbti;
+            if (learningStyle) updatedData.learningStyle = learningStyle;
+            if (ams) updatedData.ams = ams;
+            if (cooperative) updatedData.cooperative = cooperative;
+            if (grade) updatedData.grade = parseFloat(grade);
 
             // Update student using the proper data.js function
             const success = await updateStudent(studentNumber, updatedData);
