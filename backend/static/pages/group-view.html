@@ -380,9 +380,12 @@
                             <span class="bg-white px-3 py-1 rounded-lg border border-gray-200">
                                 <strong>سبک:</strong> ${member.learningStyle || 'ندارد'}
                             </span>
-                            <span class="bg-white px-3 py-1 rounded-lg border border-gray-200">
-                                <strong>نمره:</strong> ${member.grade.toFixed(2)}
-                            </span>
+                            ${member.ams ? `<span class="bg-white px-3 py-1 rounded-lg border border-gray-200">
+                                <strong>AMS:</strong> ${member.ams}
+                            </span>` : ''}
+                            ${member.cooperative ? `<span class="bg-white px-3 py-1 rounded-lg border border-gray-200">
+                                <strong>همکاری:</strong> ${member.cooperative}
+                            </span>` : ''}
                         </div>
                     </div>
                 `;

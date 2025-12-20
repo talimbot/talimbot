@@ -89,12 +89,11 @@
                             <input 
                                 type="text" 
                                 id="nationalCode" 
-                                placeholder="کد ملی ۱۰ رقمی "
-                                maxlength="10"
+                                placeholder="کد ملی خود را وارد کنید"
                                 class="w-full p-4 border-2 border-gray-300 rounded-xl text-center text-lg focus:border-teal-500 focus:ring-2 focus:ring-teal-200 outline-none transition-all"
                                 dir="ltr"
                             >
-                            <p class="text-xs text-gray-500 mt-2 text-center">کد ملی ۱۰ رقمی خود را وارد کنید</p>
+                            <p class="text-xs text-gray-500 mt-2 text-center">کد ملی خود را بدون صفر ابتدایی وارد کنید</p>
                         </div>
                     </div>
 
@@ -207,15 +206,13 @@
                     return;
                 }
                 
-                if (nationalCode.length !== 10) {
-                    showError('کد ملی باید ۱۰ رقم باشد');
+                // Check if starts with zero and show warning
+                if (nationalCode.startsWith('0')) {
+                    showError('لطفاً صفر ابتدایی را از کد ملی حذف کنید');
                     return;
                 }
                 
-                // Remove leading zero if present
-                if (nationalCode.startsWith('0')) {
-                    nationalCode = nationalCode.substring(1);
-                }
+                // No length restriction - just check if it matches a student in database
                 
                 try {
                     // Authenticate student with backend using national code only
