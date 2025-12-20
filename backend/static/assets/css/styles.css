@@ -1,0 +1,727 @@
+/* سیستم گروه‌بندی دانشجویان - طراحی مدرن فارسی */
+
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary-color: #381c80;
+    --primary-dark: #2a1560;
+    --secondary-color: #1e3a8a;
+    --accent-color: #5b21b6;
+    --success-color: #10b981;
+    --warning-color: #f59e0b;
+    --danger-color: #ef4444;
+    --text-dark: #1f2937;
+    --text-light: #6b7280;
+    --bg-light: #f8fafc;
+    --bg-white: #ffffff;
+    --border-color: #e2e8f0;
+    --shadow-sm: 0 1px 2px 0 rgba(56, 28, 128, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(56, 28, 128, 0.1), 0 2px 4px -1px rgba(56, 28, 128, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(56, 28, 128, 0.15), 0 4px 6px -2px rgba(56, 28, 128, 0.08);
+    --shadow-xl: 0 20px 25px -5px rgba(56, 28, 128, 0.2), 0 10px 10px -5px rgba(56, 28, 128, 0.1);
+}
+
+body {
+    font-family: 'Vazirmatn', sans-serif;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    color: var(--text-dark);
+    line-height: 1.8;
+    direction: rtl;
+    text-align: right;
+}
+
+/* صفحات مختلف با تصاویر پس‌زمینه */
+body.login-page {
+    background: url('images/blueBackground.jpg') no-repeat center center fixed;
+    background-size: cover;
+}
+
+body.dashboard-page {
+    background: url('images/darkBlueMixed.png') no-repeat center center fixed;
+    background-size: cover;
+    align-items: flex-start;
+}
+
+body.teacher-page {
+    background: url('images/darkBluePlain.jpg') no-repeat center center fixed;
+    background-size: cover;
+    align-items: flex-start;
+}
+
+/* اور‌لی برای خوانایی بهتر متن */
+body.login-page::before,
+body.dashboard-page::before,
+body.teacher-page::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(56, 28, 128, 0.15);
+    z-index: -1;
+}
+
+/* انیمیشن‌ها */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* کانتینرها */
+.container {
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    box-shadow: var(--shadow-xl);
+    padding: 35px;
+    max-width: 480px;
+    width: 100%;
+    animation: fadeInUp 0.5s ease;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.dashboard-container {
+    max-width: 1150px;
+    padding: 25px;
+    background: transparent;
+    box-shadow: none;
+    border: none;
+}
+
+/* لوگو و هدر */
+.logo-section {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.logo-section img {
+    max-width: 200px;
+    height: auto;
+    margin-bottom: 15px;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.header h1 {
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 8px;
+}
+
+.header p {
+    color: var(--text-light);
+    font-size: 0.95rem;
+}
+
+/* انتخاب نقش */
+.role-selector {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.role-option {
+    padding: 18px 12px;
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: var(--bg-white);
+}
+
+.role-option:hover {
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.role-option.selected {
+    border-color: var(--primary-color);
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: white;
+}
+
+.role-option .icon {
+    font-size: 2.2rem;
+    margin-bottom: 8px;
+}
+
+.role-option h3 {
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+/* فرم‌ها */
+.form-group {
+    margin-bottom: 18px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--text-dark);
+    font-size: 0.9rem;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    background: var(--bg-white);
+    font-family: 'Vazirmatn', sans-serif;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(56, 28, 128, 0.1);
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+/* دکمه‌ها */
+.btn {
+    width: 100%;
+    padding: 13px 20px;
+    border: none;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-family: 'Vazirmatn', sans-serif;
+}
+
+/* دکمه‌های جمع‌وجور که در وسط کانتینر قرار می‌گیرند (یک سوم/نیم عرض) */
+.btn--compact {
+    display: block;
+    width: 33%;
+    max-width: 360px;
+    min-width: 160px;
+    margin: 0.35rem auto;
+    padding: 10px 12px;
+    border-radius: 10px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: white;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.btn-secondary {
+    background: var(--bg-light);
+    color: var(--text-dark);
+    border: 2px solid var(--border-color);
+}
+
+.btn-secondary:hover {
+    background: var(--border-color);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+}
+
+.btn-success:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+/* کارت‌ها */
+.card {
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    padding: 22px;
+    margin-bottom: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 8px 32px rgba(56, 28, 128, 0.12);
+    transition: all 0.3s ease;
+}
+
+/* Header card tweaks: centered title and positioned logout button */
+.header-card {
+    padding-top: 14px;
+    padding-bottom: 14px;
+}
+
+.header-card .logout-btn {
+    position: absolute;
+    right: 18px; /* put logout on the right like previous layout */
+    top: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 12px;
+    color: var(--text-dark);
+    background: var(--bg-light);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 700;
+    transition: all 0.18s ease;
+}
+
+.header-card .logout-btn:hover {
+    background: rgba(56, 28, 128, 0.04);
+    transform: translateY(-2px);
+}
+
+/* two-column grid used in teacher page to align cards horizontally */
+.two-col-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+@media (max-width: 900px) {
+    .two-col-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* small inline button variant for header logout when needed */
+.btn--small {
+    display: inline-block;
+    width: auto;
+    padding: 8px 12px;
+}
+
+/* Group results layout */
+#groupResultsList {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.group-card {
+    flex: 1 1 calc(50% - 16px);
+    max-width: calc(50% - 16px);
+    box-sizing: border-box;
+    padding: 18px;
+    background: var(--bg-light);
+    border-radius: 12px;
+    border-right: 4px solid var(--primary-color);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.group-card-header {
+    color: var(--primary-color);
+    margin: 0;
+    font-size: 1.05rem;
+}
+
+.group-reasoning {
+    color: var(--text-light);
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.group-members-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 220px;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.group-member-item {
+    padding: 10px;
+    background: white;
+    border-radius: 8px;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 900px) {
+    .group-card {
+        flex-basis: 100%;
+        max-width: 100%;
+    }
+}
+
+/* cap the overall results area so it doesn't push the whole page too far; individual groups scroll internally */
+#groupResultsCard .card-body {
+    max-height: 520px;
+    overflow: auto;
+}
+
+.card:hover {
+    box-shadow: 0 12px 40px rgba(56, 28, 128, 0.18);
+    transform: translateY(-3px);
+}
+
+.card-header {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.card-body {
+    color: var(--text-dark);
+}
+
+/* اطلاعات نمایشی */
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    margin-bottom: 15px;
+}
+
+.info-display {
+    background: var(--bg-light);
+    padding: 12px 15px;
+    border-radius: 10px;
+    border-right: 3px solid var(--primary-color);
+}
+
+.info-display .label {
+    font-weight: 500;
+    color: var(--text-light);
+    font-size: 0.8rem;
+    margin-bottom: 4px;
+}
+
+.info-display .value {
+    font-size: 1.05rem;
+    color: var(--text-dark);
+    font-weight: 700;
+}
+
+/* لینک‌های تست */
+.links-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 15px;
+}
+
+.external-link {
+    padding: 16px 12px;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    border: none;
+    border-radius: 12px;
+    text-align: center;
+    text-decoration: none;
+    color: white;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.9rem;
+    box-shadow: 0 4px 12px rgba(56, 28, 128, 0.2);
+}
+
+.external-link:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(56, 28, 128, 0.3);
+    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-color) 100%);
+}
+
+.external-link .icon {
+    font-size: 1.8rem;
+}
+
+/* هشدارها */
+.alert {
+    padding: 12px 16px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.alert-info {
+    background: rgba(56, 28, 128, 0.1);
+    color: var(--primary-color);
+    border: 1px solid rgba(56, 28, 128, 0.3);
+}
+
+.alert-success {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--success-color);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.alert-warning {
+    background: rgba(245, 158, 11, 0.1);
+    color: var(--warning-color);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+/* آمار */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.stat-card {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.stat-card .stat-value {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.stat-card .stat-label {
+    font-size: 0.9rem;
+    opacity: 0.95;
+}
+
+/* لیست گروه */
+.group-list {
+    list-style: none;
+}
+
+.group-member {
+    background: var(--bg-light);
+    padding: 12px 15px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.3s ease;
+}
+
+.group-member:hover {
+    background: var(--border-color);
+    transform: translateX(5px);
+}
+
+.group-member .member-icon {
+    font-size: 1.4rem;
+}
+
+.group-member .member-info {
+    flex: 1;
+}
+
+.group-member .member-name {
+    font-weight: 600;
+    color: var(--text-dark);
+    font-size: 0.95rem;
+    margin-bottom: 3px;
+}
+
+.group-member .member-details {
+    font-size: 0.8rem;
+    color: var(--text-light);
+}
+
+/* چک‌باکس‌ها */
+.checkbox-group {
+    max-height: 250px;
+    overflow-y: auto;
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
+    padding: 8px;
+}
+
+.checkbox-item {
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.checkbox-item:hover {
+    background: var(--bg-light);
+}
+
+.checkbox-item input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.checkbox-item label {
+    cursor: pointer;
+    margin: 0;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+/* لینک بازگشت */
+.back-link {
+    display: inline-block;
+    margin-bottom: 15px;
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    font-size: 0.95rem;
+}
+
+.back-link:hover {
+    transform: translateX(5px);
+}
+
+/* حالت خالی */
+.empty-state {
+    text-align: center;
+    padding: 35px 20px;
+}
+
+.empty-state .icon {
+    font-size: 3.5rem;
+    opacity: 0.3;
+    margin-bottom: 15px;
+}
+
+.empty-state h3 {
+    font-size: 1.2rem;
+    color: var(--text-dark);
+    margin-bottom: 10px;
+}
+
+.empty-state p {
+    color: var(--text-light);
+    font-size: 0.9rem;
+}
+
+/* لودینگ */
+.loading {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 1s ease-in-out infinite;
+}
+
+/* طراحی ریسپانسیو */
+@media (max-width: 768px) {
+    .container {
+        padding: 25px;
+    }
+    
+    .header h1 {
+        font-size: 1.5rem;
+    }
+    
+    .role-selector {
+        grid-template-columns: 1fr;
+    }
+    
+    .links-section {
+        grid-template-columns: 1fr;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .dashboard-container {
+        max-width: 900px;
+    }
+}
+
+/* تنظیمات اسکرول */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-light);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-dark);
+}
+
+/* ترانزیشن‌های نرم */
+a, button, input, select, .role-option, .card, .external-link, .checkbox-item {
+    transition: all 0.3s ease;
+}

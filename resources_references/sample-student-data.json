@@ -1,0 +1,26 @@
+[
+  {
+    "studentNumber": "S001",
+    "mbti": "INTJ",
+    "learningStyle": "Visual",
+    "ams": "150",
+    "cooperative": "95",
+    "preferredStudents": ["S002", "S003"]
+  },
+  {
+    "studentNumber": "S002",
+    "mbti": "ENFP",
+    "learningStyle": "Aural",
+    "ams": "130",
+    "cooperative": "110",
+    "preferredStudents": ["S001", "S004", "S005"]
+  },
+  {
+    "studentNumber": "S003",
+    "mbti": "ISFJ",
+    "learningStyle": "Read/Write",
+    "ams": "165",
+    "cooperative": "88",
+    "preferredStudents": ["S001", "S002"]
+  }
+]
