@@ -1,3 +1,13 @@
+---
+title: TalimBot
+emoji: 🎓
+colorFrom: teal
+colorTo: cyan
+sdk: docker
+pinned: false
+license: mit
+---
+
 # TalimBot - AI-Powered Student Grouping System
 
 An intelligent educational platform that uses advanced psychology principles and AI to create optimal learning groups for adolescent students (ages 15-16).
