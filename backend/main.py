@@ -315,11 +315,12 @@ def check_teacher_password(request: TeacherAuthRequest):
 @app.post("/api/auth/student")
 def authenticate_student(request: StudentAuthRequest):
     # Special demo account - not stored in database
-    if request.nationalCode == "0921111111":
+    # Check for national code without leading zero (frontend strips it)
+    if request.nationalCode == "921111111":
         demo_student = Student(
             studentNumber="DEMO",
             name="پریناز عاکف",
-            nationalCode="0921111111",
+            nationalCode="921111111",
             grade=0.0,
             mbti=None,
             learningStyle=None,
@@ -346,11 +347,12 @@ class NationalCodeAuthRequest(BaseModel):
 @app.post("/api/auth/student-by-nationalcode")
 def authenticate_student_by_nationalcode(request: NationalCodeAuthRequest):
     # Special demo account - not stored in database
-    if request.nationalCode == "0921111111":
+    # Check for national code without leading zero (frontend strips it)
+    if request.nationalCode == "921111111":
         demo_student = Student(
             studentNumber="DEMO",
             name="پریناز عاکف",
-            nationalCode="0921111111",
+            nationalCode="921111111",
             grade=0.0,
             mbti=None,
             learningStyle=None,
