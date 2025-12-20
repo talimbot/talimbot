@@ -126,6 +126,21 @@ def get_all_students():
 
 @app.get("/api/student/{student_number}")
 def get_student(student_number: str):
+    # Return demo account if requested
+    if student_number == "DEMO":
+        return Student(
+            studentNumber="DEMO",
+            name="پریناز عاکف",
+            nationalCode="0921111111",
+            grade=0.0,
+            mbti=None,
+            learningStyle=None,
+            ams=None,
+            cooperative=None,
+            preferredStudents=[],
+            group=None
+        )
+    
     data = load_data()
     student = next((s for s in data.students if s.studentNumber == student_number), None)
     if not student:
@@ -134,6 +149,22 @@ def get_student(student_number: str):
 
 @app.put("/api/student/{student_number}")
 def update_student(student_number: str, updates: StudentUpdate):
+    # Silently ignore updates to demo account (pretend it worked)
+    if student_number == "DEMO":
+        demo_student = Student(
+            studentNumber="DEMO",
+            name="پریناز عاکف",
+            nationalCode="0921111111",
+            grade=0.0,
+            mbti=updates.mbti,
+            learningStyle=updates.learningStyle,
+            ams=updates.ams,
+            cooperative=updates.cooperative,
+            preferredStudents=updates.preferredStudents or [],
+            group=None
+        )
+        return {"success": True, "student": demo_student}
+    
     data = load_data()
     student = next((s for s in data.students if s.studentNumber == student_number), None)
     if not student:
@@ -283,6 +314,22 @@ def check_teacher_password(request: TeacherAuthRequest):
 
 @app.post("/api/auth/student")
 def authenticate_student(request: StudentAuthRequest):
+    # Special demo account - not stored in database
+    if request.nationalCode == "0921111111":
+        demo_student = Student(
+            studentNumber="DEMO",
+            name="پریناز عاکف",
+            nationalCode="0921111111",
+            grade=0.0,
+            mbti=None,
+            learningStyle=None,
+            ams=None,
+            cooperative=None,
+            preferredStudents=[],
+            group=None
+        )
+        return {"valid": True, "student": demo_student}
+    
     data = load_data()
     student = next((s for s in data.students if s.studentNumber == request.studentNumber), None)
     if not student:
@@ -298,6 +345,22 @@ class NationalCodeAuthRequest(BaseModel):
 
 @app.post("/api/auth/student-by-nationalcode")
 def authenticate_student_by_nationalcode(request: NationalCodeAuthRequest):
+    # Special demo account - not stored in database
+    if request.nationalCode == "0921111111":
+        demo_student = Student(
+            studentNumber="DEMO",
+            name="پریناز عاکف",
+            nationalCode="0921111111",
+            grade=0.0,
+            mbti=None,
+            learningStyle=None,
+            ams=None,
+            cooperative=None,
+            preferredStudents=[],
+            group=None
+        )
+        return {"valid": True, "student": demo_student}
+    
     data = load_data()
     # Find student by national code (without leading zero)
     student = next((s for s in data.students if s.nationalCode == request.nationalCode), None)
@@ -308,6 +371,10 @@ def authenticate_student_by_nationalcode(request: NationalCodeAuthRequest):
 
 @app.get("/api/student/{student_number}/group")
 def get_student_group(student_number: str):
+    # Demo account has no group
+    if student_number == "DEMO":
+        raise HTTPException(status_code=404, detail="Demo account is not part of any group")
+    
     data = load_data()
     
     if not data.resultsVisible:
