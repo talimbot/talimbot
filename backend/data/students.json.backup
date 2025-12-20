@@ -1,0 +1,388 @@
+{
+  "students": [
+    {
+      "studentNumber": "S001",
+      "name": "یاسمن آدینه پور",
+      "nationalCode": "929986644",
+      "mbti": null,
+      "learningStyle": null,
+      "ams": null,
+      "cooperative": null,
+      "grade": 18.77,
+      "preferredStudents": [],
+      "group": null
+    },
+    {
+      "studentNumber": "S002",
+      "name": "پریا احمدزاده",
+      "nationalCode": "980085330",
+      "mbti": null,
+      "learningStyle": null,
+      "ams": null,
+      "cooperative": null,
+      "grade": 17.28,
+      "preferredStudents": [],
+      "group": null
+    },
+    {
+      "studentNumber": "S003",
+      "name": "فاطمه اکبرزاده",
+      "nationalCode": "970154550",
+      "mbti": null,
+      "learningStyle": null,
+      "ams": null,
+      "cooperative": null,
+      "grade": 16.71,
+      "preferredStudents": [],
+      "group": null
+    },
+    {
+      "studentNumber": "S004",
+      "name": "آناهیتا الهی مهر",
+      "nationalCode": "26425955",
+      "mbti": null,
+      "learningStyle": null,
+      "ams": null,
+      "cooperative": null,
+      "grade": 19.05,
+      "preferredStudents": [],
+      "group": null
+    },
+    {
+      "studentNumber": "S005",
+      "name": "مریم امیری",
+      "nationalCode": "980093341",
+      "mbti": null,
+      "learningStyle": null,
+      "ams": null,
+      "cooperative": null,
+      "grade": 18.87,
+      "preferredStudents": [],
+      "group": null
+    },
+    {
+      "studentNumber": "S006",
+      "name": "باران برادران رحیمی",
+      "nationalCode": "960043985",
+      "mbti": null,
+      "learningStyle": null,
+      "ams": null,
+      "cooperative": null,
+      "grade": 19.07,
+      "preferredStudents": [],
+      "group": null
+    },
+    {
+      "studentNumber": "S007",
+      "name": "مایسا بصیری امین",
+      "nationalCode": "960089446",
+      "mbti": null,
+      "learningStyle": null,
+      "ams": null,
+      "cooperative": null,
+      "grade": 19.33,
+      "preferredStudents": [],
+      "group": null
+    },
+    {
+      "studentNumber": "S008",
+      "name": "دلارام ثابت عهد",
+      "nationalCode": "960125620",
+      "mbti": null,
+      "learningStyle": null,
+      "ams": null,
+      "cooperative": null,
+      "grade": 19.55,
+      "preferredStudents": [],
+      "group": null
+    },
+    {
+      "studentNumber": "S009",
+      "name": "شاینا جان محمدی",
+      "nationalCode": "960068041",
+      "mbti": null,
+      "learningStyle": null,
+      "ams": null,
+      "cooperative": null,
+      "grade": 19.47,
+      "preferredStudents": [],
+      "group": null
+    },
+    {
+      "studentNumber": "S010",
+      "name": "آیدا جوان",
+      "nationalCode": "95112313",
+      "mbti": null,
+      "learningStyle": null,
+      "ams": null,
+      "cooperative": null,
+      "grade": 16.77,
+      "preferredStudents": [],
+      "group": null
+    },
+    {
+      "studentNumber": "S011",
+      "name": "سارینا حاجی آبادی",
+      "nationalCode": "999216751",
+      "mbti": null,
+      "learningStyle": null,
+      "ams": null,
+      "cooperative": null,
+      "grade": 16.08,
+      "preferredStudents": [],
+      "group": null
+    },
+    {
+      "studentNumber": "S012",
+      "name": "هستی حسن پور جوان",
+      "nationalCode": "960074198",
+      "mbti": null,
+      "learningStyle": null,
+      "ams": null,
+      "cooperative": null,
+      "grade": 19.55,
+      "preferredStudents": [],
+      "group": null
+    },
+    {
+      "studentNumber": "S013",
+      "name": "فاطمه حسینی",
+      "nationalCode": "2400410259",
+      "mbti": null,
+      "learningStyle": null,
+      "ams": null,
+      "cooperative": null,
+      "grade": 19.07,
+      "preferredStudents": [],
+      "group": null
+    },
+    {
+      "studentNumber": "S014",
+      "name": "غزل خسروی",
+      "nationalCode": "929995767",
+      "mbti": null,
+      "learningStyle": null,
+      "ams": null,
+      "cooperative": null,
+      "grade": 15.05,
+      "preferredStudents": [],
+      "group": null
+    },
+    {
+      "studentNumber": "S015",
+      "name": "غزل ذباح",
+      "nationalCode": "960110186",
+      "mbti": null,
+      "learningStyle": null,
+      "ams": null,
+      "cooperative": null,
+      "grade": 19.25,
+      "preferredStudents": [],
+      "group": null
+    },
+    {
+      "studentNumber": "S016",
+      "name": "نازنین زهرا راشکی",
+      "nationalCode": "3661516087",
+      "mbti": null,
+      "learningStyle": null,
+      "ams": null,
+      "cooperative": null,
+      "grade": 17.02,
+      "preferredStudents": [],
+      "group": null
+    },
+    {
+      "studentNumber": "S017",
+      "name": "ویونا روح نواز",
+      "nationalCode": "314458344",
+      "mbti": null,
+      "learningStyle": null,
+      "ams": null,
+      "cooperative": null,
+      "grade": 18.7,
+      "preferredStudents": [],
+      "group": null
+    },
+    {
+      "studentNumber": "S018",
+      "name": "روژینا سعادتی",
+      "nationalCode": "960051023",
+      "mbti": null,
+      "learningStyle": null,
+      "ams": null,
+      "cooperative": null,
+      "grade": 18.2,
+      "preferredStudents": [],
+      "group": null
+    },
+    {
+      "studentNumber": "S019",
+      "name": "ترنم شعبانی",
+      "nationalCode": "950083100",
+      "mbti": null,
+      "learningStyle": null,
+      "ams": null,
+      "cooperative": null,
+      "grade": 19.37,
+      "preferredStudents": [],
+      "group": null
+    },
+    {
+      "studentNumber": "S020",
+      "name": "ستایش شفابخش",
+      "nationalCode": "960126899",
+      "mbti": null,
+      "learningStyle": null,
+      "ams": null,
+      "cooperative": null,
+      "grade": 18.36,
+      "preferredStudents": [],
+      "group": null
+    },
+    {
+      "studentNumber": "S021",
+      "name": "فاطمه شیرزادخان",
+      "nationalCode": "980120756",
+      "mbti": null,
+      "learningStyle": null,
+      "ams": null,
+      "cooperative": null,
+      "grade": 19.33,
+      "preferredStudents": [],
+      "group": null
+    },
+    {
+      "studentNumber": "S022",
+      "name": "آرزو علی جوی",
+      "nationalCode": "960054316",
+      "mbti": null,
+      "learningStyle": null,
+      "ams": null,
+      "cooperative": null,
+      "grade": 17.98,
+      "preferredStudents": [],
+      "group": null
+    },
+    {
+      "studentNumber": "S023",
+      "name": "آناهیتا قنادزاده",
+      "nationalCode": "960089836",
+      "mbti": null,
+      "learningStyle": null,
+      "ams": null,
+      "cooperative": null,
+      "grade": 18.84,
+      "preferredStudents": [],
+      "group": null
+    },
+    {
+      "studentNumber": "S024",
+      "name": "نیایش کارگر",
+      "nationalCode": "929956052",
+      "mbti": null,
+      "learningStyle": null,
+      "ams": null,
+      "cooperative": null,
+      "grade": 17.74,
+      "preferredStudents": [],
+      "group": null
+    },
+    {
+      "studentNumber": "S025",
+      "name": "باران کبریایی نسب",
+      "nationalCode": "980119588",
+      "mbti": null,
+      "learningStyle": null,
+      "ams": null,
+      "cooperative": null,
+      "grade": 18.82,
+      "preferredStudents": [],
+      "group": null
+    },
+    {
+      "studentNumber": "S026",
+      "name": "زینب کیانوش",
+      "nationalCode": "970072678",
+      "mbti": null,
+      "learningStyle": null,
+      "ams": null,
+      "cooperative": null,
+      "grade": 18.58,
+      "preferredStudents": [],
+      "group": null
+    },
+    {
+      "studentNumber": "S027",
+      "name": "ستایش محمودی",
+      "nationalCode": "929904656",
+      "mbti": null,
+      "learningStyle": null,
+      "ams": null,
+      "cooperative": null,
+      "grade": 19.33,
+      "preferredStudents": [],
+      "group": null
+    },
+    {
+      "studentNumber": "S028",
+      "name": "ستایش مشتاقی",
+      "nationalCode": "361282217",
+      "mbti": null,
+      "learningStyle": null,
+      "ams": null,
+      "cooperative": null,
+      "grade": 17.67,
+      "preferredStudents": [],
+      "group": null
+    },
+    {
+      "studentNumber": "S029",
+      "name": "مهتاب معلمی",
+      "nationalCode": "960070265",
+      "mbti": null,
+      "learningStyle": null,
+      "ams": null,
+      "cooperative": null,
+      "grade": 18.56,
+      "preferredStudents": [],
+      "group": null
+    },
+    {
+      "studentNumber": "S030",
+      "name": "باران وحدتی",
+      "nationalCode": "929916913",
+      "mbti": null,
+      "learningStyle": null,
+      "ams": null,
+      "cooperative": null,
+      "grade": 15.02,
+      "preferredStudents": [],
+      "group": null
+    }
+  ],
+  "courseName": "ریاضی",
+  "groupingComplete": true,
+  "groupingResults": {
+    "groups": [
+      {
+        "groupNumber": 1,
+        "students": [
+          "S001",
+          "S003",
+          "S004"
+        ],
+        "reasoning": "این گروه شامل ۲ درون‌گرا (S001, S003) و ۱ برون‌گرا (S004) است. همچنین این گروه شامل یک دانش‌آموز با سبک یادگیری بصری (S001)، یک دانش‌آموز با سبک یادگیری حرکتی (S003) و یک دانش‌آموز با سبک یادگیری بصوتی (S004) است. همچنین نمرات این دانش‌آموزان به ترتیب 18.77، 16.71 و 19.05 است که یک توازن خوب بین نمرات دانش‌آموزان در این گروه ایجاد می‌کند."
+      },
+      {
+        "groupNumber": 2,
+        "students": [
+          "S002"
+        ],
+        "reasoning": "این گروه شامل یک برون‌گرا (S002) است که با توجه به داده‌های ورودی تنها دانش‌آموز برون‌گرا در داده‌ها است. همچنین این دانش‌آموز با سبک یادگیری بصوتی و نمره 17.28 انتخاب شده است."
+      }
+    ]
+  },
+  "resultsVisible": false,
+  "teacherPassword": "teacher123"
+}

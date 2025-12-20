@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ورود اطلاعات دانش‌آموزان - TalimBot</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Top Navigation -->
+    <nav style="background-color: #1b6e6e;" class="shadow-lg border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center text-white text-xl font-bold">
+                        T
+                    </div>
+                    <span class="text-xl font-bold text-white">TalimBot</span>
+                </div>
+
+                <!-- Navigation Links -->
+                <div class="hidden md:flex items-center gap-6">
+                    <a href="teacher-dashboard.html" class="text-white/80 hover:text-white font-medium transition-colors">
+                        داشبورد
+                    </a>
+                    <a href="student-data.html" class="text-white font-bold border-b-2 border-white pb-1">
+                        ورود اطلاعات
+                    </a>
+                </div>
+
+                <!-- User Menu -->
+                <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-2">
+                        <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+                            <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"/>
+                                <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1z"/>
+                            </svg>
+                        </div>
+                        <div class="hidden md:block text-right">
+                            <p class="text-sm font-bold text-white">معلم</p>
+                            <p class="text-xs text-white/80">مدیر سیستم</p>
+                        </div>
+                    </div>
+                    <a href="login.html" class="text-white/80 hover:text-red-300 transition-colors" title="خروج">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 py-8">
+        <!-- Page Header -->
+        <div class="mb-8">
+            <h1 class="text-4xl font-bold text-gray-900 mb-2 flex items-center gap-3">
+                <svg class="w-10 h-10 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+                ورود اطلاعات دانش‌آموزان
+            </h1>
+            <p class="text-gray-600">اطلاعات دانش‌آموزان را وارد کنید تا در سیستم گروه‌بندی ثبت شود</p>
+        </div>
+
+        <!-- Instructions Card -->
+        <div class="bg-blue-50 border-r-4 border-blue-500 rounded-lg p-4 mb-6">
+            <div class="flex items-start gap-3">
+                <svg class="w-6 h-6 text-blue-600 flex-shrink-0 mt-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                </svg>
+                <div>
+                    <h3 class="font-bold text-blue-900 mb-1">راهنما</h3>
+                    <p class="text-blue-800 text-sm">نام، شماره دانش‌آموزی و نمره را وارد کنید. پس از هر ورودی روی "ذخیره" کلیک کنید تا فرم خالی شود و آماده ورود دانش‌آموز بعدی باشد.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div class="bg-white rounded-xl shadow-md p-6 border-r-4 border-purple-500">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 text-sm mb-1">تعداد دانش‌آموزان ثبت شده</p>
+                        <p class="text-3xl font-bold text-purple-600" id="totalCount">0</p>
+                    </div>
+                    <div class="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center">
+                        <svg class="w-8 h-8 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-md p-6 border-r-4 border-green-500">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 text-sm mb-1">آخرین دانش‌آموز ثبت شده</p>
+                        <p class="text-xl font-bold text-green-600" id="lastStudent">-</p>
+                    </div>
+                    <div class="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center">
+                        <svg class="w-8 h-8 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Entry Form Card -->
+        <div class="bg-white rounded-xl shadow-md overflow-hidden mb-8">
+            <div class="p-6 border-b border-gray-200 bg-gradient-to-r from-purple-600 to-blue-600">
+                <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z"/>
+                    </svg>
+                    افزودن دانش‌آموز
+                </h2>
+            </div>
+            
+            <div class="p-8">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-2">نام دانش‌آموز</label>
+                        <input 
+                            type="text" 
+                            id="studentName"
+                            placeholder="نام و نام خانوادگی..."
+                            class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:ring-2 focus:ring-purple-200 focus:outline-none transition-all"
+                        >
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-2">شماره دانش‌آموزی</label>
+                        <input 
+                            type="text" 
+                            id="studentId"
+                            placeholder="شماره دانش‌آموز..."
+                            class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:ring-2 focus:ring-purple-200 focus:outline-none transition-all"
+                        >
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-2">نمره (از 20)</label>
+                        <input 
+                            type="number" 
+                            id="studentGrade"
+                            min="0" 
+                            max="20" 
+                            placeholder="نمره..."
+                            class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:ring-2 focus:ring-purple-200 focus:outline-none transition-all text-center"
+                        >
+                    </div>
+                </div>
+
+                <div class="flex justify-center">
+                    <button onclick="addStudent()" class="w-1/3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white py-3 px-8 rounded-lg font-bold transition-all shadow-md hover:shadow-lg transform hover:scale-105 flex items-center justify-center gap-2">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M7.707 10.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V6h5a2 2 0 012 2v7a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2h5v5.586l-1.293-1.293zM9 4a1 1 0 012 0v2H9V4z"/>
+                        </svg>
+                        ذخیره
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Students List -->
+        <div class="bg-white rounded-xl shadow-md overflow-hidden">
+            <div class="p-6 border-b border-gray-200 bg-gradient-to-r from-purple-600 to-blue-600">
+                <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/>
+                    </svg>
+                    لیست دانش‌آموزان ذخیره شده
+                </h2>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="px-6 py-4 text-center text-sm font-bold text-gray-700 border-b">ردیف</th>
+                            <th class="px-6 py-4 text-center text-sm font-bold text-gray-700 border-b">شماره دانش‌آموز</th>
+                            <th class="px-6 py-4 text-center text-sm font-bold text-gray-700 border-b">نام دانش‌آموز</th>
+                            <th class="px-6 py-4 text-center text-sm font-bold text-gray-700 border-b">نمره (از 20)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentsList">
+                        <tr>
+                            <td colspan="4" class="px-6 py-12 text-center text-gray-400">
+                                <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
+                                </svg>
+                                <p class="text-lg font-medium">هنوز دانش‌آموزی ثبت نشده است</p>
+                                <p class="text-sm mt-2">از فرم بالا برای افزودن دانش‌آموز استفاده کنید</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Help Card -->
+        <!-- <div class="mt-6 bg-purple-50 rounded-xl shadow-md p-6">
+            <h3 class="text-lg font-bold text-purple-900 mb-3 flex items-center gap-2">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/>
+                </svg>
+                سؤالات متداول
+            </h3>
+            <div class="space-y-2 text-sm text-purple-800">
+                <p><strong>چگونه نمره وارد کنم؟</strong> نمره باید عدد بین 0 تا 20 باشد.</p>
+                <p><strong>آیا باید همه فیلدها پر شود؟</strong> بله، برای گروه‌بندی موفق، اطلاعات همه دانش‌آموزان لازم است.</p>
+                <p><strong>اطلاعات کجا ذخیره می‌شود؟</strong> در نسخه فعلی در مرورگر ذخیره می‌شود. در آینده به پایگاه داده متصل خواهد شد.</p>
+            </div>
+        </div> -->
+
+        <!-- Footer -->
+        <footer class="bg-white border-t border-gray-200 mt-16">
+            <div class="max-w-7xl mx-auto px-4 py-6">
+                <div class="text-center text-gray-600 text-sm">
+                    <p class="mb-2">نسخه 1.0.0 | آبان 1404</p>
+                    <p>© ۲۰۲۵ TalimBot - سیستم گروه‌بندی هوشمند دانش آموزان</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="../assets/js/data.js"></script>
+    <script>
+        // Check authentication on page load
+        function checkAuth() {
+            const isTeacher = sessionStorage.getItem('isTeacher');
+            if (isTeacher !== 'true') {
+                window.location.href = 'login.html';
+            }
+        }
+
+        function logout() {
+            sessionStorage.clear();
+            window.location.href = 'login.html';
+        }
+
+        // Add student function
+        function addStudent() {
+            const name = document.getElementById('studentName').value.trim();
+            const studentId = document.getElementById('studentId').value.trim().toUpperCase();
+            const grade = document.getElementById('studentGrade').value.trim();
+
+            // Validation
+            if (!name) {
+                alert('لطفاً نام دانش‌آموز را وارد کنید');
+                return;
+            }
+            if (!studentId) {
+                alert('لطفاً شماره دانش‌آموزی را وارد کنید');
+                return;
+            }
+            if (!grade) {
+                alert('لطفاً نمره را وارد کنید');
+                return;
+            }
+            if (parseFloat(grade) < 0 || parseFloat(grade) > 20) {
+                alert('نمره باید بین 0 تا 20 باشد');
+                return;
+            }
+
+            // Validate student number format (must be S followed by numbers)
+            if (!/^S\d+$/.test(studentId)) {
+                alert('⚠️ فرمت شماره دانش‌آموزی نادرست است!\n\nشماره باید با حرف S شروع شود و بعد از آن فقط اعداد باشد\n\nمثال‌های صحیح: S001, S031, S100');
+                return;
+            }
+
+            // Try to add student using data.js function
+            const result = addNewStudent(studentId, name, parseFloat(grade));
+
+            if (result.success) {
+                // Clear form
+                document.getElementById('studentName').value = '';
+                document.getElementById('studentId').value = '';
+                document.getElementById('studentGrade').value = '';
+
+                // Focus back on student ID field
+                document.getElementById('studentId').focus();
+
+                // Update the list display
+                updateStudentsList();
+
+                // Update stats
+                updateStats();
+
+                // Show success message
+                showToast('✅ دانش‌آموز با موفقیت اضافه شد!\n' + name + ' (' + studentId + ')');
+            } else {
+                alert('❌ ' + result.message);
+            }
+        }
+
+        // Update students list display
+        function updateStudentsList() {
+            const tbody = document.getElementById('studentsList');
+            const allStudents = getAllStudents();
+            
+            if (allStudents.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="4" class="px-6 py-12 text-center text-gray-400">
+                            <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
+                            </svg>
+                            <p class="text-lg font-medium">هنوز دانش‌آموزی ثبت نشده است</p>
+                            <p class="text-sm mt-2">از فرم بالا برای افزودن دانش‌آموز استفاده کنید</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = '';
+            allStudents.forEach((student, index) => {
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-gray-50 transition-colors';
+                row.innerHTML = `
+                    <td class="px-6 py-4 text-center border-b border-gray-200">
+                        <span class="font-bold text-gray-700">${index + 1}</span>
+                    </td>
+                    <td class="px-6 py-4 text-center border-b border-gray-200">
+                        <span class="text-gray-600 font-medium">${student.studentNumber}</span>
+                    </td>
+                    <td class="px-6 py-4 text-center border-b border-gray-200">
+                        <span class="text-gray-900 font-medium">${student.name}</span>
+                    </td>
+                    <td class="px-6 py-4 text-center border-b border-gray-200">
+                        <span class="text-purple-600 font-bold">${student.grade}</span>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Update statistics
+        function updateStats() {
+            const allStudents = getAllStudents();
+            document.getElementById('totalCount').textContent = allStudents.length;
+            if (allStudents.length > 0) {
+                document.getElementById('lastStudent').textContent = allStudents[allStudents.length - 1].name;
+            } else {
+                document.getElementById('lastStudent').textContent = '-';
+            }
+        }
+
+        // Show success toast
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'fixed top-20 left-1/2 -translate-x-1/2 bg-green-500 text-white px-6 py-4 rounded-xl shadow-2xl z-50 flex items-center gap-2';
+            toast.innerHTML = `
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                </svg>
+                <span class="font-semibold">${message}</span>
+            `;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        // Initialize on page load
+        window.onload = () => {
+            checkAuth();
+            updateStudentsList();
+            updateStats();
+        };
+    </script>
+</body>
+</html>
+
+

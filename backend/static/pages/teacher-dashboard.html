@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <!-- Version: 2.1 - Fixed VARK 4 options + field preservation -->
+    <title>داشبورد معلم - سیستم گروه‌بندی</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Vazirmatn', system-ui, -apple-system, sans-serif;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'vazir': ['Vazirmatn', 'system-ui', '-apple-system', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-vazir bg-gray-50">
+    <div class="min-h-screen">
+        <!-- Top Navigation -->
+        <nav style="background-color: #1b6e6e;" class="shadow-lg border-b border-gray-200 sticky top-0 z-50">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="flex justify-between items-center h-16">
+                    <!-- Logo -->
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center text-white text-xl font-bold">
+                            T
+                        </div>
+                        <span class="text-xl font-bold text-white">TalimBot</span>
+                    </div>
+
+                    <!-- Navigation Links -->
+                    <div class="hidden md:flex items-center gap-6">
+                        <a href="teacher-dashboard.html" class="text-white font-bold border-b-2 border-white pb-1">
+                            داشبورد
+                        </a>
+                        <!-- student-data.html removed - all 30 students already exist -->
+                    </div>
+
+                    <!-- User Menu -->
+                    <div class="flex items-center gap-4">
+                        <div class="flex items-center gap-2">
+                            <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+                                <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"/>
+                                    <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1z"/>
+                                </svg>
+                            </div>
+                            <div class="hidden md:block text-right">
+                                <p class="text-sm font-bold text-white">معلم</p>
+                                <p class="text-xs text-white/80">مدیر سیستم</p>
+                            </div>
+                        </div>
+                        <a href="login.html" class="text-white/80 hover:text-red-300 transition-colors" title="خروج">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Page Header -->
+        <div class="max-w-7xl mx-auto px-4 py-8">
+            <div class="mb-8">
+                <h1 class="text-4xl font-bold text-gray-900 mb-2 flex items-center gap-3">
+                    <svg class="w-10 h-10 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"/>
+                        <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1z"/>
+                    </svg>
+                    پنل مدیریت معلم
+                </h1>
+                <p class="text-gray-600">مدیریت گروه‌بندی دانش آموزان</p>
+            </div>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 py-6 space-y-6">
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-white rounded-2xl shadow-lg p-6 border-r-4 border-blue-500">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-600 text-sm font-medium">تعداد کل دانش آموزان</p>
+                            <p class="text-3xl font-bold text-gray-900 mt-2" id="totalStudents">30</p>
+                        </div>
+                        <div class="bg-blue-100 p-4 rounded-xl">
+                            <svg class="w-8 h-8 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-lg p-6 border-r-4 border-green-500">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-600 text-sm font-medium">پروفایل‌های تکمیل شده</p>
+                            <p class="text-3xl font-bold text-gray-900 mt-2" id="studentsWithInfo">0</p>
+                        </div>
+                        <div class="bg-green-100 p-4 rounded-xl">
+                            <svg class="w-8 h-8 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-lg p-6 border-r-4 border-orange-500">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-600 text-sm font-medium">دانش آموزان گروه‌بندی شده</p>
+                            <p class="text-3xl font-bold text-gray-900 mt-2" id="studentsGrouped">0</p>
+                        </div>
+                        <div class="bg-orange-100 p-4 rounded-xl">
+                            <svg class="w-8 h-8 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Course & Status -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Course Name -->
+                <div class="bg-white rounded-2xl shadow-lg p-6">
+                    <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                        <svg class="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z"/>
+                        </svg>
+                        اطلاعات درس
+                    </h2>
+                    <form id="courseForm" onsubmit="saveCourse(event)" class="space-y-4">
+                        <div>
+                            <label for="courseNameInput" class="block text-sm font-semibold text-gray-700 mb-2">نام درس</label>
+                            <input 
+                                type="text" 
+                                id="courseNameInput" 
+                                placeholder="مثال: ریاضی، ادبیات، علوم"
+                                class="w-full p-3 border-2 border-gray-300 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all"
+                                required
+                            >
+                        </div>
+                        <div class="flex justify-center">
+                            <button type="submit" class="w-full md:w-1/3 bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition-colors flex items-center justify-center gap-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
+                                </svg>
+                                ذخیره نام درس
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Grouping Status -->
+                <div class="bg-white rounded-2xl shadow-lg p-6">
+                    <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                        <svg class="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/>
+                        </svg>
+                        وضعیت گروه‌بندی
+                    </h2>
+                    <div id="statusInfo" class="fade-in">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Grouping Actions -->
+            <div class="bg-white rounded-2xl shadow-lg p-6">
+                <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                    <span class="text-2xl">⚙️</span>
+                    عملیات گروه‌بندی
+                </h2>
+                <div class="space-y-4">
+                    <div class="bg-blue-50 border border-blue-200 rounded-xl p-4">
+                        <h4 class="font-bold text-blue-900 mb-2 flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                            </svg>
+                            آماده گروه‌بندی
+                        </h4>
+                        <p class="text-gray-700 mb-2">
+                            <strong class="text-2xl text-blue-600" id="readyStudentsCount">0</strong> 
+                            دانش آموز آماده گروه‌بندی هستند.
+                        </p>
+                        <div class="text-sm text-gray-700 space-y-1 bg-white rounded-lg p-3 mt-2">
+                            <p class="font-semibold text-gray-800 mb-2">🎯 معیارهای گروه‌بندی علمی (سنین 15-16 سال، به ترتیب اولویت):</p>
+                            <div class="mr-4 space-y-1">
+                                <p><strong>1. بهینه‌سازی ZPD ناحیه رشد نزدیک (30%):</strong> ترکیب نمرات بالا با متوسط برای یادگیری همیاری و آموزش همتا-به-همتا</p>
+                                <p><strong>2. تکمیل MBTI (25%):</strong> ترکیب شخصیت‌های مکمل (نه مشابه) - مثال: ENFP+INTJ، ENTP+INFJ - تعادل درون‌گرا/برون‌گرا</p>
+                                <p><strong>3. تنوع VARK (20%):</strong> ترکیب سبک‌های یادگیری دیداری، شنیداری، خواندن/نوشتن و حرکتی در هر گروه</p>
+                                <p><strong>4. انگیزش تحصیلی - AMS (15%):</strong> توزیع دانش‌آموزان با انگیزه بالا (>140) در گروه‌ها برای الهام‌بخشی</p>
+                                <p><strong>5. مهارت همکاری (10%):</strong> دانش‌آموزان با مهارت همکاری بالا (>88) به عنوان تسهیل‌گر اجتماعی</p>
+                                <p><strong>6. ویژگی‌های درس:</strong> <span id="courseNameInCriteria">تطبیق با نیازهای درس (ریاضی: تفکر منطقی، ادبیات: احساسی)</span></p>
+                                <p class="text-orange-600 italic mt-1"><strong>7. ترجیحات دانش‌آموزان (5%):</strong> فقط اگر با معیارهای بالا تضاد نداشته باشد - نوجوانان از کار با افراد جدید رشد می‌کنند</p>
+                            </div>
+                        </div>
+                        <div class="bg-amber-50 border border-amber-300 rounded-lg p-3 mt-3">
+                            <p class="text-sm text-amber-800 font-medium">
+                                ⚡ نکته مهم: فقط دانش‌آموزانی که MBTI و سبک یادگیری خود را تکمیل کرده‌اند در گروه‌بندی شرکت می‌کنند. 
+                                اگر دانش‌آموزی دوستان خود را انتخاب کرده ولی آن دوستان فرم را تکمیل نکرده‌اند، این انتخاب در نظر گرفته نمی‌شود.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div id="groupingActions" class="flex flex-col items-center gap-4">
+                        <button onclick="startGrouping()" id="startGroupingBtn"
+                                class="w-full md:w-1/3 bg-gradient-to-r from-green-600 to-green-700 text-white py-4 rounded-xl font-bold text-lg hover:from-green-700 hover:to-green-800 transform hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg flex items-center justify-center gap-2">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                            </svg>
+                            شروع فرآیند گروه‌بندی
+                        </button>
+                        
+                        <button onclick="handleResetGrouping()" id="resetGroupingBtn"
+                                class="hidden w-full md:w-1/3 bg-gray-600 text-white py-4 rounded-xl font-bold text-lg hover:bg-gray-700 transform hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                            </svg>
+                            بازنشانی گروه‌بندی
+                        </button>
+                        <button onclick="toggleVisibility()" id="toggleVisibilityBtn"
+                                class="hidden w-full md:w-1/3 bg-blue-600 text-white py-4 rounded-xl font-bold text-lg hover:bg-blue-700 transform hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                            </svg>
+                            <span id="visibilityButtonText">نمایش نتایج به دانش‌آموزان</span>
+                        </button>
+                    </div>
+
+                    <div id="groupingProgress" class="hidden text-center py-8">
+                        <div class="inline-block w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-4"></div>
+                        <p class="text-gray-700 font-semibold">در حال پردازش الگوریتم گروه‌بندی...</p>
+                        <p class="text-sm text-gray-500 mt-2">ممکن است چند لحظه طول بکشد</p>
+                    </div>
+
+                    <div id="groupingSuccess" class="hidden bg-green-50 border-r-4 border-green-500 p-4 rounded-lg">
+                        <p class="text-green-700 font-semibold flex items-center gap-2">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                            گروه‌بندی با موفقیت انجام شد! دانش آموزان اکنون می‌توانند گروه‌های خود را مشاهده کنند.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Students List -->
+            <div class="bg-white rounded-2xl shadow-lg p-6">
+                <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                    <span class="text-2xl">📋</span>
+                    لیست تمام دانش آموزان
+                </h2>
+                
+                <div class="text-center mb-4 flex gap-3 justify-center">
+                    <button onclick="toggleStudentList()" id="toggleStudentBtn"
+                            class="bg-blue-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-blue-700 transition-colors">
+                        نمایش لیست دانش آموزان
+                    </button>
+                    <button onclick="downloadAllData()" 
+                            class="bg-green-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-green-700 transition-colors">
+                        📥 دانلود همه داده‌ها (JSON)
+                    </button>
+                </div>
+                <div id="studentListContainer" class="hidden">
+                    <div class="overflow-x-auto rounded-xl border border-gray-200">
+                        <table class="w-full">
+                            <thead class="bg-gray-100 sticky top-0">
+                                <tr class="border-b-2 border-blue-500">
+                                    <th class="p-3 text-right text-sm font-bold text-gray-700">شماره دانش آموز</th>
+                                    <th class="p-3 text-right text-sm font-bold text-gray-700">نام</th>
+                                    <th class="p-3 text-center text-sm font-bold text-gray-700">MBTI</th>
+                                    <th class="p-3 text-center text-sm font-bold text-gray-700">سبک یادگیری</th>
+                                    <th class="p-3 text-center text-sm font-bold text-gray-700">AMS</th>
+                                    <th class="p-3 text-center text-sm font-bold text-gray-700">Cooperative</th>
+                                    <th class="p-3 text-center text-sm font-bold text-gray-700">معدل</th>
+                                    <th class="p-3 text-center text-sm font-bold text-gray-700">گروه</th>
+                                    <th class="p-3 text-center text-sm font-bold text-gray-700">عملیات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="studentTableBody">
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reset Data Section -->
+            <div class="bg-white rounded-2xl shadow-lg p-6 border-r-4 border-orange-500">
+                <div class="flex items-start gap-4">
+                    <div class="flex-shrink-0">
+                        <svg class="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                        </svg>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-lg font-bold text-gray-900 mb-2">بازنشانی داده‌ها</h3>
+                        <p class="text-sm text-gray-600 mb-4">
+                            این عملیات تمام اطلاعات سیستم را به حالت اولیه بازمی‌گرداند. همه 30 دانش‌آموز (S001 تا S030) بازگردانده می‌شوند، 
+                            تمام تغییرات و گروه‌بندی‌ها حذف می‌شوند و سیستم به حالت پیش‌فرض برمی‌گردد.
+                        </p>
+                        <button onclick="resetAllData()" class="bg-orange-600 hover:bg-orange-700 text-white py-3 px-6 rounded-xl font-semibold transition-colors flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                            </svg>
+                            بازنشانی داده‌ها
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Test Data Generator Section -->
+            <div class="bg-white rounded-2xl shadow-lg p-6 border-r-4 border-green-500">
+                <div class="flex items-start gap-4">
+                    <div class="flex-shrink-0">
+                        <svg class="w-8 h-8 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM14 11a1 1 0 011 1v1h1a1 1 0 110 2h-1v1a1 1 0 11-2 0v-1h-1a1 1 0 110-2h1v-1a1 1 0 011-1z"/>
+                        </svg>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-lg font-bold text-gray-900 mb-2">پر کردن داده‌های تست</h3>
+                        <p class="text-sm text-gray-600 mb-4">
+                            برای تست سیستم گروه‌بندی، 10 دانش‌آموز اول (S001 تا S010) را با داده‌های کامل و تصادفی پر کنید. 
+                            این شامل MBTI، VARK، نمرات AMS و Cooperative و ترجیحات دانش‌آموزی می‌شود.
+                        </p>
+                        <div class="flex gap-3">
+                            <button onclick="fillTestData()" id="fillTestDataBtn" class="bg-green-600 hover:bg-green-700 text-white py-3 px-6 rounded-xl font-semibold transition-colors flex items-center gap-2">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM14 11a1 1 0 011 1v1h1a1 1 0 110 2h-1v1a1 1 0 11-2 0v-1h-1a1 1 0 110-2h1v-1a1 1 0 011-1z"/>
+                                </svg>
+                                پر کردن داده‌های تست
+                            </button>
+                            <div id="testDataProgress" class="hidden flex items-center gap-2 text-sm text-gray-600">
+                                <div class="inline-block w-5 h-5 border-2 border-green-600 border-t-transparent rounded-full animate-spin"></div>
+                                <span id="testDataProgressText">در حال پردازش...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Import JSON Data Section -->
+            <div class="bg-white rounded-2xl shadow-lg p-6 border-r-4 border-blue-500">
+                <div class="flex items-start gap-4">
+                    <div class="flex-shrink-0">
+                        <svg class="w-8 h-8 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-lg font-bold text-gray-900 mb-2">وارد کردن داده‌ها از JSON</h3>
+                        <p class="text-sm text-gray-600 mb-4">
+                            یک فایل JSON حاوی اطلاعات دانش‌آموزان را انتخاب کنید. فایل باید شامل آرایه‌ای از دانش‌آموزان با فیلدهای 
+                            mbti، learningStyle، ams، cooperative و preferredStudents باشد.
+                        </p>
+                        <div class="flex gap-3 items-center">
+                            <input type="file" id="jsonFileInput" accept=".json" class="hidden">
+                            <button onclick="document.getElementById('jsonFileInput').click()" class="bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-xl font-semibold transition-colors flex items-center gap-2">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                انتخاب فایل JSON
+                            </button>
+                            <span id="jsonFileName" class="text-sm text-gray-600"></span>
+                            <div id="jsonImportProgress" class="hidden flex items-center gap-2 text-sm text-gray-600">
+                                <div class="inline-block w-5 h-5 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                                <span id="jsonImportProgressText">در حال پردازش...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Group Results -->
+            <div id="groupResultsCard" class="hidden bg-white rounded-2xl shadow-lg p-6">
+                <h2 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                    <svg class="w-6 h-6 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
+                    </svg>
+                    نتایج گروه‌بندی
+                </h2>
+                <div id="groupResultsList" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <footer class="bg-white border-t border-gray-200 mt-16">
+                <div class="max-w-7xl mx-auto px-4 py-6">
+                    <div class="text-center text-gray-600 text-sm">
+                        <p class="mb-2">نسخه 1.0.0 | آبان 1404</p>
+                        <p>© ۲۰۲۵ TalimBot - سیستم گروه‌بندی هوشمند دانش آموزان</p>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <script src="../assets/js/data.js"></script>
+    <script src="../assets/js/grouping.js"></script>
+    <script>
+        let isStudentListVisible = false;
+
+        // Check if user is authenticated as teacher
+        function checkAuth() {
+            const isTeacher = sessionStorage.getItem('isTeacher');
+            if (!isTeacher) {
+                window.location.href = 'login.html';
+                return false;
+            }
+            return true;
+        }
+
+        async function loadDashboard() {
+            if (!checkAuth()) return;
+
+            const stats = await getGroupingStats();
+            const courseName = await getCourseName();
+
+            document.getElementById('totalStudents').textContent = stats.totalStudents;
+            document.getElementById('studentsWithInfo').textContent = stats.studentsWithCompleteInfo;
+            document.getElementById('studentsGrouped').textContent = stats.studentsGrouped;
+            document.getElementById('readyStudentsCount').textContent = stats.studentsWithCompleteInfo;
+
+            if (courseName) {
+                document.getElementById('courseNameInput').value = courseName;
+                // Update the course name in the criteria description
+                const courseNameEl = document.getElementById('courseNameInCriteria');
+                if (courseNameEl) {
+                    courseNameEl.textContent = `انتخاب بر اساس نیاز درس "${courseName}"`;
+                }
+            }
+
+            await updateStatus(stats);
+            await updateStudentTable();
+        }
+
+        async function updateStatus(stats) {
+            const statusDiv = document.getElementById('statusInfo');
+            const toggleBtn = document.getElementById('toggleVisibilityBtn');
+            const toggleBtnText = document.getElementById('visibilityButtonText');
+
+            if (stats.groupingComplete) {
+                statusDiv.innerHTML = `
+                    <div class="bg-green-50 border-r-4 border-green-500 p-4 rounded-lg">
+                        <p class="font-bold text-green-700 mb-1 flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                            گروه‌بندی انجام شد!
+                        </p>
+                        <p class="text-sm text-green-600">${stats.studentsGrouped} دانش آموز در ${stats.groups.length} گروه برای درس <strong>${stats.courseName}</strong></p>
+                        ${stats.resultsVisible ? 
+                            '<p class="text-sm text-blue-600 mt-2">✅ نتایج برای دانش‌آموزان نمایش داده می‌شود</p>' : 
+                            '<p class="text-sm text-orange-600 mt-2">⚠️ نتایج هنوز برای دانش‌آموزان مخفی است</p>'}
+                    </div>
+                `;
+                document.getElementById('startGroupingBtn').classList.add('hidden');
+                document.getElementById('resetGroupingBtn').classList.remove('hidden');
+                toggleBtn.classList.remove('hidden');
+                
+                // Update button text based on visibility status
+                if (stats.resultsVisible) {
+                    toggleBtnText.textContent = 'مخفی کردن نتایج از دانش‌آموزان';
+                    toggleBtn.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+                    toggleBtn.classList.add('bg-orange-600', 'hover:bg-orange-700');
+                } else {
+                    toggleBtnText.textContent = 'نمایش نتایج به دانش‌آموزان';
+                    toggleBtn.classList.remove('bg-orange-600', 'hover:bg-orange-700');
+                    toggleBtn.classList.add('bg-blue-600', 'hover:bg-blue-700');
+                }
+                
+                await displayGroupResults(stats.groups);
+            } else {
+                statusDiv.innerHTML = `
+                    <div class="bg-blue-50 border-r-4 border-blue-500 p-4 rounded-lg">
+                        <p class="font-bold text-blue-700 mb-1">ℹ️ آماده گروه‌بندی</p>
+                        <p class="text-sm text-blue-600">${stats.studentsWithCompleteInfo} دانش آموز آماده هستند</p>
+                    </div>
+                `;
+                document.getElementById('startGroupingBtn').classList.remove('hidden');
+                document.getElementById('resetGroupingBtn').classList.add('hidden');
+                toggleBtn.classList.add('hidden');
+                document.getElementById('groupResultsCard').classList.add('hidden');
+            }
+        }
+
+        function saveCourse(event) {
+            event.preventDefault();
+            const courseName = document.getElementById('courseNameInput').value.trim();
+            
+            if (courseName) {
+                setCourseName(courseName);
+                // Update the display immediately
+                const courseNameEl = document.getElementById('courseNameInCriteria');
+                if (courseNameEl) {
+                    courseNameEl.textContent = `انتخاب بر اساس نیاز درس "${courseName}"`;
+                }
+                alert('نام درس با موفقیت ذخیره شد!');
+            }
+        }
+
+        async function startGrouping() {
+            const courseName = document.getElementById('courseNameInput').value.trim();
+            
+            if (!courseName) {
+                alert('لطفاً ابتدا نام درس را وارد کنید!');
+                return;
+            }
+
+            const stats = await getGroupingStats();
+            
+            if (stats.studentsWithCompleteInfo === 0) {
+                alert('هیچ دانش آموزی پروفایل خود را تکمیل نکرده است!');
+                return;
+            }
+
+            const confirmed = confirm(`آماده گروه‌بندی ${stats.studentsWithCompleteInfo} دانش آموز؟`);
+            if (!confirmed) return;
+
+            document.getElementById('groupingActions').classList.add('hidden');
+            document.getElementById('groupingProgress').classList.remove('hidden');
+
+            try {
+                const groupingResult = await performGrouping(courseName);
+                
+                document.getElementById('groupingProgress').classList.add('hidden');
+                document.getElementById('groupingSuccess').classList.remove('hidden');
+                document.getElementById('groupingActions').classList.remove('hidden');
+                
+                setTimeout(() => {
+                    loadDashboard();
+                }, 2000);
+                
+            } catch (error) {
+                let errorMsg = 'خطا در گروه‌بندی: ' + error.message;
+                alert(errorMsg);
+                
+                document.getElementById('groupingProgress').classList.add('hidden');
+                document.getElementById('groupingActions').classList.remove('hidden');
+            }
+        }
+
+        async function handleResetGrouping() {
+            if (!confirm('آیا مطمئن هستید که می‌خواهید گروه‌بندی را بازنشانی کنید؟\n\n✓ گروه‌بندی‌های فعلی حذف می‌شوند\n✓ اطلاعات دانش‌آموزان (MBTI، VARK، AMS، Cooperative) حفظ می‌مانند\n✓ می‌توانید دوباره گروه‌بندی انجام دهید')) return;
+            
+            const password = prompt('لطفاً رمز عبور استاد را وارد کنید:');
+            if (!password) return;
+
+            try {
+                await resetGrouping(password);
+                // Hide success message
+                document.getElementById('groupingSuccess').classList.add('hidden');
+                alert('✅ گروه‌بندی با موفقیت بازنشانی شد!\n\nاطلاعات دانش‌آموزان حفظ شده و می‌توانید دوباره گروه‌بندی کنید.');
+                loadDashboard();
+            } catch (error) {
+                if (error.message.includes('Invalid password')) {
+                    alert('رمز عبور اشتباه است!');
+                } else {
+                    alert('خطا در بازنشانی: ' + error.message);
+                }
+            }
+        }
+
+        async function toggleVisibility() {
+            const password = prompt('لطفاً رمز عبور استاد را وارد کنید:');
+            if (!password) return;
+
+            try {
+                const result = await toggleResultsVisibility(password);
+                if (result.success) {
+                    const message = result.resultsVisible ? 
+                        'نتایج اکنون برای دانش‌آموزان قابل مشاهده است! ✅' : 
+                        'نتایج از دانش‌آموزان مخفی شد! 🔒';
+                    alert(message);
+                    loadDashboard();
+                } else {
+                    alert('خطا در تغییر وضعیت نمایش');
+                }
+            } catch (error) {
+                if (error.message.includes('Invalid password')) {
+                    alert('رمز عبور اشتباه است!');
+                } else {
+                    alert('خطا: ' + error.message);
+                }
+            }
+        }
+
+        async function displayGroupResults(groups) {
+            const card = document.getElementById('groupResultsCard');
+            const container = document.getElementById('groupResultsList');
+            
+            card.classList.remove('hidden');
+            container.innerHTML = '';
+
+            const allStudents = await getAllStudents();
+
+            groups.forEach(group => {
+                const groupDiv = document.createElement('div');
+                groupDiv.className = 'bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-300 rounded-xl p-4';
+                
+                let html = `<h3 class="font-bold text-blue-900 mb-3">گروه ${group.groupNumber} (${group.students.length} نفر)</h3>`;
+                
+                if (group.reasoning) {
+                    html += `<p class="text-xs text-blue-700 mb-3 italic">${group.reasoning}</p>`;
+                }
+                
+                html += '<ul class="space-y-1">';
+                group.students.forEach(studentNumber => {
+                    const student = allStudents.find(s => s.studentNumber === studentNumber);
+                    if (student) {
+                        html += `<li class="text-sm text-gray-700">👤 ${student.name} (${student.mbti || 'N/A'})</li>`;
+                    }
+                });
+                html += '</ul>';
+                
+                groupDiv.innerHTML = html;
+                container.appendChild(groupDiv);
+            });
+        }
+
+        function toggleStudentList() {
+            isStudentListVisible = !isStudentListVisible;
+            const container = document.getElementById('studentListContainer');
+            const btn = document.getElementById('toggleStudentBtn');
+            
+            container.classList.toggle('hidden', !isStudentListVisible);
+            btn.textContent = isStudentListVisible ? 'مخفی کردن لیست' : 'نمایش لیست دانش آموزان';
+        }
+
+        async function updateStudentTable() {
+            const tbody = document.getElementById('studentTableBody');
+            tbody.innerHTML = '';
+
+            const allStudents = await getAllStudents();
+
+            allStudents.forEach((student, index) => {
+                const tr = document.createElement('tr');
+                tr.className = index % 2 === 0 ? 'bg-gray-50' : 'bg-white';
+                tr.id = `row-${student.studentNumber}`;
+                tr.innerHTML = `
+                    <td class="p-3 text-sm">${student.studentNumber}</td>
+                    <td class="p-3 text-sm">
+                        <span class="view-mode">${student.name}</span>
+                        <input type="text" class="edit-mode hidden w-full p-1 border border-gray-300 rounded" value="${student.name}">
+                    </td>
+                    <td class="p-3 text-sm text-center">
+                        <span class="view-mode">${student.mbti || '-'}</span>
+                        <select class="edit-mode hidden w-full p-1 border border-gray-300 rounded text-xs">
+                            <option value="">انتخاب کنید</option>
+                            <option value="INTJ" ${student.mbti === 'INTJ' ? 'selected' : ''}>INTJ</option>
+                            <option value="INTP" ${student.mbti === 'INTP' ? 'selected' : ''}>INTP</option>
+                            <option value="ENTJ" ${student.mbti === 'ENTJ' ? 'selected' : ''}>ENTJ</option>
+                            <option value="ENTP" ${student.mbti === 'ENTP' ? 'selected' : ''}>ENTP</option>
+                            <option value="INFJ" ${student.mbti === 'INFJ' ? 'selected' : ''}>INFJ</option>
+                            <option value="INFP" ${student.mbti === 'INFP' ? 'selected' : ''}>INFP</option>
+                            <option value="ENFJ" ${student.mbti === 'ENFJ' ? 'selected' : ''}>ENFJ</option>
+                            <option value="ENFP" ${student.mbti === 'ENFP' ? 'selected' : ''}>ENFP</option>
+                            <option value="ISTJ" ${student.mbti === 'ISTJ' ? 'selected' : ''}>ISTJ</option>
+                            <option value="ISFJ" ${student.mbti === 'ISFJ' ? 'selected' : ''}>ISFJ</option>
+                            <option value="ESTJ" ${student.mbti === 'ESTJ' ? 'selected' : ''}>ESTJ</option>
+                            <option value="ESFJ" ${student.mbti === 'ESFJ' ? 'selected' : ''}>ESFJ</option>
+                            <option value="ISTP" ${student.mbti === 'ISTP' ? 'selected' : ''}>ISTP</option>
+                            <option value="ISFP" ${student.mbti === 'ISFP' ? 'selected' : ''}>ISFP</option>
+                            <option value="ESTP" ${student.mbti === 'ESTP' ? 'selected' : ''}>ESTP</option>
+                            <option value="ESFP" ${student.mbti === 'ESFP' ? 'selected' : ''}>ESFP</option>
+                        </select>
+                    </td>
+                    <td class="p-3 text-sm text-center">
+                        <span class="view-mode">${student.learningStyle || '-'}</span>
+                        <select class="edit-mode hidden w-full p-1 border border-gray-300 rounded text-xs">
+                            <option value="">انتخاب کنید</option>
+                            <option value="Visual" ${student.learningStyle === 'Visual' ? 'selected' : ''}>Visual (دیداری)</option>
+                            <option value="Aural" ${student.learningStyle === 'Aural' ? 'selected' : ''}>Aural (شنیداری)</option>
+                            <option value="Read/Write" ${student.learningStyle === 'Read/Write' ? 'selected' : ''}>Read/Write (خواندن/نوشتن)</option>
+                            <option value="Kinesthetic" ${student.learningStyle === 'Kinesthetic' ? 'selected' : ''}>Kinesthetic (حرکتی/عملی)</option>
+                        </select>
+                    </td>
+                    <td class="p-3 text-sm text-center">
+                        <span class="view-mode">${student.ams || '-'}</span>
+                        <input type="text" class="edit-mode hidden w-full p-1 border border-gray-300 rounded text-xs" value="${student.ams || ''}">
+                    </td>
+                    <td class="p-3 text-sm text-center">
+                        <span class="view-mode">${student.cooperative || '-'}</span>
+                        <input type="text" class="edit-mode hidden w-full p-1 border border-gray-300 rounded text-xs" value="${student.cooperative || ''}">
+                    </td>
+                    <td class="p-3 text-sm text-center font-semibold">
+                        <span class="view-mode">${student.grade}</span>
+                        <input type="number" class="edit-mode hidden w-20 p-1 border border-gray-300 rounded text-center" value="${student.grade}" min="0" max="20" step="0.1">
+                    </td>
+                    <td class="p-3 text-sm text-center text-blue-600 font-bold">${student.group || '-'}</td>
+                    <td class="p-3 text-center">
+                        <div class="flex gap-1 justify-center">
+                            <button onclick="editStudent('${student.studentNumber}')" class="view-mode bg-blue-600 text-white px-3 py-1 rounded-lg text-xs hover:bg-blue-700">
+                                ✏️ ویرایش
+                            </button>
+                            <button onclick="saveStudent('${student.studentNumber}')" class="edit-mode hidden bg-green-600 text-white px-3 py-1 rounded-lg text-xs hover:bg-green-700">
+                                ✓ ذخیره
+                            </button>
+                            <button onclick="cancelEdit('${student.studentNumber}')" class="edit-mode hidden bg-gray-600 text-white px-3 py-1 rounded-lg text-xs hover:bg-gray-700">
+                                ✕ لغو
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function editStudent(studentNumber) {
+            const row = document.getElementById(`row-${studentNumber}`);
+            row.querySelectorAll('.view-mode').forEach(el => el.classList.add('hidden'));
+            row.querySelectorAll('.edit-mode').forEach(el => el.classList.remove('hidden'));
+        }
+
+        function cancelEdit(studentNumber) {
+            const row = document.getElementById(`row-${studentNumber}`);
+            row.querySelectorAll('.edit-mode').forEach(el => el.classList.add('hidden'));
+            row.querySelectorAll('.view-mode').forEach(el => el.classList.remove('hidden'));
+        }
+
+        async function saveStudent(studentNumber) {
+            const row = document.getElementById(`row-${studentNumber}`);
+            
+            // Get specific input elements - order matters!
+            const textInputs = row.querySelectorAll('input[type="text"]');
+            const nameInput = textInputs[0];  // First text input is name
+            const amsInput = textInputs[1];   // Second text input is AMS
+            const cooperativeInput = textInputs[2];  // Third text input is cooperative
+            const mbtiSelect = row.querySelectorAll('select')[0];
+            const learningStyleSelect = row.querySelectorAll('select')[1];
+            const gradeInput = row.querySelector('input[type="number"]');
+            
+            // Build update object with only non-empty values to prevent overwriting existing data
+            const updatedData = {};
+            
+            const name = nameInput.value.trim();
+            const mbti = mbtiSelect.value;
+            const learningStyle = learningStyleSelect.value;
+            const ams = amsInput.value.trim();
+            const cooperative = cooperativeInput.value.trim();
+            const grade = gradeInput.value;
+
+            // Name is required
+            if (!name) {
+                alert('نام نمی‌تواند خالی باشد!');
+                return;
+            }
+            updatedData.name = name;
+
+            // Only include other fields if they have values
+            if (mbti) updatedData.mbti = mbti;
+            if (learningStyle) updatedData.learningStyle = learningStyle;
+            if (ams) updatedData.ams = ams;
+            if (cooperative) updatedData.cooperative = cooperative;
+            if (grade) updatedData.grade = parseFloat(grade);
+
+            // Update student using the proper data.js function
+            const success = await updateStudent(studentNumber, updatedData);
+            
+            if (success) {
+                alert('اطلاعات دانش آموز با موفقیت ذخیره شد!');
+                cancelEdit(studentNumber);
+                await updateStudentTable();
+                await loadDashboard();
+            } else {
+                alert('خطا در ذخیره اطلاعات!');
+            }
+        }
+
+        async function resetAllData() {
+            if (!confirm('⚠️ هشدار: این عملیات غیرقابل بازگشت است!\n\nآیا مطمئن هستید که می‌خواهید تمام داده‌ها را بازنشانی کنید؟\n\n• همه اطلاعات دانش‌آموزان (MBTI، VARK، AMS، Cooperative، ترجیحات) حذف می‌شوند\n• تمام گروه‌بندی‌ها پاک می‌شوند\n• نام درس حذف می‌شود\n• سیستم به حالت اولیه برمی‌گردد')) {
+                return;
+            }
+
+            const password = prompt('لطفاً رمز عبور استاد را وارد کنید:');
+            if (!password) return;
+
+            try {
+                const result = await fetch(`${API_BASE_URL}/data/reset-all`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password })
+                });
+                
+                if (!result.ok) {
+                    const error = await result.json();
+                    throw new Error(error.detail || 'Reset failed');
+                }
+                
+                alert('✅ تمام داده‌ها با موفقیت بازنشانی شدند!\n\nسیستم به حالت اولیه بازگردانده شد.');
+                window.location.reload();
+            } catch (error) {
+                if (error.message.includes('Invalid password') || error.message.includes('403')) {
+                    alert('رمز عبور اشتباه است!');
+                } else {
+                    alert('خطا در بازنشانی: ' + error.message);
+                }
+            }
+        }
+
+        // Test data generator
+        async function fillTestData() {
+            if (!confirm('آیا می‌خواهید 10 دانش‌آموز اول (S001 تا S010) را با داده‌های تست کامل پر کنید؟\n\nاین عملیات داده‌های موجود این دانش‌آموزان را جایگزین می‌کند.')) {
+                return;
+            }
+
+            const MBTI_TYPES = ['INTJ', 'INTP', 'ENTJ', 'ENTP', 'INFJ', 'INFP', 'ENFJ', 'ENFP', 
+                               'ISTJ', 'ISFJ', 'ESTJ', 'ESFJ', 'ISTP', 'ISFP', 'ESTP', 'ESFP'];
+            const VARK_STYLES = ['Visual', 'Aural', 'Read/Write', 'Kinesthetic'];
+
+            function randomChoice(arr) {
+                return arr[Math.floor(Math.random() * arr.length)];
+            }
+
+            function randomInt(min, max) {
+                return Math.floor(Math.random() * (max - min + 1)) + min;
+            }
+
+            const btn = document.getElementById('fillTestDataBtn');
+            const progress = document.getElementById('testDataProgress');
+            const progressText = document.getElementById('testDataProgressText');
+
+            btn.disabled = true;
+            progress.classList.remove('hidden');
+
+            let successCount = 0;
+
+            try {
+                for (let i = 1; i <= 10; i++) {
+                    const studentId = `S${String(i).padStart(3, '0')}`;
+                    progressText.textContent = `در حال پردازش ${studentId}... (${successCount}/10)`;
+
+                    // Generate 2-3 random preferred students (excluding self)
+                    const allStudents = Array.from({length: 30}, (_, idx) => `S${String(idx + 1).padStart(3, '0')}`);
+                    const otherStudents = allStudents.filter(s => s !== studentId);
+                    const numPreferred = randomInt(2, 3);
+                    const preferred = [];
+                    for (let j = 0; j < numPreferred; j++) {
+                        const randomStudent = otherStudents[Math.floor(Math.random() * otherStudents.length)];
+                        if (!preferred.includes(randomStudent)) {
+                            preferred.push(randomStudent);
+                        }
+                    }
+
+                    const testData = {
+                        mbti: randomChoice(MBTI_TYPES),
+                        learningStyle: randomChoice(VARK_STYLES),
+                        ams: String(randomInt(80, 180)),
+                        cooperative: String(randomInt(60, 120)),
+                        preferredStudents: preferred
+                    };
+
+                    await updateStudent(studentId, testData);
+                    successCount++;
+                    progressText.textContent = `${studentId} انجام شد... (${successCount}/10)`;
+                }
+
+                progress.classList.add('hidden');
+                alert(`✅ موفق!\n\n10 دانش‌آموز با داده‌های تست پر شدند:\n• MBTI: تصادفی از 16 نوع\n• VARK: ${VARK_STYLES.join(', ')}\n• AMS: 80-180\n• Cooperative: 60-120\n• ترجیحات: 2-3 دانش‌آموز برای هر نفر\n\nحالا می‌توانید گروه‌بندی را تست کنید!`);
+                window.location.reload();
+            } catch (error) {
+                progress.classList.add('hidden');
+                alert('خطا در پر کردن داده‌های تست: ' + error.message);
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        // JSON file import handler
+        document.getElementById('jsonFileInput').addEventListener('change', async function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            document.getElementById('jsonFileName').textContent = file.name;
+
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                try {
+                    const jsonData = JSON.parse(e.target.result);
+                    
+                    // Accept both formats: direct array or {students: [...]} object
+                    let studentsArray;
+                    if (Array.isArray(jsonData)) {
+                        studentsArray = jsonData;
+                    } else if (jsonData.students && Array.isArray(jsonData.students)) {
+                        studentsArray = jsonData.students;
+                    } else {
+                        alert('خطا: فایل JSON باید شامل آرایه students باشد یا یک آرایه مستقیم از دانش‌آموزان.');
+                        return;
+                    }
+
+                    if (!confirm(`آیا می‌خواهید داده‌های ${studentsArray.length} دانش‌آموز را از فایل JSON وارد کنید؟\n\nاین عملیات داده‌های موجود را جایگزین می‌کند.`)) {
+                        return;
+                    }
+
+                    const progress = document.getElementById('jsonImportProgress');
+                    const progressText = document.getElementById('jsonImportProgressText');
+                    
+                    progress.classList.remove('hidden');
+                    let successCount = 0;
+                    let errorCount = 0;
+
+                    for (const student of studentsArray) {
+                        // Validate required field
+                        if (!student.studentNumber) {
+                            console.warn('Student missing studentNumber, skipping:', student);
+                            errorCount++;
+                            continue;
+                        }
+
+                        progressText.textContent = `در حال پردازش ${student.studentNumber}... (${successCount}/${studentsArray.length})`;
+
+                        // Build update object with only provided fields
+                        const updates = {};
+                        if (student.mbti) updates.mbti = student.mbti;
+                        if (student.learningStyle) updates.learningStyle = student.learningStyle;
+                        if (student.ams !== undefined && student.ams !== null) updates.ams = String(student.ams);
+                        if (student.cooperative !== undefined && student.cooperative !== null) updates.cooperative = String(student.cooperative);
+                        if (student.preferredStudents) updates.preferredStudents = student.preferredStudents;
+
+                        try {
+                            await updateStudent(student.studentNumber, updates);
+                            successCount++;
+                        } catch (error) {
+                            console.error(`Error updating ${student.studentNumber}:`, error);
+                            errorCount++;
+                        }
+                    }
+
+                    progress.classList.add('hidden');
+                    
+                    let message = `✅ موفق!\n\n${successCount} دانش‌آموز با موفقیت به‌روزرسانی شدند.`;
+                    if (errorCount > 0) {
+                        message += `\n\n⚠️ ${errorCount} دانش‌آموز دارای خطا بودند.`;
+                    }
+                    
+                    alert(message);
+                    window.location.reload();
+
+                } catch (error) {
+                    alert('خطا در خواندن فایل JSON: ' + error.message);
+                    document.getElementById('jsonImportProgress').classList.add('hidden');
+                }
+            };
+
+            reader.readAsText(file);
+        });
+
+        async function downloadAllData() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/data/backup`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch data');
+                }
+                
+                const data = await response.json();
+                
+                // Create a blob with the JSON data
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                
+                // Create download link
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                
+                // Generate filename with current date/time
+                const now = new Date();
+                const dateStr = now.toISOString().replace(/[:.]/g, '-').slice(0, -5);
+                a.download = `talimbot-data-${dateStr}.json`;
+                
+                // Trigger download
+                document.body.appendChild(a);
+                a.click();
+                
+                // Cleanup
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+                
+                alert('✅ داده‌ها با موفقیت دانلود شد!');
+            } catch (error) {
+                console.error('Download error:', error);
+                alert('❌ خطا در دانلود داده‌ها: ' + error.message);
+            }
+        }
+
+        window.onload = loadDashboard;
+    </script>
+</body>
+</html>
+
+

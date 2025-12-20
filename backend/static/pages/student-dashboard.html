@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <!-- Version: 2.1 - Fixed AMS/Cooperative field preservation -->
+    <title>داشبورد دانش آموز - سیستم گروه‌بندی</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Vazirmatn', system-ui, -apple-system, sans-serif;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'vazir': ['Vazirmatn', 'system-ui', '-apple-system', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-vazir bg-gray-50 min-h-screen">
+    <!-- Top Navigation Bar -->
+    <nav style="background-color: #1b6e6e;" class="shadow-lg border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo/Brand -->
+                <div class="flex items-center gap-3">
+                    <div class="bg-white/20 w-10 h-10 rounded-lg flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-white">TalimBot</h1>
+                        <p class="text-xs text-white/80">سیستم گروه‌بندی هوشمند</p>
+                    </div>
+                </div>
+
+                <!-- Navigation Links -->
+                <div class="hidden md:flex items-center gap-1">
+                    <a href="#" class="px-4 py-2 text-white bg-white/20 rounded-lg font-semibold border-b-2 border-white">
+                        <span class="flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
+                            </svg>
+                            داشبورد
+                        </span>
+                    </a>
+                    <a href="group-view.html" class="px-4 py-2 text-white/80 hover:text-white hover:bg-white/10 rounded-lg font-medium transition-colors">
+                        <span class="flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                            </svg>
+                            گروه من
+                        </span>
+                    </a>
+                </div>
+
+                <!-- User Menu -->
+                <div class="flex items-center gap-4">
+                    <div class="hidden md:block text-left">
+                        <p class="text-sm font-semibold text-white" id="navStudentName">دانش آموز</p>
+                        <p class="text-xs text-white/80" id="navStudentNumber">-</p>
+                    </div>
+                    <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-white font-bold">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+                        </svg>
+                    </div>
+                    <a href="login.html" class="text-white/80 hover:text-red-300 transition-colors" title="خروج">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 py-8">
+        <!-- Welcome Section -->
+        <div class="mb-8">
+            <h2 class="text-3xl font-bold text-gray-900 mb-2" id="studentName"></h2>
+            <p class="text-gray-600 mb-3">لطفاً تمام تست‌های شخصیتی خود را تکمیل کنید و اطلاعات را ذخیره نمایید.</p>
+            <div class="bg-blue-50 border-r-4 border-blue-500 p-4 rounded-lg">
+                <p class="text-sm text-blue-800"><strong>💡 چرا این اطلاعات مهم است؟</strong> سیستم گروه‌بندی هوشمند از روش‌های علمی مانند <strong>ZPD</strong>، تکمیل شخصیتی MBTI، و تنوع سبک یادگیری VARK برای ساخت بهترین تیم‌ها استفاده می‌کند. هر چه اطلاعات کامل‌تری وارد کنید، گروه‌بندی دقیق‌تری خواهید داشت!</p>
+            </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white rounded-xl shadow-md p-6 border-r-4 border-blue-500">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 text-sm font-medium">شماره دانش‌آموزی</p>
+                        <p class="text-2xl font-bold text-gray-900 mt-1" id="studentNumber">-</p>
+                    </div>
+                    <div class="bg-blue-100 p-3 rounded-lg">
+                        <svg class="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-md p-6 border-r-4 border-green-500">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 text-sm font-medium">تست‌های تکمیل شده</p>
+                        <p class="text-2xl font-bold text-gray-900 mt-1"><span id="testsCompleted">0</span> / 4</p>
+                    </div>
+                    <div class="bg-green-100 p-3 rounded-lg">
+                        <svg class="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-md p-6 border-r-4 border-orange-500">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 text-sm font-medium">معدل</p>
+                        <p class="text-2xl font-bold text-gray-900 mt-1" id="gradeDisplay">-</p>
+                    </div>
+                    <div class="bg-orange-100 p-3 rounded-lg">
+                        <svg class="w-6 h-6 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tests Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <!-- MBTI Test -->
+            <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow p-6">
+                <div class="flex items-start gap-4 mb-4">
+                    <div class="bg-gradient-to-br from-blue-500 to-blue-600 p-4 rounded-xl flex-shrink-0">
+                        <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z"/>
+                        </svg>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-bold text-lg text-gray-900 mb-2">MBTI - تیپ شخصیتی</h3>
+                        <p class="text-sm text-gray-600 leading-relaxed">شناخت تیپ شخصیتی برای ایجاد تعادل در گروه و درک نقاط قوت شما</p>
+                    </div>
+                </div>
+                <div class="space-y-3">
+                    <div class="flex gap-2">
+                        <a href="https://www.16personalities.com/fa" target="_blank" 
+                           class="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-3 px-4 rounded-lg transition-colors text-center flex items-center justify-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
+                            </svg>
+                            شروع آزمون
+                        </a>
+                        <a href="https://www.16personalities.com/" target="_blank" 
+                           class="bg-blue-100 hover:bg-blue-200 text-blue-700 text-sm font-semibold py-3 px-4 rounded-lg transition-colors">
+                            EN
+                        </a>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">نتیجه تست</label>
+                        <select id="mbtiInput" 
+                               class="w-full border-2 border-gray-300 rounded-lg py-3 px-4 focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition-all">
+                            <option value="">انتخاب کنید...</option>
+                            <option value="INTJ">INTJ</option>
+                            <option value="INTP">INTP</option>
+                            <option value="ENTJ">ENTJ</option>
+                            <option value="ENTP">ENTP</option>
+                            <option value="INFJ">INFJ</option>
+                            <option value="INFP">INFP</option>
+                            <option value="ENFJ">ENFJ</option>
+                            <option value="ENFP">ENFP</option>
+                            <option value="ISTJ">ISTJ</option>
+                            <option value="ISFJ">ISFJ</option>
+                            <option value="ESTJ">ESTJ</option>
+                            <option value="ESFJ">ESFJ</option>
+                            <option value="ISTP">ISTP</option>
+                            <option value="ISFP">ISFP</option>
+                            <option value="ESTP">ESTP</option>
+                            <option value="ESFP">ESFP</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VARK Test -->
+            <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow p-6">
+                <div class="flex items-start gap-4 mb-4">
+                    <div class="bg-gradient-to-br from-green-500 to-green-600 p-4 rounded-xl flex-shrink-0">
+                        <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v3.57A22.952 22.952 0 0110 13a22.95 22.95 0 01-8-1.43V8a2 2 0 012-2h2zm2-1a1 1 0 011-1h2a1 1 0 011 1v1H8V5zm1 5a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1z" clip-rule="evenodd"/>
+                            <path d="M2 13.692V16a2 2 0 002 2h12a2 2 0 002-2v-2.308A24.974 24.974 0 0110 15c-2.796 0-5.487-.46-8-1.308z"/>
+                        </svg>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-bold text-lg text-gray-900 mb-2">VARK - سبک یادگیری</h3>
+                        <p class="text-sm text-gray-600 leading-relaxed">شناسایی سبک یادگیری شما (دیداری، شنیداری، خواندن/نوشتن، حرکتی)</p>
+                    </div>
+                </div>
+                <div class="space-y-3">
+                    <div class="flex gap-2">
+                        <a href="https://vark-learn.com/%D9%BE%D8%B1%D8%B3%D8%B4%D9%86%D8%A7%D9%85%D9%87-%D9%88%D8%A7%D8%B1%DA%A9/" target="_blank" 
+                           class="flex-1 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold py-3 px-4 rounded-lg transition-colors text-center flex items-center justify-center gap-2">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M3 6a3 3 0 013-3h10a1 1 0 01.8 1.6L14.25 8l2.55 3.4A1 1 0 0116 13H6a1 1 0 00-1 1v3a1 1 0 11-2 0V6z" clip-rule="evenodd"/>
+                            </svg>
+                            شروع آزمون
+                        </a>
+                        <a href="https://vark-learn.com/the-vark-questionnaire/" target="_blank" 
+                           class="bg-green-100 hover:bg-green-200 text-green-700 text-sm font-semibold py-3 px-4 rounded-lg transition-colors">
+                            EN
+                        </a>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">نتیجه تست</label>
+                        <select id="varkInput" 
+                               class="w-full border-2 border-gray-300 rounded-lg py-3 px-4 focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition-all">
+                            <option value="">انتخاب کنید...</option>
+                            <option value="Visual">Visual (دیداری)</option>
+                            <option value="Aural">Aural (شنیداری)</option>
+                            <option value="Read/Write">Read/Write (خواندن/نوشتن)</option>
+                            <option value="Kinesthetic">Kinesthetic (حرکتی/عملی)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AMS Test -->
+            <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow p-6">
+                <div class="flex items-start gap-4 mb-4">
+                    <div class="bg-gradient-to-br from-orange-500 to-orange-600 p-4 rounded-xl flex-shrink-0">
+                        <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/>
+                        </svg>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-bold text-lg text-gray-900 mb-2">AMS - انگیزش تحصیلی</h3>
+                        <p class="text-sm text-gray-600 leading-relaxed">سنجش انگیزه درونی و بیرونی برای یادگیری و پیشرفت تحصیلی</p>
+                    </div>
+                </div>
+                <div class="space-y-3">
+                    <div class="flex gap-2">
+                        <a href="ams-questionnaire.html" 
+                           class="flex-1 bg-orange-600 hover:bg-orange-700 text-white text-sm font-semibold py-3 px-4 rounded-lg transition-colors text-center flex items-center justify-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                            شروع آزمون (28 سؤال)
+                        </a>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">نمره کل (از 196)</label>
+                        <input type="number" id="amsInput" placeholder="نمره را پس از تکمیل آزمون وارد کنید" min="0" max="196"
+                               class="w-full text-center text-lg font-bold border-2 border-gray-300 rounded-lg py-3 px-4 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 outline-none transition-all">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cooperative Test -->
+            <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow p-6">
+                <div class="flex items-start gap-4 mb-4">
+                    <div class="bg-gradient-to-br from-purple-500 to-purple-600 p-4 rounded-xl flex-shrink-0">
+                        <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"/>
+                        </svg>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-bold text-lg text-gray-900 mb-2">توانایی همکاری</h3>
+                        <p class="text-sm text-gray-600 leading-relaxed">سنجش مهارت‌های کار گروهی، تعامل و همکاری با دیگران</p>
+                    </div>
+                </div>
+                <div class="space-y-3">
+                    <div class="flex gap-2">
+                        <a href="cooperative-questionnaire.html" 
+                           class="flex-1 bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold py-3 px-4 rounded-lg transition-colors text-center flex items-center justify-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                            شروع آزمون (25 سؤال)
+                        </a>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">نمره کل (از 125)</label>
+                        <input type="number" id="cooperativeInput" placeholder="نمره را پس از تکمیل آزمون وارد کنید" min="0" max="125"
+                               class="w-full text-center text-lg font-bold border-2 border-gray-300 rounded-lg py-3 px-4 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none transition-all">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Preferences Section -->
+        <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+            <div class="mb-6">
+                <h3 class="font-bold text-xl text-gray-900 mb-2 flex items-center gap-2">
+                    <svg class="w-6 h-6 text-gray-700" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"/>
+                    </svg>
+                    ترجیحات همگروهی
+                </h3>
+                <p class="text-gray-600">می‌توانید حداکثر 4 نفر از همکلاسی‌های خود را که دوست دارید در یک گروه باشید انتخاب کنید (اختیاری)</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mb-4" id="preferredStudentsCheckbox">
+                <!-- Populated by JS -->
+            </div>
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                <p class="text-sm text-blue-800 font-medium text-center" id="selectedCount">انتخاب شده: 0/4</p>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex flex-col items-center gap-4">
+            <button onclick="saveAllResults()" 
+                    class="w-full md:w-1/3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white py-4 px-6 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
+                </svg>
+                ذخیره تمام اطلاعات
+            </button>
+            <button onclick="viewGroup()" 
+                    class="w-full md:w-1/3 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white py-4 px-6 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"/>
+                </svg>
+                مشاهده گروه من
+            </button>
+        </div>
+    </div>
+
+    <!-- Success Toast -->
+    <div id="successToast" class="hidden fixed top-20 left-1/2 -translate-x-1/2 bg-green-500 text-white px-6 py-4 rounded-xl shadow-2xl z-50">
+        <div class="flex items-center gap-2">
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            <span class="font-semibold">اطلاعات با موفقیت ذخیره شد!</span>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200 mt-16">
+        <div class="max-w-7xl mx-auto px-4 py-6">
+            <div class="text-center text-gray-600 text-sm">
+                <p class="mb-2">نسخه 1.0.0 | آبان 1404</p>
+                <p>© ۲۰۲۵ TalimBot - سیستم گروه‌بندی هوشمند دانش آموزان</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../assets/js/data.js"></script>
+    <script>
+        let currentStudent = null;
+        let allStudents = [];
+
+        // Check if user is authenticated
+        function checkAuth() {
+            const studentNumber = sessionStorage.getItem('currentStudent');
+            if (!studentNumber) {
+                window.location.href = 'login.html';
+                return null;
+            }
+            return studentNumber;
+        }
+
+        async function loadStudentData() {
+            const studentNumber = checkAuth();
+            if (!studentNumber) return;
+
+            try {
+                currentStudent = await getStudent(studentNumber);
+                allStudents = await getAllStudents();
+
+                if (!currentStudent) {
+                    alert('دانش آموز یافت نشد');
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                // Update nav and page info with Persian name
+                const displayName = currentStudent.name || studentNumber;
+                document.getElementById('studentName').textContent = `خوش آمدید، ${displayName}`;
+                document.getElementById('navStudentName').textContent = displayName;
+                document.getElementById('studentNumber').textContent = currentStudent.studentNumber;
+                document.getElementById('navStudentNumber').textContent = currentStudent.studentNumber;
+                document.getElementById('gradeDisplay').textContent = currentStudent.grade.toFixed(2);
+
+                // Count completed tests
+                let testsCompleted = 0;
+                if (currentStudent.mbti) testsCompleted++;
+                if (currentStudent.learningStyle) testsCompleted++;
+                if (currentStudent.ams) testsCompleted++;
+                if (currentStudent.cooperative) testsCompleted++;
+                document.getElementById('testsCompleted').textContent = testsCompleted;
+
+                // Load existing data from backend
+                if (currentStudent.mbti) document.getElementById('mbtiInput').value = currentStudent.mbti;
+                if (currentStudent.learningStyle) document.getElementById('varkInput').value = currentStudent.learningStyle;
+                if (currentStudent.ams) document.getElementById('amsInput').value = currentStudent.ams;
+                if (currentStudent.cooperative) document.getElementById('cooperativeInput').value = currentStudent.cooperative;
+
+                // Check for scores from questionnaires in sessionStorage (takes priority)
+                const amsScore = sessionStorage.getItem('amsScore');
+                const cooperativeScore = sessionStorage.getItem('cooperativeScore');
+                
+                if (amsScore) {
+                    document.getElementById('amsInput').value = amsScore;
+                    sessionStorage.removeItem('amsScore');
+                }
+                
+                if (cooperativeScore) {
+                    document.getElementById('cooperativeInput').value = cooperativeScore;
+                    sessionStorage.removeItem('cooperativeScore');
+                }
+
+                // Restore any unsaved form data from sessionStorage (in case user navigated away without saving)
+                const unsavedMbti = sessionStorage.getItem('unsavedMbti');
+                const unsavedVark = sessionStorage.getItem('unsavedVark');
+                const unsavedAms = sessionStorage.getItem('unsavedAms');
+                const unsavedCooperative = sessionStorage.getItem('unsavedCooperative');
+                
+                if (unsavedMbti) {
+                    document.getElementById('mbtiInput').value = unsavedMbti;
+                    sessionStorage.removeItem('unsavedMbti');
+                }
+                
+                if (unsavedVark) {
+                    document.getElementById('varkInput').value = unsavedVark;
+                    sessionStorage.removeItem('unsavedVark');
+                }
+                
+                if (unsavedAms) {
+                    document.getElementById('amsInput').value = unsavedAms;
+                    sessionStorage.removeItem('unsavedAms');
+                }
+                
+                if (unsavedCooperative) {
+                    document.getElementById('cooperativeInput').value = unsavedCooperative;
+                    sessionStorage.removeItem('unsavedCooperative');
+                }
+
+                populatePreferredStudents();
+            } catch (error) {
+                console.error('Error loading student data:', error);
+                alert('خطا در بارگذاری اطلاعات. لطفاً دوباره تلاش کنید');
+            }
+        }
+
+        function populatePreferredStudents() {
+            const container = document.getElementById('preferredStudentsCheckbox');
+            container.innerHTML = '';
+
+            allStudents.forEach(student => {
+                if (student.studentNumber === currentStudent.studentNumber) return;
+
+                const div = document.createElement('div');
+                div.className = 'flex items-center gap-2 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.id = 'student_' + student.studentNumber;
+                checkbox.value = student.studentNumber;
+                checkbox.onchange = updateSelectedCount;
+                checkbox.className = 'w-5 h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500';
+
+                if (currentStudent.preferredStudents && currentStudent.preferredStudents.includes(student.studentNumber)) {
+                    checkbox.checked = true;
+                }
+
+                const label = document.createElement('label');
+                label.htmlFor = 'student_' + student.studentNumber;
+                label.textContent = `${student.name} (${student.studentNumber})`;
+                label.className = 'text-sm text-gray-700 cursor-pointer flex-1';
+
+                div.appendChild(checkbox);
+                div.appendChild(label);
+                container.appendChild(div);
+            });
+
+            updateSelectedCount();
+        }
+
+        function updateSelectedCount() {
+            const checkboxes = document.querySelectorAll('#preferredStudentsCheckbox input[type="checkbox"]:checked');
+            const count = checkboxes.length;
+            document.getElementById('selectedCount').textContent = `انتخاب شده: ${count}/4`;
+
+            const allCheckboxes = document.querySelectorAll('#preferredStudentsCheckbox input[type="checkbox"]');
+            allCheckboxes.forEach(cb => {
+                if (!cb.checked && count >= 4) {
+                    cb.disabled = true;
+                    cb.parentElement.classList.add('opacity-50');
+                } else {
+                    cb.disabled = false;
+                    cb.parentElement.classList.remove('opacity-50');
+                }
+            });
+        }
+
+        async function saveAllResults() {
+            const mbti = document.getElementById('mbtiInput').value.trim().toUpperCase();
+            const vark = document.getElementById('varkInput').value.trim();
+            const ams = document.getElementById('amsInput').value.trim();
+            const cooperative = document.getElementById('cooperativeInput').value.trim();
+
+            const checkboxes = document.querySelectorAll('#preferredStudentsCheckbox input[type="checkbox"]:checked');
+            const preferredStudents = Array.from(checkboxes).map(cb => cb.value);
+
+            // Build update object with only non-empty values to prevent overwriting existing data
+            const updates = {};
+            if (mbti) updates.mbti = mbti;
+            if (vark) updates.learningStyle = vark;
+            if (ams) updates.ams = ams;
+            if (cooperative) updates.cooperative = cooperative;
+            // Always update preferred students (can be empty array)
+            updates.preferredStudents = preferredStudents;
+
+            const success = await updateStudent(currentStudent.studentNumber, updates);
+
+            if (success) {
+                const toast = document.getElementById('successToast');
+                toast.classList.remove('hidden');
+                setTimeout(() => toast.classList.add('hidden'), 3000);
+                await loadStudentData();
+            } else {
+                alert('خطا در ذخیره اطلاعات!');
+            }
+        }
+
+        function viewGroup() {
+            window.location.href = 'group-view.html';
+        }
+
+        // Preserve unsaved form data when navigating to questionnaire pages
+        function saveFormState() {
+            const mbti = document.getElementById('mbtiInput').value.trim();
+            const vark = document.getElementById('varkInput').value.trim();
+            const ams = document.getElementById('amsInput').value.trim();
+            const cooperative = document.getElementById('cooperativeInput').value.trim();
+            
+            // Only save to sessionStorage if values exist
+            if (mbti) sessionStorage.setItem('unsavedMbti', mbti);
+            if (vark) sessionStorage.setItem('unsavedVark', vark);
+            if (ams) sessionStorage.setItem('unsavedAms', ams);
+            if (cooperative) sessionStorage.setItem('unsavedCooperative', cooperative);
+        }
+
+        // Add click listeners to questionnaire links to save form state
+        window.onload = function() {
+            loadStudentData();
+            
+            // Save form state when clicking on questionnaire links
+            const amsLink = document.querySelector('a[href="ams-questionnaire.html"]');
+            const cooperativeLink = document.querySelector('a[href="cooperative-questionnaire.html"]');
+            
+            if (amsLink) {
+                amsLink.addEventListener('click', saveFormState);
+            }
+            
+            if (cooperativeLink) {
+                cooperativeLink.addEventListener('click', saveFormState);
+            }
+        };
+    </script>
+</body>
+</html>
