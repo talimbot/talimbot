@@ -191,7 +191,7 @@ async def perform_grouping(request: GroupingRequest):
     if not api_key:
         raise HTTPException(
             status_code=500, 
-            detail="OpenRouter API key not configured. Please set OPENROUTER_API_KEY in Railway Variables tab"
+            detail="OpenRouter API key not configured. Please set OPENROUTER_API_KEY in your environment variables or hosting platform settings"
         )
     
     # Get students with complete info (mbti and learningStyle required)

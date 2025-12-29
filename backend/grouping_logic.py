@@ -108,15 +108,17 @@ STUDENT AGE CONTEXT (15-16 years - Adolescence):
 - Sensitivity to feedback from peers
 - Collaborative learning enhances engagement
 
-GROUPING FRAMEWORK - PRIORITY ORDER:
+GROUPING FRAMEWORK - HIERARCHY OF IMPORTANCE:
 
-1. **ZPD OPTIMIZATION (Zone of Proximal Development)** - 30%
+1. **PRIMARY DRIVER: ZPD OPTIMIZATION (Zone of Proximal Development)**
+   *This is the most critical psychological factor.*
    - Mix academic performance (grade field) to create ZPD scaffolding
    - Place high performers (معدل بالا) with medium performers for peer tutoring
    - Avoid grouping all high or all low performers together
    - Target: Each group should have grade variance of 1-2 points to maximize learning
 
-2. **MBTI COMPLEMENTARITY (NOT Similarity)** - 25%
+2. **SECONDARY DRIVER: MBTI COMPLEMENTARITY (NOT Similarity)**
+   *Use this to refine the groups created by ZPD.*
    Research-based MBTI pairings for adolescent teamwork:
    - ENFP + INTJ: Visionary creativity with strategic planning
    - ENTP + INFJ: Innovation meets deep insight and empathy
@@ -133,7 +135,8 @@ GROUPING FRAMEWORK - PRIORITY ORDER:
    - Mix N (Intuitive) with S (Sensing) for big-picture + detail focus
    - Combine J (Judging) with P (Perceiving) for structure + flexibility
 
-3. **VARK DIVERSITY (Learning Styles)** - 20%
+3. **TERTIARY DRIVER: VARK DIVERSITY (Learning Styles)**
+   *Ensure the group has "Full Coverage" of capabilities.*
    - Include different learning styles in each group:
      * Visual (دیداری): Diagrams, charts, spatial understanding
      * Aural (شنیداری): Discussions, verbal explanations
@@ -142,26 +145,28 @@ GROUPING FRAMEWORK - PRIORITY ORDER:
    - Diversity ensures multiple teaching approaches within group
    - Adolescents learn best when exposed to varied learning methods
 
-4. **ACADEMIC MOTIVATION (AMS Score)** - 15%
+4. **BALANCING FACTOR: ACADEMIC MOTIVATION (AMS Score)**
    - AMS field: Academic Motivation Scale (0-196)
    - Balance high and moderate motivation levels
    - High motivation students (>140) can inspire others
    - Avoid grouping all low-motivation (<100) students together
    - Target: Each group has at least one high-motivation member
 
-5. **COOPERATIVE LEARNING SKILLS** - 10%
+5. **SOCIAL GLUE: COOPERATIVE LEARNING SKILLS**
    - Cooperative field: Cooperation ability (0-125)
    - High cooperation students (>88) act as social facilitators
    - Mix cooperation levels for peer modeling
    - Students with strong cooperation skills help integrate introverts
 
-6. **COURSE-SPECIFIC REQUIREMENTS** - Based on "{course_name}":
+6. **CONTEXTUAL ADAPTATION: COURSE-SPECIFIC REQUIREMENTS**
+   Based on "{course_name}":
    - Math/Science: Prioritize T (Thinking) types, Visual/Kinesthetic learners
    - Literature/Humanities: Include F (Feeling) types, Read/Write learners
    - Projects/Labs: Need high Kinesthetic and ESTP/ISTP types
    - Discussion-based: Ensure Aural learners and E (Extrovert) types
 
-7. **STUDENT PREFERENCES** - 5% (Secondary consideration)
+7. **TIE-BREAKER: STUDENT PREFERENCES**
+   *Only use this if it does not violate the drivers above.*
    - Honor "preferredStudents" field ONLY if it doesn't compromise above criteria
    - Adolescents benefit from working outside comfort zones
    - Strategic separation can reduce cliques and expand social circles
@@ -193,7 +198,7 @@ OUTPUT FORMAT (Valid JSON Only):
     headers = {
         'Content-Type': 'application/json',
         'Authorization': f'Bearer {openrouter_key}',
-        'HTTP-Referer': 'https://talimbot.up.railway.app',
+        'HTTP-Referer': 'https://talimbot-talimbot.hf.space',
         'X-Title': 'TalimBot'
     }
     
