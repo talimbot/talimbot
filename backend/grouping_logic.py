@@ -180,8 +180,21 @@ CRITICAL RULES:
 ✓ Each group needs grade diversity: Mix high (>18) with medium (16-18) performers
 ✓ Prioritize complementary MBTI types over similar types
 ✓ Use provided data fields - DO NOT invent values
-✓ **ABSOLUTELY CRITICAL**: Each student ID can appear in EXACTLY ONE group. NO DUPLICATES. Verify this before outputting.
-✓ Double-check: Count total students in all groups = input students count
+
+🚨 MANDATORY DUPLICATE PREVENTION (HIGHEST PRIORITY) 🚨
+This is a HARD CONSTRAINT, not a guideline:
+✓ Each student ID (S001, S002, etc.) can appear in EXACTLY ONE group
+✓ NO student can be in multiple groups - this would be a CRITICAL ERROR
+✓ Before outputting, verify EVERY student ID appears exactly once
+✓ If you find a duplicate, STOP and fix it immediately
+✓ Total students in all groups MUST equal {total_students}
+
+VALIDATION CHECKLIST (complete this mentally before responding):
+□ Step 1: List all student IDs used across all groups
+□ Step 2: Check if any ID appears more than once → if YES, remove duplicates
+□ Step 3: Count total students in groups → must equal {total_students}
+□ Step 4: Check for missing students → add them to appropriate groups
+□ Step 5: Verify no duplicates exist → if duplicates found, START OVER
 
 OUTPUT FORMAT (Valid JSON Only):
 {{
@@ -207,7 +220,23 @@ OUTPUT FORMAT (Valid JSON Only):
         'messages': [
             {
                 'role': 'system',
-                'content': 'You are a precise algorithmic grouping assistant. You MUST output ONLY valid JSON - no markdown, no code blocks, no extra text. Start directly with { and end with }. CRITICAL RULE: Each student can appear in EXACTLY ONE group - no duplicates allowed. You rely on the explicit "mbti_analysis" fields provided in the user prompt for your reasoning. Verify that all student IDs appear exactly once across all groups.'
+                'content': '''You are a precise algorithmic grouping assistant. You MUST output ONLY valid JSON - no markdown, no code blocks, no extra text. Start directly with { and end with }.
+
+🚨 CRITICAL DUPLICATE PREVENTION RULE 🚨
+This is the MOST IMPORTANT rule - violating this makes your output INVALID:
+• Each student ID (e.g., S001, S002) can appear in EXACTLY ONE group
+• NO DUPLICATES ALLOWED - putting a student in multiple groups is a CRITICAL ERROR
+• Before you output, you MUST verify: count how many times each student ID appears across ALL groups
+• If ANY student ID appears more than once, your output is REJECTED
+• If the total count of students in all groups ≠ total input students, your output is REJECTED
+
+VALIDATION STEPS (do this before outputting):
+1. Make a list of ALL student IDs from all groups you created
+2. Check if any ID appears 2 or more times → if YES, remove duplicates
+3. Count total students: sum of all group sizes must equal the TOTAL STUDENTS number
+4. Verify each input student ID appears exactly once
+
+You rely on the explicit "mbti_analysis" fields provided in the user prompt for your reasoning.'''
             },
             {
                 'role': 'user',
@@ -294,17 +323,52 @@ OUTPUT FORMAT (Valid JSON Only):
                 print(f"❌ No JSON found in response. Full content:\n{content}")
                 raise Exception("Invalid JSON from API - no valid JSON structure found")
     
-    # Failsafe: Add missing students if AI messed up
+    # Failsafe: Detect and remove duplicates, then add missing students
     assigned_students = set()
+    duplicate_students = set()
+    
+    # First pass: detect duplicates
     for group in grouping_result['groups']:
         if 'students' in group:
-            assigned_students.update(group['students'])
+            for student_id in group['students']:
+                if student_id in assigned_students:
+                    duplicate_students.add(student_id)
+                    print(f'⚠️ DUPLICATE DETECTED: {student_id} appears in multiple groups!')
+                else:
+                    assigned_students.add(student_id)
     
+    # Second pass: remove duplicates (keep first occurrence only)
+    if duplicate_students:
+        print(f'🔧 Removing duplicates: {duplicate_students}')
+        first_occurrence = {}
+        for i, group in enumerate(grouping_result['groups']):
+            if 'students' in group:
+                cleaned_students = []
+                for student_id in group['students']:
+                    if student_id in duplicate_students:
+                        if student_id not in first_occurrence:
+                            # Keep first occurrence
+                            first_occurrence[student_id] = i
+                            cleaned_students.append(student_id)
+                        else:
+                            # Remove duplicate
+                            print(f'  Removing {student_id} from group {group["groupNumber"]}')
+                    else:
+                        cleaned_students.append(student_id)
+                group['students'] = cleaned_students
+        
+        # Rebuild assigned_students set after cleaning
+        assigned_students = set()
+        for group in grouping_result['groups']:
+            if 'students' in group:
+                assigned_students.update(group['students'])
+    
+    # Third pass: add missing students
     all_ids = [s.studentNumber for s in students]
     missing = [id for id in all_ids if id not in assigned_students]
     
     if missing:
-        print(f'AI missed students, adding to last group: {missing}')
+        print(f'⚠️ AI missed students, adding to last group: {missing}')
         if grouping_result['groups']:
             grouping_result['groups'][-1]['students'].extend(missing)
             grouping_result['groups'][-1]['reasoning'] += f" (سیستم دانش‌آموزان {', '.join(missing)} را به این گروه اضافه کرد)"
@@ -314,6 +378,17 @@ OUTPUT FORMAT (Valid JSON Only):
                 "students": missing,
                 "reasoning": "گروه بازیابی شده توسط سیستم"
             })
+    
+    # Final verification
+    final_assigned = set()
+    for group in grouping_result['groups']:
+        if 'students' in group:
+            final_assigned.update(group['students'])
+    
+    if len(final_assigned) != len(students):
+        print(f'❌ ERROR: Final count mismatch! Expected {len(students)}, got {len(final_assigned)}')
+    else:
+        print(f'✅ Verification passed: All {len(students)} students assigned exactly once')
     
     return grouping_result
 
