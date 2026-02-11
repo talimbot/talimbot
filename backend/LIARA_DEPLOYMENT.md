@@ -87,7 +87,27 @@ liara create --name talimbot --platform python
 
 ---
 
-### مرحله 6️⃣: تنظیم متغیر محیطی (API Key)
+### مرحله 6️⃣: ایجاد دیسک ذخیره‌سازی دائمی (CRITICAL!) ⚠️
+
+**این مرحله الزامی است - بدون آن برنامه کار نمی‌کند!**
+
+**از طریق وب (توصیه می‌شود):**
+1. در پنل لیارا به برنامه `talimbot` بروید
+2. از منوی سمت راست **دیسک‌ها** را انتخاب کنید
+3. روی **ایجاد دیسک** کلیک کنید
+4. **نام دیسک**: `data-disk`
+5. **مسیر mount**: `/usr/src/app/data`
+6. **فضا**: `1GB` (کافی است)
+7. روی **ایجاد** کلیک کنید
+
+**یا از طریق CLI:**
+```powershell
+liara disk:create --app talimbot --name data-disk --size 1
+```
+
+---
+
+### مرحله 7️⃣: تنظیم متغیر محیطی (API Key)
 
 **از طریق وب (ساده‌تر):**
 1. در پنل لیارا رد شوید به برنامه `talimbot`
@@ -106,7 +126,7 @@ liara env:set OPENROUTER_API_KEY=sk-or-v1-your-actual-api-key-here --app=talimbo
 
 ---
 
-### مرحله 7️⃣: استقرار (Deploy)!
+### مرحله 8️⃣: استقرار (Deploy)!
 
 ```powershell
 cd c:\Users\Parinaz\Desktop\Talim_Project\talimbot\backend
@@ -122,7 +142,39 @@ liara deploy --app talimbot --platform python
 
 ---
 
-### مرحله 8️⃣: مشاهده سایت
+### مرحله 9️⃣: تنظیم استقرار خودکار از GitHub 🤖
+
+**این قابلیت اجازه می‌دهد هر بار که کد را push می‌کنید، خودکار روی لیارا deploy شود!**
+
+#### گام 1: دریافت API Token از لیارا
+1. به https://console.liara.ir/api بروید
+2. روی **ایجاد توکن API** کلیک کنید
+3. نام: `github-actions`
+4. توکن را **کپی کنید** (فقط یک بار نمایش داده می‌شود!)
+
+#### گام 2: افزودن Token به GitHub
+1. به مخزن GitHub خود بروید
+2. **Settings** → **Secrets and variables** → **Actions**
+3. روی **New repository secret** کلیک کنید
+4. Name: `LIARA_TOKEN`
+5. Value: توکنی که کپی کردید را paste کنید
+6. **Add secret** را بزنید
+
+#### گام 3: Push کردن workflow
+```powershell
+cd c:\Users\Parinaz\Desktop\Talim_Project\talimbot\backend
+git add .
+git commit -m "Add Liara auto-deployment"
+git push
+```
+
+**🎉 تمام! حالا هر بار که push می‌کنید، خودکار deploy می‌شود!**
+
+برای مشاهده وضعیت deployment: به repo خود در GitHub → تب **Actions** بروید
+
+---
+
+### مرحله 🔟: مشاهده سایت
 
 لیارا یک آدرس به شما می‌دهد:
 ```

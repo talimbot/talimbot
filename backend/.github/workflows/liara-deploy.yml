@@ -1,0 +1,26 @@
+name: Deploy to Liara
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Install Liara CLI
+        run: npm install -g @liara/cli
+      
+      - name: Deploy to Liara
+        env:
+          LIARA_TOKEN: ${{ secrets.LIARA_TOKEN }}
+        run: |
+          cd backend
+          liara deploy --app talimbot --platform python --api-token="${LIARA_TOKEN}" --detach
