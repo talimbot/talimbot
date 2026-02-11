@@ -2,7 +2,18 @@
 
 FastAPI backend server for the TalimBot student grouping system.
 
-## Quick Start
+## 🚀 Deploy to Liara (Iranian Hosting)
+
+**See [LIARA_DEPLOYMENT.md](LIARA_DEPLOYMENT.md) for complete deployment guide in Persian.**
+
+Quick deploy:
+```bash
+npm install -g @liara/cli
+liara login
+liara deploy --app talimbot --platform python
+```
+
+## 💻 Local Development
 
 ```bash
 # Install dependencies (one time only)
