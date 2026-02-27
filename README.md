@@ -86,11 +86,3 @@ http://localhost:8000
 ## Deployment
 
 The application is configured for deployment on Liara (Iranian cloud platform). Upon pushing to the main branch, GitHub Actions automatically deploys the application.
-
-## License
-
-MIT
-
-## Author
-
-Developed for educational purposes.
