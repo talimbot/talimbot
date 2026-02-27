@@ -37,20 +37,17 @@ cd backend
 liara shell --app talimbot
 
 # Inside the Liara shell, delete the old file
-rm /usr/src/app/data/students.json
+rm -f /usr/src/app/data/students.json
 
 # Exit the shell
 exit
 ```
 
-### Step 2: Restart the app to load new data
+### Step 2: Deploy to reinitialize with new data
 
 ```powershell
-# Restart the app (this will initialize with your latest code)
-liara restart --app talimbot
-
-# Wait 10 seconds for app to restart
-Start-Sleep -Seconds 10
+# Deploy the app (this will create new students.json from your code)
+liara deploy --app talimbot --platform python --no-app-logs
 ```
 
 ### Step 3: Verify the changes
@@ -60,7 +57,7 @@ Visit your website: https://talimbot.liara.run/api/students
 ## Important Notes
 
 **Code vs Data:**
-- Code changes are automatically deployed when you push to GitHub (via GitHub Actions)
+- Code changes are automatically deployed when you push to GitHub (via Liara dashboard connection)
 - Data changes require manual update on the persistent disk (follow steps above)
 - The persistent disk preserves data across deployments to prevent data loss
 
@@ -79,6 +76,6 @@ git add .; git commit -m "Description"; git push fork main
 **Update students.json:**
 ```powershell
 cd backend; liara shell --app talimbot
-# Then in shell: rm /usr/src/app/data/students.json; exit
-liara restart --app talimbot
+# Then in shell: rm -f /usr/src/app/data/students.json; exit
+liara deploy --app talimbot --platform python --no-app-logs
 ```
