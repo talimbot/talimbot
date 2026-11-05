@@ -8,10 +8,10 @@ OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions'
 
 def analyze_mbti(mbti: str) -> Dict[str, str]:
     """Helper to break down MBTI into explicit tags"""
-    if not mbti or len(mbti) < 4:
+    if not mbti or len(str(mbti)) < 4:
         return {"type": "Unknown", "tags": []}
     
-    m = mbti.upper()
+    m = str(mbti).upper()
     return {
         "energy": 'Introvert (درون‌گرا)' if m[0] == 'I' else 'Extrovert (برون‌گرا)',
         "info": 'Intuitive' if m[1] == 'N' else 'Sensing',
@@ -19,18 +19,40 @@ def analyze_mbti(mbti: str) -> Dict[str, str]:
         "structure": 'Judging' if m[3] == 'J' else 'Perceiving'
     }
 
+def has_valid_data(student: Any) -> bool:
+    """
+    Strict validation: Returns True ONLY if all required fields are filled.
+    """
+    try:
+        # Check all fields: MBTI, Learning Style, AMS, Cooperative, and Grade
+        has_mbti = hasattr(student, 'mbti') and bool(student.mbti) and len(str(student.mbti).strip()) >= 4
+        has_ls = hasattr(student, 'learningStyle') and bool(student.learningStyle)
+        has_ams = hasattr(student, 'ams') and student.ams is not None
+        has_coop = hasattr(student, 'cooperative') and student.cooperative is not None
+        has_grade = hasattr(student, 'grade') and student.grade is not None
+        
+        return all([has_mbti, has_ls, has_ams, has_coop, has_grade])
+    except Exception:
+        return False
+    # """
+    # Evaluates if a student has actually filled out the required fields.
+    # Adjust these checks based on how your system represents empty data (None, "", etc.)
+    # """
+    # try:
+    #     has_mbti = hasattr(student, 'mbti') and bool(student.mbti) and len(str(student.mbti).strip()) >= 4
+    #     has_grade = hasattr(student, 'grade') and student.grade is not None
+    #     return has_mbti and has_grade
+    # except Exception:
+    #     return False
+
 def group_students_with_ai(students: List[Any], course_name: str, api_key: Optional[str] = None) -> Dict[str, Any]:
     """
-    Group students using OpenRouter API (ChatGPT) with advanced educational psychology principles
-    Args:
-        students: List of student objects
-        course_name: Name of the course
-        api_key: OpenRouter API key (optional, falls back to env var)
+    Group students using OpenRouter API (ChatGPT) with advanced educational psychology principles.
     """
     # Get API key from parameter or environment variable
     openrouter_key = api_key or os.getenv('OPENROUTER_API_KEY', '')
     
-    # Clean the API key - remove any whitespace and newlines
+    # Clean the API key
     if openrouter_key:
         openrouter_key = openrouter_key.strip().replace('\n', '').replace('\r', '')
     
@@ -41,65 +63,63 @@ def group_students_with_ai(students: List[Any], course_name: str, api_key: Optio
             "Get your free key at: https://openrouter.ai/keys"
         )
     
-    # Validate API key format (but don't log the key)
     if not openrouter_key.startswith('sk-or-v1-'):
         raise Exception(
-            f"Invalid API key format. OpenRouter keys should start with 'sk-or-v1-'. "
-            f"Please check your OPENROUTER_API_KEY in Railway Variables."
+            "Invalid API key format. OpenRouter keys should start with 'sk-or-v1-'. "
+            "Please check your OPENROUTER_API_KEY in Railway Variables."
         )
+
     
-    # Sanitization & Data Enrichment
-    valid_student_ids = set(s.studentNumber for s in students)
+    # --- 1. FILTERING AND SORTING (For Repeatability) ---
+    valid_students = [s for s in students if has_valid_data(s)]
     
+    if not valid_students:
+        return {"groups": [], "error": "No students with valid data found to group."}
+
+    # Sort students by ID to ensure the LLM receives them in the exact same order every run
+    valid_students.sort(key=lambda s: str(s.studentNumber))
+    
+    valid_student_ids = set(s.studentNumber for s in valid_students)
+    total_students = len(valid_students)
+
+    # --- 2. DATA ENRICHMENT ---
     student_data = []
-    for s in students:
+    for s in valid_students:
         mbti_details = analyze_mbti(s.mbti)
         student_data.append({
             "id": s.studentNumber,
             "name": s.name,
             "mbti": s.mbti,
             "mbti_analysis": mbti_details,
-            "learningStyle": s.learningStyle,
+            "learningStyle": s.learningStyle if hasattr(s, 'learningStyle') else None,
             "ams": s.ams if hasattr(s, 'ams') else None,
             "cooperative": s.cooperative if hasattr(s, 'cooperative') else None,
             "grade": s.grade,
-            "preferredStudents": [id for id in (s.preferredStudents or []) if id in valid_student_ids]
+            "preferredStudents": [id for id in (getattr(s, 'preferredStudents', []) or []) if id in valid_student_ids]
         })
     
-    # Dynamic Group Size Logic
-    total_students = len(students)
+    # --- 3. DYNAMIC GROUP SIZE LOGIC ---
     if total_students < 4:
         size_guidance = "a single group"
     elif total_students < 8:
         size_guidance = "groups of 3-4 students"
     else:
-        # Prefer groups of 5, but use groups of 4 if needed to avoid very small groups
-        # Examples: 30 students = 6 groups of 5
-        #          27 students = 5 groups of 5 + 1 group of 2 (bad) → instead: 3 groups of 5 + 3 groups of 4 (good)
-        #          25 students = 5 groups of 5
-        #          22 students = 4 groups of 5 + 1 group of 2 (bad) → instead: 2 groups of 5 + 3 groups of 4 (good)
         remainder = total_students % 5
         if remainder == 1:
-            # e.g., 21 students: would be 4 groups of 5 + 1 of 1 → instead make 3 groups of 5 + 2 groups of 3
             size_guidance = "groups of 5 students, with some groups of 3-4 if needed to avoid groups smaller than 3"
         elif remainder == 2:
-            # e.g., 22 students: would be 4 groups of 5 + 1 of 2 → instead make 2 groups of 5 + 3 groups of 4
             size_guidance = "groups of 5 students, with some groups of 4 if needed to avoid groups of 2"
         else:
             size_guidance = "groups of 5 students"
     
-    # The Enhanced Prompt
+    # --- 4. PROMPT ASSEMBLY ---
     prompt = f"""You are an expert educational psychologist specializing in adolescent team formation and Vygotsky's Zone of Proximal Development (ZPD). Create optimal learning groups for "{course_name}" course with 15-16 year old students.
 
-INPUT DATA:
+INPUT DATA (ONLY GROUP THESE STUDENTS):
 {json.dumps(student_data, ensure_ascii=False, indent=2)}
 
-TOTAL STUDENTS: {total_students}
-GROUPING STRATEGY: Prefer {size_guidance}. IMPORTANT: Avoid creating groups with only 1-2 students. If the math doesn't work out evenly with groups of 5, adjust by creating some groups of 4 to balance the numbers. For example:
-- 30 students = 6 groups of 5 ✓
-- 27 students = 3 groups of 5 + 3 groups of 4 ✓ (NOT 5 groups of 5 + 1 group of 2 ✗)
-- 25 students = 5 groups of 5 ✓
-- 22 students = 2 groups of 5 + 3 groups of 4 ✓ (NOT 4 groups of 5 + 1 group of 2 ✗)
+TOTAL STUDENTS TO GROUP: {total_students}
+GROUPING STRATEGY: Prefer {size_guidance}. IMPORTANT: Avoid creating groups with only 1-2 students. If the math doesn't work out evenly with groups of 5, adjust by creating some groups of 4 to balance the numbers.
 
 STUDENT AGE CONTEXT (15-16 years - Adolescence):
 - High need for peer acceptance and social belonging
@@ -111,90 +131,45 @@ STUDENT AGE CONTEXT (15-16 years - Adolescence):
 GROUPING FRAMEWORK - HIERARCHY OF IMPORTANCE:
 
 1. **PRIMARY DRIVER: ZPD OPTIMIZATION (Zone of Proximal Development)**
-   *This is the most critical psychological factor.*
    - Mix academic performance (grade field) to create ZPD scaffolding
    - Place high performers (معدل بالا) with medium performers for peer tutoring
    - Avoid grouping all high or all low performers together
    - Target: Each group should have grade variance of 1-2 points to maximize learning
 
 2. **SECONDARY DRIVER: MBTI COMPLEMENTARITY (NOT Similarity)**
-   *Use this to refine the groups created by ZPD.*
-   Research-based MBTI pairings for adolescent teamwork:
-   - ENFP + INTJ: Visionary creativity with strategic planning
-   - ENTP + INFJ: Innovation meets deep insight and empathy
-   - ENTJ + INFP: Leadership with values-driven creativity
-   - ESTJ + ISFP: Organization with practical creativity
-   - ESFJ + INTP: Social cohesion with analytical thinking
-   - ESTP + ISFJ: Action-oriented with detail consciousness
-   - ENFJ + ISTP: Motivational leadership with technical problem-solving
-   - ESFP + ISTJ: Enthusiasm with reliability and structure
-   
-   KEY PRINCIPLES:
    - Balance E (Extrovert) and I (Introvert): 2-3 of each per group
    - Complement T (Thinking) with F (Feeling) for balanced decision-making
    - Mix N (Intuitive) with S (Sensing) for big-picture + detail focus
    - Combine J (Judging) with P (Perceiving) for structure + flexibility
 
 3. **TERTIARY DRIVER: VARK DIVERSITY (Learning Styles)**
-   *Ensure the group has "Full Coverage" of capabilities.*
-   - Include different learning styles in each group:
-     * Visual (دیداری): Diagrams, charts, spatial understanding
-     * Aural (شنیداری): Discussions, verbal explanations
-     * Read/Write: Text-based learning, note-taking
-     * Kinesthetic (حرکتی): Hands-on, experiential learning
+   - Include different learning styles in each group (Visual, Aural, Read/Write, Kinesthetic)
    - Diversity ensures multiple teaching approaches within group
-   - Adolescents learn best when exposed to varied learning methods
 
 4. **BALANCING FACTOR: ACADEMIC MOTIVATION (AMS Score)**
-   - AMS field: Academic Motivation Scale (0-196)
    - Balance high and moderate motivation levels
-   - High motivation students (>140) can inspire others
-   - Avoid grouping all low-motivation (<100) students together
    - Target: Each group has at least one high-motivation member
 
 5. **SOCIAL GLUE: COOPERATIVE LEARNING SKILLS**
-   - Cooperative field: Cooperation ability (0-125)
-   - High cooperation students (>88) act as social facilitators
+   - High cooperation students act as social facilitators
    - Mix cooperation levels for peer modeling
-   - Students with strong cooperation skills help integrate introverts
 
 6. **CONTEXTUAL ADAPTATION: COURSE-SPECIFIC REQUIREMENTS**
-   Based on "{course_name}":
-   - Math/Science: Prioritize T (Thinking) types, Visual/Kinesthetic learners
-   - Literature/Humanities: Include F (Feeling) types, Read/Write learners
-   - Projects/Labs: Need high Kinesthetic and ESTP/ISTP types
-   - Discussion-based: Ensure Aural learners and E (Extrovert) types
+   Based on "{course_name}": Adapt MBTI/VARK priorities to fit the subject matter.
 
 7. **TIE-BREAKER: STUDENT PREFERENCES**
-   *Only use this if it does not violate the drivers above.*
    - Honor "preferredStudents" field ONLY if it doesn't compromise above criteria
-   - Adolescents benefit from working outside comfort zones
-   - Strategic separation can reduce cliques and expand social circles
 
 CRITICAL RULES:
-✓ ALL students MUST be assigned to a group
-✓ PREFER groups of 5 students to minimize total number of groups
+✓ ALL {total_students} students MUST be assigned to a group
 ✓ Adjust group sizes (use groups of 4) to avoid creating groups with only 1-2 students
-✓ Each group should have 3-5 students (never 1-2 students alone)
-✓ Each group needs MBTI balance: 2-3 Introverts + 2-3 Extroverts
-✓ Each group needs grade diversity: Mix high (>18) with medium (16-18) performers
-✓ Prioritize complementary MBTI types over similar types
-✓ Use provided data fields - DO NOT invent values
+✓ Each group needs MBTI balance and grade diversity
+✓ Use ONLY provided data fields - DO NOT invent values or add missing students
 
 🚨 MANDATORY DUPLICATE PREVENTION (HIGHEST PRIORITY) 🚨
-This is a HARD CONSTRAINT, not a guideline:
-✓ Each student ID (S001, S002, etc.) can appear in EXACTLY ONE group
-✓ NO student can be in multiple groups - this would be a CRITICAL ERROR
+✓ Each student ID can appear in EXACTLY ONE group
 ✓ Before outputting, verify EVERY student ID appears exactly once
-✓ If you find a duplicate, STOP and fix it immediately
 ✓ Total students in all groups MUST equal {total_students}
-
-VALIDATION CHECKLIST (complete this mentally before responding):
-□ Step 1: List all student IDs used across all groups
-□ Step 2: Check if any ID appears more than once → if YES, remove duplicates
-□ Step 3: Count total students in groups → must equal {total_students}
-□ Step 4: Check for missing students → add them to appropriate groups
-□ Step 5: Verify no duplicates exist → if duplicates found, START OVER
 
 OUTPUT FORMAT (Valid JSON Only):
 {{
@@ -202,12 +177,12 @@ OUTPUT FORMAT (Valid JSON Only):
     {{
       "groupNumber": 1,
       "students": ["S001", "S002", "S003", "S004"],
-      "reasoning": "توضیحات کامل به فارسی - شامل: (1) تحلیل ZPD: معدل‌ها و چگونگی یادگیری همیاری (2) تکمیل MBTI: چرا این تیپ‌ها با هم سازگارند (3) تنوع VARK (4) سطح انگیزش و همکاری (5) مناسب بودن برای درس {course_name}. مثال: 'این گروه دارای ZPD مطلوب است: S001 (معدل 19.5) و S002 (معدل 17.2) به S003 (معدل 16) کمک می‌کنند. تکمیل MBTI: ENFP (S001) با خلاقیت و INTJ (S002) با برنامه‌ریزی استراتژیک همکاری می‌کنند. تنوع یادگیری: 2 Visual، 1 Aural، 1 Kinesthetic. انگیزش بالا (AMS>150) در S001 الهام‌بخش است.'"
+      "reasoning": "توضیحات کامل به فارسی بر اساس ZPD، MBTI، و سبک‌های یادگیری"
     }}
   ]
 }}"""
 
-    # Make API call using requests library
+    # --- 5. API CALL ---
     headers = {
         'Content-Type': 'application/json',
         'Authorization': f'Bearer {openrouter_key}',
@@ -216,37 +191,28 @@ OUTPUT FORMAT (Valid JSON Only):
     }
     
     payload = {
-        'model': 'openai/gpt-4o',  # Using GPT-4o for better accuracy and reasoning
+        'model': 'openai/gpt-4o',
         'messages': [
             {
                 'role': 'system',
                 'content': '''You are a precise algorithmic grouping assistant. You MUST output ONLY valid JSON - no markdown, no code blocks, no extra text. Start directly with { and end with }.
 
 🚨 CRITICAL DUPLICATE PREVENTION RULE 🚨
-This is the MOST IMPORTANT rule - violating this makes your output INVALID:
-• Each student ID (e.g., S001, S002) can appear in EXACTLY ONE group
-• NO DUPLICATES ALLOWED - putting a student in multiple groups is a CRITICAL ERROR
-• Before you output, you MUST verify: count how many times each student ID appears across ALL groups
-• If ANY student ID appears more than once, your output is REJECTED
-• If the total count of students in all groups ≠ total input students, your output is REJECTED
-
-VALIDATION STEPS (do this before outputting):
-1. Make a list of ALL student IDs from all groups you created
-2. Check if any ID appears 2 or more times → if YES, remove duplicates
-3. Count total students: sum of all group sizes must equal the TOTAL STUDENTS number
-4. Verify each input student ID appears exactly once
-
-You rely on the explicit "mbti_analysis" fields provided in the user prompt for your reasoning.'''
+• Each student ID can appear in EXACTLY ONE group
+• NO DUPLICATES ALLOWED
+• Total students in all groups MUST equal the TOTAL STUDENTS number exactly.
+• Only use the IDs provided in the INPUT DATA.'''
             },
             {
                 'role': 'user',
                 'content': prompt
             }
         ],
-        'temperature': 0.2  # Lower temperature for more consistent, logical grouping
+        'temperature': 0.0,  # Set to 0.0 for maximum determinism (repeatability)
+        'seed': 42           # Locks the randomness seed on supported models
     }
     
-    print(f"Sending request to OpenRouter API...")
+    print(f"Sending request to OpenRouter API for {total_students} valid students...")
     
     response = requests.post(
         OPENROUTER_API_URL,
@@ -255,38 +221,23 @@ You rely on the explicit "mbti_analysis" fields provided in the user prompt for 
         timeout=60
     )
     
-    print(f"Response status: {response.status_code}")
-    print(f"Response preview: {response.text[:200]}")
-    
     if response.status_code == 401:
-        try:
-            error_data = response.json()
-            error_msg = error_data.get('error', {}).get('message', 'Unauthorized')
-        except:
-            error_msg = response.text
-        
-        raise Exception(
-            f"OpenRouter Authentication Error: {error_msg}. "
-            f"Your API key is configured but invalid. Please:\n"
-            f"1. Go to https://openrouter.ai/keys\n"
-            f"2. Check if your key is active and has credits\n"
-            f"3. Create a NEW key if needed\n"
-            f"4. Update OPENROUTER_API_KEY in Railway Variables"
-        )
-    
+        raise Exception("OpenRouter Authentication Error. API Key invalid or expired.")
     if response.status_code == 402:
-        raise Exception(
-            "OpenRouter Payment Required: Your account has no credits. "
-            "Add credits at https://openrouter.ai/credits"
-        )
-    
+        raise Exception("OpenRouter Payment Required: Your account has no credits.")
     if not response.ok:
-        try:
-            error_data = response.json()
-            error_detail = error_data.get('error', {}).get('message', response.text)
-        except:
-            error_detail = response.text
-        raise Exception(f"API request failed ({response.status_code}): {error_detail}")
+        raise Exception(f"API request failed ({response.status_code}): {response.text}")
+    
+#     data = response.json()
+#     content = data['choices'][0]['message']['content']
+    
+#     # --- 6. PARSE AND CLEANUP ---
+#     try:
+#         grouping_result = json.loads(content)
+#     except json.JSONDecodeError:
+#         import re
+#         json_match = re.search(r'
+# http://googleusercontent.com/immersive_entry_chip/0
     
     data = response.json()
     content = data['choices'][0]['message']['content']
@@ -364,20 +315,20 @@ You rely on the explicit "mbti_analysis" fields provided in the user prompt for 
                 assigned_students.update(group['students'])
     
     # Third pass: add missing students
-    all_ids = [s.studentNumber for s in students]
-    missing = [id for id in all_ids if id not in assigned_students]
+    # all_ids = [s.studentNumber for s in students]
+    # missing = [id for id in all_ids if id not in assigned_students]
     
-    if missing:
-        print(f'⚠️ AI missed students, adding to last group: {missing}')
-        if grouping_result['groups']:
-            grouping_result['groups'][-1]['students'].extend(missing)
-            grouping_result['groups'][-1]['reasoning'] += f" (سیستم دانش‌آموزان {', '.join(missing)} را به این گروه اضافه کرد)"
-        else:
-            grouping_result['groups'].append({
-                "groupNumber": 1,
-                "students": missing,
-                "reasoning": "گروه بازیابی شده توسط سیستم"
-            })
+    # if missing:
+    #     print(f'⚠️ AI missed students, adding to last group: {missing}')
+    #     if grouping_result['groups']:
+    #         grouping_result['groups'][-1]['students'].extend(missing)
+    #         grouping_result['groups'][-1]['reasoning'] += f" (سیستم دانش‌آموزان {', '.join(missing)} را به این گروه اضافه کرد)"
+    #     else:
+    #         grouping_result['groups'].append({
+    #             "groupNumber": 1,
+    #             "students": missing,
+    #             "reasoning": "گروه بازیابی شده توسط سیستم"
+    #         })
     
     # Final verification
     final_assigned = set()

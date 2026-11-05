@@ -4,13 +4,17 @@
       "studentNumber": "S001",
       "name": "یاسمن آدینه پور",
       "nationalCode": "929986644",
-      "mbti": null,
-      "learningStyle": null,
-      "ams": null,
-      "cooperative": null,
+      "mbti": "ESFP",
+      "learningStyle": "Visual",
+      "ams": "99",
+      "cooperative": "55",
       "grade": 18.77,
-      "preferredStudents": [],
-      "group": null
+      "preferredStudents": [
+        "S006",
+        "S012",
+        "S015"
+      ],
+      "group": 1
     },
     {
       "studentNumber": "S002",
@@ -28,97 +32,126 @@
       "studentNumber": "S003",
       "name": "فاطمه اکبرزاده",
       "nationalCode": "970154550",
-      "mbti": null,
-      "learningStyle": null,
-      "ams": null,
-      "cooperative": null,
+      "mbti": "INFJ",
+      "learningStyle": "Aural",
+      "ams": "146",
+      "cooperative": "102",
       "grade": 16.71,
-      "preferredStudents": [],
-      "group": null
+      "preferredStudents": [
+        "S007",
+        "S013",
+        "S021",
+        "S026"
+      ],
+      "group": 2
     },
     {
       "studentNumber": "S004",
       "name": "آناهیتا الهی مهر",
       "nationalCode": "26425955",
-      "mbti": null,
-      "learningStyle": null,
-      "ams": null,
-      "cooperative": null,
+      "mbti": "INTP",
+      "learningStyle": "Read/Write",
+      "ams": "156",
+      "cooperative": "101",
       "grade": 19.05,
-      "preferredStudents": [],
-      "group": null
+      "preferredStudents": [
+        "S005",
+        "S006",
+        "S008",
+        "S019"
+      ],
+      "group": 3
     },
     {
       "studentNumber": "S005",
       "name": "مریم امیری",
       "nationalCode": "980093341",
-      "mbti": null,
-      "learningStyle": null,
-      "ams": null,
-      "cooperative": null,
+      "mbti": "INFJ",
+      "learningStyle": "Aural",
+      "ams": "125",
+      "cooperative": "94",
       "grade": 18.87,
-      "preferredStudents": [],
-      "group": null
+      "preferredStudents": [
+        "S004",
+        "S007",
+        "S009",
+        "S026"
+      ],
+      "group": 2
     },
     {
       "studentNumber": "S006",
       "name": "باران برادران رحیمی",
       "nationalCode": "960043985",
-      "mbti": null,
-      "learningStyle": null,
-      "ams": null,
-      "cooperative": null,
+      "mbti": "ENFP",
+      "learningStyle": "Kinesthetic",
+      "ams": "134",
+      "cooperative": "90",
       "grade": 19.07,
-      "preferredStudents": [],
-      "group": null
+      "preferredStudents": [
+        "S001",
+        "S008",
+        "S012",
+        "S015"
+      ],
+      "group": 1
     },
     {
       "studentNumber": "S007",
       "name": "مایسا بصیری امین",
       "nationalCode": "960089446",
-      "mbti": null,
-      "learningStyle": null,
-      "ams": null,
-      "cooperative": null,
+      "mbti": "ISTP",
+      "learningStyle": "Aural",
+      "ams": "112",
+      "cooperative": "73",
       "grade": 19.33,
       "preferredStudents": [],
-      "group": null
+      "group": 2
     },
     {
       "studentNumber": "S008",
       "name": "دلارام ثابت عهد",
       "nationalCode": "960125620",
-      "mbti": null,
-      "learningStyle": null,
-      "ams": null,
-      "cooperative": null,
+      "mbti": "INTJ",
+      "learningStyle": "Read/Write",
+      "ams": "147",
+      "cooperative": "76",
       "grade": 19.55,
       "preferredStudents": [],
-      "group": null
+      "group": 3
     },
     {
       "studentNumber": "S009",
       "name": "شاینا جان محمدی",
       "nationalCode": "960068041",
-      "mbti": null,
-      "learningStyle": null,
-      "ams": null,
-      "cooperative": null,
+      "mbti": "ENFJ",
+      "learningStyle": "Read/Write",
+      "ams": "159",
+      "cooperative": "99",
       "grade": 19.47,
-      "preferredStudents": [],
-      "group": null
+      "preferredStudents": [
+        "S007",
+        "S012",
+        "S015",
+        "S027"
+      ],
+      "group": 1
     },
     {
       "studentNumber": "S010",
       "name": "آیدا جوان",
       "nationalCode": "95112313",
-      "mbti": null,
-      "learningStyle": null,
-      "ams": null,
-      "cooperative": null,
+      "mbti": "INFP",
+      "learningStyle": "Kinesthetic",
+      "ams": "132",
+      "cooperative": "99",
       "grade": 16.77,
-      "preferredStudents": [],
-      "group": null
+      "preferredStudents": [
+        "S014",
+        "S016",
+        "S025"
+      ],
+      "group": 3
     },
     {
       "studentNumber": "S011",
@@ -136,61 +169,84 @@
       "studentNumber": "S012",
       "name": "هستی حسن پور جوان",
       "nationalCode": "960074198",
-      "mbti": null,
-      "learningStyle": null,
-      "ams": null,
-      "cooperative": null,
+      "mbti": "INTJ",
+      "learningStyle": "Aural",
+      "ams": "127",
+      "cooperative": "85",
       "grade": 19.55,
-      "preferredStudents": [],
-      "group": null
+      "preferredStudents": [
+        "S001",
+        "S006",
+        "S008",
+        "S009"
+      ],
+      "group": 1
     },
     {
       "studentNumber": "S013",
       "name": "فاطمه حسینی",
       "nationalCode": "2400410259",
-      "mbti": null,
-      "learningStyle": null,
-      "ams": null,
-      "cooperative": null,
+      "mbti": "INTP",
+      "learningStyle": "Kinesthetic",
+      "ams": "153",
+      "cooperative": "92",
       "grade": 19.07,
-      "preferredStudents": [],
-      "group": null
+      "preferredStudents": [
+        "S003",
+        "S021",
+        "S028"
+      ],
+      "group": 2
     },
     {
       "studentNumber": "S014",
       "name": "غزل خسروی",
       "nationalCode": "929995767",
-      "mbti": null,
-      "learningStyle": null,
-      "ams": null,
-      "cooperative": null,
+      "mbti": "INFP",
+      "learningStyle": "Read/Write",
+      "ams": "169",
+      "cooperative": "69",
       "grade": 15.05,
-      "preferredStudents": [],
-      "group": null
+      "preferredStudents": [
+        "S010",
+        "S016",
+        "S017",
+        "S025"
+      ],
+      "group": 3
     },
     {
       "studentNumber": "S015",
       "name": "غزل ذباح",
       "nationalCode": "960110186",
-      "mbti": null,
-      "learningStyle": null,
-      "ams": null,
-      "cooperative": null,
+      "mbti": "ENTJ",
+      "learningStyle": "Aural",
+      "ams": "148",
+      "cooperative": "115",
       "grade": 19.25,
-      "preferredStudents": [],
-      "group": null
+      "preferredStudents": [
+        "S001",
+        "S006",
+        "S009",
+        "S012"
+      ],
+      "group": 1
     },
     {
       "studentNumber": "S016",
       "name": "نازنین زهرا راشکی",
       "nationalCode": "3661516087",
-      "mbti": null,
-      "learningStyle": null,
-      "ams": null,
-      "cooperative": null,
+      "mbti": "INTJ",
+      "learningStyle": "Kinesthetic",
+      "ams": "105",
+      "cooperative": "122",
       "grade": 17.02,
-      "preferredStudents": [],
-      "group": null
+      "preferredStudents": [
+        "S010",
+        "S014",
+        "S025"
+      ],
+      "group": 3
     },
     {
       "studentNumber": "S017",
@@ -198,23 +254,33 @@
       "nationalCode": "314458344",
       "mbti": null,
       "learningStyle": null,
-      "ams": null,
-      "cooperative": null,
+      "ams": "162",
+      "cooperative": "112",
       "grade": 18.7,
-      "preferredStudents": [],
+      "preferredStudents": [
+        "S004",
+        "S008",
+        "S019",
+        "S029"
+      ],
       "group": null
     },
     {
       "studentNumber": "S018",
       "name": "روژینا سعادتی",
       "nationalCode": "960051023",
-      "mbti": null,
-      "learningStyle": null,
-      "ams": null,
-      "cooperative": null,
+      "mbti": "ENTP",
+      "learningStyle": "Read/Write",
+      "ams": "146",
+      "cooperative": "93",
       "grade": 18.2,
-      "preferredStudents": [],
-      "group": null
+      "preferredStudents": [
+        "S011",
+        "S020",
+        "S023",
+        "S024"
+      ],
+      "group": 4
     },
     {
       "studentNumber": "S019",
@@ -232,37 +298,50 @@
       "studentNumber": "S020",
       "name": "ستایش شفابخش",
       "nationalCode": "960126899",
-      "mbti": null,
+      "mbti": "INTP",
       "learningStyle": null,
-      "ams": null,
-      "cooperative": null,
+      "ams": "118",
+      "cooperative": "111",
       "grade": 18.36,
-      "preferredStudents": [],
+      "preferredStudents": [
+        "S018",
+        "S023",
+        "S024"
+      ],
       "group": null
     },
     {
       "studentNumber": "S021",
       "name": "فاطمه شیرزادخان",
       "nationalCode": "980120756",
-      "mbti": null,
-      "learningStyle": null,
-      "ams": null,
-      "cooperative": null,
+      "mbti": "INTP",
+      "learningStyle": "Kinesthetic",
+      "ams": "121",
+      "cooperative": "97",
       "grade": 19.33,
-      "preferredStudents": [],
-      "group": null
+      "preferredStudents": [
+        "S003",
+        "S013",
+        "S028"
+      ],
+      "group": 2
     },
     {
       "studentNumber": "S022",
       "name": "آرزو علی جوی",
       "nationalCode": "960054316",
-      "mbti": null,
-      "learningStyle": null,
-      "ams": null,
-      "cooperative": null,
+      "mbti": "ENTJ",
+      "learningStyle": "Aural",
+      "ams": "149",
+      "cooperative": "109",
       "grade": 17.98,
-      "preferredStudents": [],
-      "group": null
+      "preferredStudents": [
+        "S007",
+        "S008",
+        "S009",
+        "S015"
+      ],
+      "group": 4
     },
     {
       "studentNumber": "S023",
@@ -280,12 +359,17 @@
       "studentNumber": "S024",
       "name": "نیایش کارگر",
       "nationalCode": "929956052",
-      "mbti": null,
-      "learningStyle": null,
-      "ams": null,
+      "mbti": "ENTP",
+      "learningStyle": "Aural",
+      "ams": "78",
       "cooperative": null,
       "grade": 17.74,
-      "preferredStudents": [],
+      "preferredStudents": [
+        "S009",
+        "S018",
+        "S020",
+        "S023"
+      ],
       "group": null
     },
     {
@@ -297,32 +381,41 @@
       "ams": null,
       "cooperative": null,
       "grade": 18.82,
-      "preferredStudents": [],
+      "preferredStudents": [
+        "S010"
+      ],
       "group": null
     },
     {
       "studentNumber": "S026",
       "name": "زینب کیانوش",
       "nationalCode": "970072678",
-      "mbti": null,
-      "learningStyle": null,
-      "ams": null,
-      "cooperative": null,
+      "mbti": "INTP",
+      "learningStyle": "Kinesthetic",
+      "ams": "111",
+      "cooperative": "85",
       "grade": 18.58,
-      "preferredStudents": [],
-      "group": null
+      "preferredStudents": [
+        "S007",
+        "S022",
+        "S027",
+        "S028"
+      ],
+      "group": 4
     },
     {
       "studentNumber": "S027",
       "name": "ستایش محمودی",
       "nationalCode": "929904656",
-      "mbti": null,
-      "learningStyle": null,
-      "ams": null,
-      "cooperative": null,
+      "mbti": "ISTJ",
+      "learningStyle": "Read/Write",
+      "ams": "136",
+      "cooperative": "93",
       "grade": 19.33,
-      "preferredStudents": [],
-      "group": null
+      "preferredStudents": [
+        "S009"
+      ],
+      "group": 4
     },
     {
       "studentNumber": "S028",
@@ -361,9 +454,55 @@
       "group": null
     }
   ],
-  "courseName": "",
-  "groupingComplete": false,
-  "groupingResults": null,
+  "courseName": "ریاضی",
+  "groupingComplete": true,
+  "groupingResults": {
+    "groups": [
+      {
+        "groupNumber": 1,
+        "students": [
+          "S001",
+          "S006",
+          "S012",
+          "S015",
+          "S009"
+        ],
+        "reasoning": "این گروه شامل دانش‌آموزان با معدل‌های مختلف است که به بهینه‌سازی ZPD کمک می‌کند. ترکیب MBTI شامل E و I و همچنین T و F است که تصمیم‌گیری متعادل را تضمین می‌کند. سبک‌های یادگیری متنوعی مانند Visual، Kinesthetic و Aural در این گروه وجود دارد."
+      },
+      {
+        "groupNumber": 2,
+        "students": [
+          "S003",
+          "S005",
+          "S007",
+          "S013",
+          "S021"
+        ],
+        "reasoning": "این گروه با ترکیب دانش‌آموزان با معدل‌های مختلف، به بهینه‌سازی ZPD کمک می‌کند. ترکیب MBTI شامل I و E و همچنین T و F است که تصمیم‌گیری متعادل را تضمین می‌کند. سبک‌های یادگیری متنوعی مانند Aural و Kinesthetic در این گروه وجود دارد."
+      },
+      {
+        "groupNumber": 3,
+        "students": [
+          "S004",
+          "S008",
+          "S010",
+          "S014",
+          "S016"
+        ],
+        "reasoning": "این گروه با ترکیب دانش‌آموزان با معدل‌های مختلف، به بهینه‌سازی ZPD کمک می‌کند. ترکیب MBTI شامل I و E و همچنین T و F است که تصمیم‌گیری متعادل را تضمین می‌کند. سبک‌های یادگیری متنوعی مانند Read/Write و Kinesthetic در این گروه وجود دارد."
+      },
+      {
+        "groupNumber": 4,
+        "students": [
+          "S018",
+          "S022",
+          "S026",
+          "S027"
+        ],
+        "reasoning": "این گروه با ترکیب دانش‌آموزان با معدل‌های مختلف، به بهینه‌سازی ZPD کمک می‌کند. ترکیب MBTI شامل E و I و همچنین T و F است که تصمیم‌گیری متعادل را تضمین می‌کند. سبک‌های یادگیری متنوعی مانند Read/Write و Aural در این گروه وجود دارد."
+      }
+    ]
+  },
   "resultsVisible": false,
   "teacherPassword": "teacher123"
 }

@@ -1,0 +1,805 @@
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مدیریت گفتگوهای دانش‌آموزان | TalimBot</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<!-- Markdown renderer -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
+
+<style>
+:root {
+  --primary: #1b6e6e;
+  --primary-dark: #155858;
+  --primary-light: #e9f5f3;
+  --bg: #f6f8f9;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  font-family: 'Vazirmatn', sans-serif;
+  background: var(--bg);
+}
+
+button, input { font-family: inherit; }
+button { transition: all .2s ease; }
+
+.brand-gradient {
+  background: linear-gradient(135deg, #1b6e6e, #278b83);
+}
+
+.app-bg {
+  background:
+    radial-gradient(ellipse at 85% 0%, rgba(27,110,110,.055), transparent 35%),
+    #f6f8f9;
+}
+
+.sidebar {
+  transition: transform .3s ease;
+}
+
+.student-item {
+  transition: all .2s ease;
+}
+
+.student-item:hover {
+  background: rgba(255,255,255,.8);
+}
+
+.student-item.active {
+  background: white;
+  border-right: 3px solid #1b6e6e;
+  box-shadow: 0 3px 12px rgba(27,110,110,.06);
+}
+
+.student-avatar {
+  background: linear-gradient(145deg, #d9efea, #eff8f5);
+  color: #1b6e6e;
+}
+
+.chat-message {
+  animation: appear .25s ease;
+}
+
+@keyframes appear {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.user-bubble {
+  background: linear-gradient(135deg, #1b6e6e, #217e78);
+  color: white;
+  border-radius: 20px 20px 5px 20px;
+}
+
+.ai-bubble {
+  background: white;
+  border: 1px solid #e9eeee;
+  color: #344747;
+  border-radius: 20px 20px 20px 5px;
+  box-shadow: 0 3px 12px rgba(0,0,0,.025);
+  direction: rtl;
+  text-align: right;
+  line-height: 1.8;
+  word-spacing: normal;
+  letter-spacing: normal;
+}
+
+.ai-bubble p {
+  margin: 0 0 8px;
+  line-height: 1.8;
+}
+
+.ai-bubble p:last-child { margin-bottom: 0; }
+
+.ai-bubble strong {
+  color: #155858;
+  font-weight: 800;
+}
+
+.ai-bubble ul,
+.ai-bubble ol {
+  margin: 4px 0 10px;
+  padding-right: 22px;
+}
+
+.ai-bubble ul { list-style: disc; }
+.ai-bubble ol { list-style: decimal; }
+
+.ai-bubble li {
+  margin: 2px 0;
+  padding-right: 0;
+  line-height: 1.8;
+}
+
+.ai-bubble h1,
+.ai-bubble h2,
+.ai-bubble h3 {
+  color: #155858;
+  font-weight: 800;
+  margin: 14px 0 8px;
+}
+
+.ai-bubble code {
+  background: #edf5f3;
+  color: #155858;
+  padding: 2px 6px;
+  border-radius: 5px;
+  direction: ltr;
+  display: inline-block;
+}
+
+.ai-bubble pre {
+  background: #f3f7f6;
+  padding: 14px;
+  border-radius: 12px;
+  overflow-x: auto;
+  direction: ltr;
+  text-align: left;
+  margin: 10px 0;
+}
+
+.ai-bubble pre code {
+  background: none;
+  padding: 0;
+}
+
+#list::-webkit-scrollbar,
+#msgs::-webkit-scrollbar {
+  width: 5px;
+}
+
+#list::-webkit-scrollbar-thumb,
+#msgs::-webkit-scrollbar-thumb {
+  background: #dce7e5;
+  border-radius: 10px;
+}
+
+@media(max-width:767px) {
+  .sidebar {
+    position: fixed;
+    z-index: 40;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 290px;
+    transform: translateX(110%);
+    box-shadow: none;
+  }
+
+  .sidebar.mobile-open {
+    transform: translateX(0);
+    box-shadow: -10px 0 40px rgba(0,0,0,.12);
+  }
+
+  .mobile-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(15,40,40,.35);
+    z-index: 30;
+  }
+
+  .mobile-overlay.visible { display: block; }
+}
+</style>
+</head>
+
+<body class="h-screen overflow-hidden app-bg">
+
+<div class="flex h-screen">
+
+<!-- MOBILE OVERLAY -->
+<div id="overlay" class="mobile-overlay" onclick="toggleSidebar()"></div>
+
+
+<!-- SIDEBAR -->
+<aside id="sidebar" class="sidebar w-[290px] shrink-0 border-l border-teal-900/10 flex flex-col bg-gradient-to-b from-[#e8f4f1] via-[#f2f8f6] to-white">
+
+  <!-- BRAND -->
+  <div class="p-5 border-b border-teal-900/10 bg-gradient-to-l from-teal-50/70 to-transparent">
+
+    <div class="flex items-center gap-3">
+
+      <div class="brand-gradient w-11 h-11 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-teal-900/15">
+
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M12 3L14.5 9.5L21 12L14.5 14.5L12 21L9.5 14.5L3 12L9.5 9.5L12 3Z"/>
+          <path d="M19 2V6M17 4H21"/>
+        </svg>
+
+      </div>
+
+      <div>
+        <h1 class="font-extrabold text-gray-800 text-lg">TalimBot</h1>
+        <p class="text-[11px] text-gray-400">پنل نظارت معلمان</p>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- SEARCH -->
+  <div class="p-4 pb-2">
+
+    <label class="text-xs font-bold text-gray-500 mb-2 block">
+      جستجوی دانش‌آموز
+    </label>
+
+    <div class="relative">
+
+      <input
+        id="q"
+        placeholder="نام دانش‌آموز..."
+        class="w-full bg-white/80 border border-teal-900/10 focus:border-teal-600 focus:ring-4 focus:ring-teal-600/5 rounded-xl py-3 pr-10 pl-3 text-xs outline-none transition-all"
+      >
+
+      <svg class="absolute right-3 top-3 text-gray-400" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <circle cx="11" cy="11" r="7"/>
+        <path d="M20 20L16 16"/>
+      </svg>
+
+    </div>
+
+  </div>
+
+
+  <!-- LIST HEADER -->
+  <div class="px-5 pt-5 pb-2 flex items-center justify-between">
+
+    <span class="text-xs font-bold text-gray-500">گفتگوهای دانش‌آموزان</span>
+
+    <span id="count" class="text-[10px] bg-white text-teal-700 px-2 py-1 rounded-lg border border-teal-100">
+      ۰ گفتگو
+    </span>
+
+  </div>
+
+
+  <!-- STUDENT LIST -->
+  <div id="list" class="flex-1 overflow-y-auto px-3 pb-3 space-y-1">
+
+    <div class="text-center text-xs text-gray-400 py-6">
+      در حال بارگذاری...
+    </div>
+
+  </div>
+
+
+  <!-- SIDEBAR FOOTER -->
+  <div class="p-4 border-t border-teal-900/10">
+
+    <a href="teacher-dashboard.html" class="flex items-center justify-center gap-2 w-full bg-white/80 hover:bg-white border border-teal-900/10 text-teal-800 rounded-xl py-3 text-xs font-bold">
+
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <rect x="3" y="3" width="8" height="8" rx="1"/>
+        <rect x="13" y="3" width="8" height="5" rx="1"/>
+        <rect x="13" y="10" width="8" height="11" rx="1"/>
+        <rect x="3" y="13" width="8" height="8" rx="1"/>
+      </svg>
+
+      بازگشت به داشبورد
+
+    </a>
+
+  </div>
+
+</aside>
+
+
+<!-- MAIN -->
+<main class="flex-1 flex flex-col min-w-0">
+
+
+  <!-- TOP NAVBAR -->
+  <header class="h-[68px] shrink-0 bg-white/90 backdrop-blur-xl border-b border-gray-100 flex items-center justify-between px-4 md:px-7">
+
+    <div class="flex items-center gap-3">
+
+      <button onclick="toggleSidebar()" class="md:hidden w-10 h-10 rounded-xl hover:bg-gray-100 flex items-center justify-center text-gray-600" aria-label="باز کردن منو">
+
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M4 6H20M4 12H20M4 18H20"/>
+        </svg>
+
+      </button>
+
+      <div>
+
+        <h2 class="font-bold text-gray-800 text-sm md:text-base">
+          نظارت بر گفتگوها
+        </h2>
+
+        <p class="text-[11px] text-gray-400 mt-1">
+          مشاهده تعاملات دانش‌آموزان با دستیار هوشمند
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <div class="flex items-center gap-2">
+
+      <div class="hidden sm:flex items-center gap-2 bg-teal-50 border border-teal-100 text-teal-800 px-3 py-2 rounded-lg text-[11px]">
+
+        <span class="w-2 h-2 rounded-full bg-teal-500"></span>
+
+        محیط نظارت معلم
+
+      </div>
+
+      <a href="teacher-dashboard.html" class="flex items-center gap-2 bg-gray-50 hover:bg-teal-50 border border-gray-100 text-gray-600 hover:text-teal-800 rounded-xl px-3 py-2 text-xs font-semibold">
+
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <rect x="3" y="3" width="8" height="8" rx="1"/>
+          <rect x="13" y="3" width="8" height="5" rx="1"/>
+          <rect x="13" y="10" width="8" height="11" rx="1"/>
+          <rect x="3" y="13" width="8" height="8" rx="1"/>
+        </svg>
+
+        داشبورد
+
+      </a>
+      <a href="teacher-chats.html" class="flex items-center gap-2 bg-teal-50 border border-teal-100 text-teal-800 rounded-xl px-3 py-2 text-xs font-semibold">
+        گفتگوها
+      </a>
+
+    </div>
+
+  </header>
+
+
+  <!-- CONVERSATION AREA -->
+  <section id="msgs" class="flex-1 overflow-y-auto p-4 md:p-8">
+
+    <!-- EMPTY STATE -->
+    <div id="emptyState" class="min-h-full flex flex-col items-center justify-center text-center max-w-lg mx-auto py-8">
+
+      <div class="w-24 h-24 rounded-[30px] bg-gradient-to-br from-teal-50 to-white border border-teal-100 shadow-lg shadow-teal-900/5 flex items-center justify-center mb-6">
+
+        <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="#1b6e6e" stroke-width="1.5">
+          <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8A8.5 8.5 0 0 1 8.7 3.9a8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5Z"/>
+        </svg>
+
+      </div>
+
+      <span class="text-xs font-bold text-teal-700 bg-teal-50 border border-teal-100 px-4 py-1.5 rounded-full mb-4">
+        پنل مدیریت گفتگوها
+      </span>
+
+      <h2 class="text-2xl font-extrabold text-gray-800 mb-3">
+        گفتگوهای دانش‌آموزان
+      </h2>
+
+      <p class="text-sm text-gray-400 leading-8 max-w-sm">
+        برای مشاهده پیام‌ها و تعاملات یک دانش‌آموز، گفتگوی موردنظر را از فهرست سمت راست انتخاب کنید.
+      </p>
+
+      <div class="mt-8 flex items-center gap-2 text-xs text-gray-400 bg-white border border-gray-100 rounded-xl px-4 py-3">
+
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+          <circle cx="12" cy="12" r="9"/>
+          <path d="M12 11V16M12 8H12.01"/>
+        </svg>
+
+        پیام‌ها در این بخش فقط برای مشاهده هستند.
+
+      </div>
+
+    </div>
+
+  </section>
+
+</main>
+
+</div>
+
+
+<script src="../assets/js/data.js"></script>
+
+<script>
+
+if (
+  sessionStorage.getItem('isTeacher') !== 'true' ||
+  !sessionStorage.getItem('token')
+) {
+  location.href = 'login.html';
+}
+
+const api = p => apiCall('/chat/teacher' + p, {
+  headers: {
+    Authorization: 'Bearer ' + sessionStorage.getItem('token')
+  }
+});
+
+const listEl = document.getElementById('list');
+const msgs = document.getElementById('msgs');
+
+let selectedId = null;
+let tm;
+
+
+// MOBILE SIDEBAR
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('mobile-open');
+  document.getElementById('overlay').classList.toggle('visible');
+}
+
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('mobile-open');
+  document.getElementById('overlay').classList.remove('visible');
+}
+
+
+// EMPTY STATE
+function showEmpty() {
+  msgs.innerHTML = `
+    <div class="min-h-full flex flex-col items-center justify-center text-center py-8">
+      <div class="w-24 h-24 rounded-[30px] bg-gradient-to-br from-teal-50 to-white border border-teal-100 shadow-lg shadow-teal-900/5 flex items-center justify-center mb-6">
+        <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="#1b6e6e" stroke-width="1.5">
+          <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8A8.5 8.5 0 0 1 8.7 3.9a8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5Z"/>
+        </svg>
+      </div>
+      <h2 class="text-xl font-extrabold text-gray-800 mb-3">گفتگویی یافت نشد</h2>
+      <p class="text-sm text-gray-400">این دانش‌آموز هنوز پیامی ارسال نکرده است.</p>
+    </div>
+  `;
+}
+
+
+// MARKDOWN RENDERING
+function renderMessage(content, isUser) {
+
+  const cleaned = content.replace(
+    /&nbsp;|&#x20;|&#160;/gi,
+    ' '
+  );
+
+  if (isUser) {
+    return DOMPurify.sanitize(cleaned, {
+      ALLOWED_TAGS: [],
+      ALLOWED_ATTR: []
+    });
+  }
+
+  return DOMPurify.sanitize(
+    marked.parse(cleaned),
+    {
+      USE_PROFILES: { html: true }
+    }
+  );
+}
+
+
+// MESSAGE BUBBLES
+function addMessage(role, content) {
+
+  const isUser = role === 'user';
+
+  const wrapper = document.createElement('div');
+
+  wrapper.className =
+    'chat-message flex items-start gap-3 max-w-4xl mx-auto w-full ' +
+    (isUser ? 'flex-row' : 'flex-row-reverse');
+
+  // Avatar
+  const avatar = document.createElement('div');
+
+  avatar.className =
+    'w-9 h-9 shrink-0 rounded-xl flex items-center justify-center ' +
+    (isUser
+      ? 'bg-gray-200 text-gray-600'
+      : 'brand-gradient text-white shadow-sm');
+
+  avatar.innerHTML = isUser
+    ? `<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+         <circle cx="12" cy="8" r="4"/>
+         <path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/>
+       </svg>`
+    : '✦';
+
+  // Content
+  const contentBox = document.createElement('div');
+
+  contentBox.className = 'max-w-[85%] md:max-w-[75%] min-w-0';
+
+  const label = document.createElement('div');
+
+  label.className =
+    'text-[10px] text-gray-400 mb-1.5 ' +
+    (isUser ? 'text-right' : 'text-left');
+
+  label.textContent = isUser ? 'دانش‌آموز' : 'TalimBot';
+
+  const bubble = document.createElement('div');
+
+  bubble.className =
+    'p-3.5 md:p-4 text-sm leading-8 break-words ' +
+    (isUser ? 'user-bubble whitespace-pre-wrap' : 'ai-bubble');
+
+  if (isUser) {
+    bubble.textContent = content;
+  } else {
+    bubble.innerHTML = renderMessage(content, false);
+  }
+
+  contentBox.appendChild(label);
+  contentBox.appendChild(bubble);
+
+  wrapper.appendChild(avatar);
+  wrapper.appendChild(contentBox);
+
+  msgs.appendChild(wrapper);
+
+  return wrapper;
+}
+
+
+// LOAD CONVERSATIONS
+async function load() {
+
+  const l = await api(
+    '/conversations?q=' +
+    encodeURIComponent(document.getElementById('q').value)
+  );
+
+  listEl.innerHTML = '';
+
+  document.getElementById('count').textContent =
+    l.length.toLocaleString('fa-IR') + ' گفتگو';
+
+  if (!l.length) {
+    listEl.innerHTML = `
+      <div class="text-center py-8 px-3">
+        <p class="text-xs text-gray-400">گفتگویی یافت نشد.</p>
+      </div>
+    `;
+    return;
+  }
+
+  l.forEach(c => {
+
+    const b = document.createElement('button');
+
+    b.className =
+      'student-item w-full text-right p-3 rounded-xl flex items-center gap-3 mb-1 ' +
+      (c.id === selectedId ? 'active' : '');
+
+    // Avatar
+    const avatar = document.createElement('div');
+
+    avatar.className =
+      'student-avatar w-10 h-10 rounded-xl shrink-0 flex items-center justify-center font-bold text-sm';
+
+    avatar.innerHTML = `
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <circle cx="12" cy="8" r="4"/>
+        <path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/>
+      </svg>
+    `;
+
+    // Student information
+    const info = document.createElement('div');
+
+    info.className = 'min-w-0 flex-1';
+
+    const name = document.createElement('div');
+
+    name.className = 'font-bold text-xs text-gray-700 truncate';
+    name.textContent = c.student_name;
+
+    const title = document.createElement('div');
+
+    title.className = 'text-[11px] text-gray-500 truncate mt-1';
+    title.textContent = c.title || 'گفتگوی جدید';
+
+    const date = document.createElement('div');
+
+    date.className = 'text-[10px] text-gray-400 mt-1';
+
+    date.textContent = new Date(
+      c.updated_at + 'Z'
+    ).toLocaleString('fa-IR', {
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+
+    info.appendChild(name);
+    info.appendChild(title);
+    info.appendChild(date);
+
+    b.appendChild(avatar);
+    b.appendChild(info);
+
+    b.onclick = () => {
+      show(c);
+      closeSidebar();
+    };
+
+    listEl.appendChild(b);
+
+  });
+
+}
+
+
+// SHOW CONVERSATION
+async function show(c) {
+
+  selectedId = c.id;
+
+  // Update selected item
+  document.querySelectorAll('.student-item').forEach(el => {
+    el.classList.remove('active');
+  });
+
+  const buttons = [...document.querySelectorAll('.student-item')];
+
+  // Refresh list to highlight selected conversation
+  await load();
+
+  msgs.innerHTML = '';
+
+  // Conversation header
+  const header = document.createElement('div');
+
+  header.className =
+    'max-w-4xl mx-auto w-full bg-white border border-gray-100 rounded-2xl p-4 mb-7 flex items-center gap-3 shadow-sm';
+
+  const avatar = document.createElement('div');
+
+  avatar.className =
+    'student-avatar w-11 h-11 rounded-xl flex items-center justify-center font-bold';
+
+  avatar.innerHTML = `
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+      <circle cx="12" cy="8" r="4"/>
+      <path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/>
+    </svg>
+  `;
+
+  const info = document.createElement('div');
+
+  info.className = 'flex-1 min-w-0';
+
+  const name = document.createElement('h2');
+
+  name.className = 'font-bold text-gray-800 text-sm';
+  name.textContent = c.student_name;
+
+  const title = document.createElement('p');
+
+  title.className = 'text-[11px] text-gray-400 mt-1';
+  title.textContent = c.title || 'گفتگوی جدید';
+
+  info.appendChild(name);
+  info.appendChild(title);
+
+  const tag = document.createElement('span');
+
+  tag.className =
+    'hidden sm:inline-flex text-[10px] bg-teal-50 text-teal-700 border border-teal-100 rounded-lg px-3 py-2';
+
+  tag.textContent = 'فقط مشاهده';
+
+  header.appendChild(avatar);
+  header.appendChild(info);
+  header.appendChild(tag);
+
+  msgs.appendChild(header);
+
+
+  // Messages
+  try {
+
+    const history = await api(
+      `/conversations/${c.id}/messages`
+    );
+
+    if (!history.length) {
+      showEmpty();
+      return;
+    }
+
+    history.forEach(x => {
+      addMessage(x.role, x.content);
+    });
+
+    msgs.scrollTop = 0;
+
+  } catch(e) {
+
+    const error = document.createElement('p');
+
+    error.className =
+      'text-center text-red-500 text-sm py-8';
+
+    error.textContent =
+      'خطا در دریافت پیام‌ها: ' + e.message;
+
+    msgs.appendChild(error);
+
+  }
+
+}
+
+
+// SEARCH
+document.getElementById('q').addEventListener('input', () => {
+
+  clearTimeout(tm);
+
+  tm = setTimeout(() => {
+    load().catch(console.error);
+  }, 300);
+
+});
+
+
+// INITIALIZE
+load().catch(e => {
+  console.error('Failed to load conversations:', e);
+
+  listEl.innerHTML = `
+    <p class="text-center text-xs text-red-500 py-6">
+      خطا در دریافت گفتگوها
+    </p>
+  `;
+});
+
+</script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+<!-- <!DOCTYPE html><html lang="fa" dir="rtl"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>گفتگوهای دانش‌آموزان</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet">
+<style>body{font-family:'Vazirmatn',sans-serif}</style></head>
+<body class="bg-gray-50 h-screen flex flex-col">
+<nav style="background:#1b6e6e" class="text-white px-4 h-14 flex items-center justify-between shrink-0">
+  <b>گفتگوهای دانش‌آموزان</b><a href="teacher-dashboard.html" class="bg-white/20 px-3 py-1 rounded-lg">داشبورد</a></nav>
+<div class="flex flex-1 min-h-0">
+  <aside class="w-72 bg-white border-l p-3 overflow-y-auto">
+    <input id="q" placeholder="جستجوی نام دانش‌آموز..." class="w-full border-2 rounded-lg p-2 mb-3">
+    <div id="list" class="space-y-1"></div></aside>
+  <main id="msgs" class="flex-1 overflow-y-auto p-4 space-y-3"><p class="text-gray-400 text-center mt-10">یک گفتگو را انتخاب کنید</p></main></div>
+<script src="../assets/js/data.js"></script>
+<script>
+if(sessionStorage.getItem('isTeacher')!=='true'||!sessionStorage.getItem('token')) location.href='login.html';
+const api=p=>apiCall('/chat/teacher'+p,{headers:{Authorization:'Bearer '+sessionStorage.getItem('token')}});
+async function load(){const l=await api('/conversations?q='+encodeURIComponent(document.getElementById('q').value));
+  const el=document.getElementById('list');el.innerHTML='';
+  l.forEach(c=>{const b=document.createElement('button');b.className='block w-full text-right p-2 rounded-lg hover:bg-gray-100 border-b';
+    const n=document.createElement('div');n.className='font-bold';n.textContent=c.student_name;
+    const t=document.createElement('div');t.className='text-xs text-gray-500 truncate';
+    t.textContent=c.title+' • '+new Date(c.updated_at+'Z').toLocaleString('fa-IR');
+    b.append(n,t);b.onclick=()=>show(c);el.appendChild(b)});
+  if(!l.length)el.textContent='گفتگویی یافت نشد'}
+async function show(c){const m=document.getElementById('msgs');m.innerHTML='';
+  const h=document.createElement('h2');h.className='font-bold';h.textContent=c.student_name;m.appendChild(h);
+  (await api(`/conversations/${c.id}/messages`)).forEach(x=>{const d=document.createElement('div');
+    d.className='max-w-[80%] p-3 rounded-2xl whitespace-pre-wrap '+(x.role==='user'?'bg-teal-700 text-white ml-auto':'bg-white border');
+    d.textContent=x.content;m.appendChild(d)})}
+let tm;document.getElementById('q').addEventListener('input',()=>{clearTimeout(tm);tm=setTimeout(load,300)});
+load();
+</script></body></html> -->

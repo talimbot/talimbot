@@ -43,3 +43,6 @@ data/*.backup
 
 # Logs
 *.log
+
+backend/data/*.db
+data/*.db

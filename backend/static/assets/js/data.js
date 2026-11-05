@@ -143,6 +143,7 @@ async function checkTeacherPassword(password) {
             method: 'POST',
             body: JSON.stringify({ password })
         });
+        if (result.valid) sessionStorage.setItem('token', result.token);
         return result.valid;
     } catch (error) {
         return false;

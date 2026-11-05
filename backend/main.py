@@ -12,6 +12,8 @@ from dotenv import load_dotenv
 # Load environment variables from .env file (for local development)
 load_dotenv()
 
+from chat import router as chat_router, signer
+
 app = FastAPI()
 
 # CORS configuration - allow all origins for flexibility
@@ -307,10 +309,16 @@ def reset_all_data(request: PasswordRequest):
     save_data(data)
     return {"success": True}
 
+# @app.post("/api/auth/teacher")
+# def check_teacher_password(request: TeacherAuthRequest):
+#     data = load_data()
+#     return {"valid": request.password == data.teacherPassword}
+
 @app.post("/api/auth/teacher")
 def check_teacher_password(request: TeacherAuthRequest):
     data = load_data()
-    return {"valid": request.password == data.teacherPassword}
+    ok = request.password == data.teacherPassword
+    return {"valid": ok, "token": signer.dumps({"role": "teacher"}) if ok else None}
 
 @app.post("/api/auth/student")
 def authenticate_student(request: StudentAuthRequest):
@@ -344,32 +352,51 @@ def authenticate_student(request: StudentAuthRequest):
 class NationalCodeAuthRequest(BaseModel):
     nationalCode: str
 
+# @app.post("/api/auth/student-by-nationalcode")
+# def authenticate_student_by_nationalcode(request: NationalCodeAuthRequest):
+#     # Special demo account - not stored in database
+#     # Check for national code without leading zero (frontend strips it)
+#     if request.nationalCode == "921111111":
+#         demo_student = Student(
+#             studentNumber="DEMO",
+#             name="پریناز عاکف",
+#             nationalCode="921111111",
+#             grade=0.0,
+#             mbti=None,
+#             learningStyle=None,
+#             ams=None,
+#             cooperative=None,
+#             preferredStudents=[],
+#             group=None
+#         )
+#         return {"valid": True, "student": demo_student}
+    
+#     data = load_data()
+#     # Find student by national code (without leading zero)
+#     student = next((s for s in data.students if s.nationalCode == request.nationalCode), None)
+#     if not student:
+#         raise HTTPException(status_code=404, detail="کد ملی در سیستم یافت نشد")
+    
+#     return {"valid": True, "student": student}
+
 @app.post("/api/auth/student-by-nationalcode")
 def authenticate_student_by_nationalcode(request: NationalCodeAuthRequest):
-    # Special demo account - not stored in database
-    # Check for national code without leading zero (frontend strips it)
     if request.nationalCode == "921111111":
         demo_student = Student(
-            studentNumber="DEMO",
-            name="پریناز عاکف",
-            nationalCode="921111111",
-            grade=0.0,
-            mbti=None,
-            learningStyle=None,
-            ams=None,
-            cooperative=None,
-            preferredStudents=[],
-            group=None
+            studentNumber="DEMO", name="پریناز عاکف", nationalCode="921111111",
+            grade=0.0, mbti=None, learningStyle=None, ams=None,
+            cooperative=None, preferredStudents=[], group=None
         )
-        return {"valid": True, "student": demo_student}
-    
+        token = signer.dumps({"role": "student", "id": "DEMO", "name": demo_student.name})
+        return {"valid": True, "student": demo_student, "token": token}
+
     data = load_data()
-    # Find student by national code (without leading zero)
     student = next((s for s in data.students if s.nationalCode == request.nationalCode), None)
     if not student:
         raise HTTPException(status_code=404, detail="کد ملی در سیستم یافت نشد")
-    
-    return {"valid": True, "student": student}
+
+    token = signer.dumps({"role": "student", "id": student.studentNumber, "name": student.name})
+    return {"valid": True, "student": student, "token": token}
 
 @app.get("/api/student/{student_number}/group")
 def get_student_group(student_number: str):
@@ -419,6 +446,8 @@ def get_data_backup():
 
 # Define static directory path
 STATIC_DIR = Path(__file__).parent / "static"
+
+app.include_router(chat_router) # ADDED FOR CHATBOT
 
 # Mount static files FIRST - this handles all non-API routes
 app.mount("/", StaticFiles(directory=str(STATIC_DIR), html=True), name="static")

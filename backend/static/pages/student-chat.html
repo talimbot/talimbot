@@ -1,0 +1,864 @@
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>چت‌بات هوشمند | TalimBot</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --primary: #1b6e6e;
+  --primary-dark: #155858;
+  --primary-light: #e9f5f3;
+  --bg: #f6f8f9;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  font-family: 'Vazirmatn', sans-serif;
+  background: var(--bg);
+}
+
+button, textarea { font-family: inherit; }
+
+button { transition: all .2s ease; }
+
+.app-bg {
+  background:
+    radial-gradient(ellipse at 85% 0%, rgba(27,110,110,.055), transparent 35%),
+    #f6f8f9;
+}
+
+.sidebar {
+  transition: transform .3s ease;
+}
+
+.brand-gradient {
+  background: linear-gradient(135deg, #1b6e6e, #278b83);
+}
+
+.welcome-icon {
+  background: linear-gradient(145deg, #e4f3f0, #f2f8f7);
+  box-shadow: 0 12px 35px rgba(27,110,110,.10);
+}
+
+.suggestion {
+  transition: all .2s ease;
+}
+
+.suggestion:hover {
+  border-color: #1b6e6e;
+  background: #f0f8f6;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(27,110,110,.07);
+}
+
+.message {
+  animation: appear .25s ease;
+}
+
+@keyframes appear {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.user-bubble {
+  background: linear-gradient(135deg, #1b6e6e, #217e78);
+  color: white;
+  border-radius: 20px 20px 5px 20px;
+}
+
+.ai-bubble {
+  background: white;
+  border: 1px solid #e9eeee;
+  color: #344747;
+  border-radius: 20px 20px 20px 5px;
+  box-shadow: 0 3px 12px rgba(0,0,0,.025);
+  line-height: 1.8;
+  word-spacing: normal;
+  letter-spacing: normal;
+  text-align: right;
+  direction: rtl;
+}
+
+.ai-bubble p {
+  margin: 0 0 8px;
+  line-height: 1.8;
+}
+
+.ai-bubble p:last-child { margin-bottom: 0; }
+.ai-bubble strong { color: #155858; font-weight: 800; }
+.ai-bubble ul, .ai-bubble ol { padding-right: 22px; margin: 4px 0 10px; }
+.ai-bubble ul { list-style-type: disc; }
+.ai-bubble ol { list-style-type: decimal; }
+.ai-bubble li { margin: 2px 0; padding-right: 0; line-height: 1.8; }
+.ai-bubble li p { margin: 0; }
+.ai-bubble h1, .ai-bubble h2, .ai-bubble h3 {
+  font-weight: 800;
+  color: #155858;
+  margin: 14px 0 8px;
+}
+.ai-bubble * {
+  word-spacing: normal !important;
+  letter-spacing: normal !important;
+  text-align-last: right;
+}
+.ai-bubble code {
+  background: #edf5f3;
+  color: #155858;
+  padding: 2px 6px;
+  border-radius: 5px;
+  direction: ltr;
+  display: inline-block;
+}
+.ai-bubble pre {
+  background: #f3f7f6;
+  padding: 14px;
+  border-radius: 12px;
+  overflow-x: auto;
+  direction: ltr;
+  text-align: left;
+  margin: 10px 0;
+}
+.ai-bubble pre * { text-align-last: auto; }
+.ai-bubble pre code { background: none; padding: 0; }
+
+.composer {
+  transition: all .2s ease;
+}
+
+.composer:focus-within {
+  border-color: rgba(27,110,110,.55);
+  box-shadow: 0 0 0 4px rgba(27,110,110,.07);
+}
+
+.send-button {
+  background: linear-gradient(135deg, #1b6e6e, #27877e);
+  transition: all .2s ease;
+}
+
+.send-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(27,110,110,.25);
+}
+
+.send-button:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+}
+
+.chat-item.active {
+  background: #eaf5f3;
+  color: #1b6e6e;
+  border-right: 3px solid #1b6e6e;
+}
+
+.chat-item:not(.active):hover {
+  background: rgba(255,255,255,.75);
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #36a18d;
+  display: inline-block;
+}
+
+.typing-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #398b81;
+  animation: typing 1s infinite ease-in-out;
+}
+
+.typing-dot:nth-child(2) { animation-delay: .15s; }
+.typing-dot:nth-child(3) { animation-delay: .3s; }
+
+@keyframes typing {
+  0%, 60%, 100% { transform: translateY(0); opacity: .4; }
+  30% { transform: translateY(-5px); opacity: 1; }
+}
+
+#msgs::-webkit-scrollbar,
+#list::-webkit-scrollbar {
+  width: 5px;
+}
+
+#msgs::-webkit-scrollbar-thumb,
+#list::-webkit-scrollbar-thumb {
+  background: #dce7e5;
+  border-radius: 10px;
+}
+
+textarea {
+  resize: none;
+  outline: none;
+}
+
+@media(max-width: 767px) {
+  .sidebar {
+    position: fixed;
+    z-index: 40;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 285px;
+    transform: translateX(110%);
+    box-shadow: none;
+  }
+
+  .sidebar.mobile-open {
+    transform: translateX(0);
+    box-shadow: -10px 0 40px rgba(0,0,0,.12);
+  }
+
+  .mobile-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(15,40,40,.35);
+    z-index: 30;
+  }
+
+  .mobile-overlay.visible { display: block; }
+}
+</style>
+</head>
+
+<body class="h-screen overflow-hidden app-bg">
+
+<div class="flex h-screen">
+
+<!-- Mobile overlay -->
+<div id="overlay" class="mobile-overlay" onclick="toggleSidebar()"></div>
+
+<!-- SIDEBAR -->
+<aside id="sidebar" class="sidebar w-[275px] shrink-0 border-l border-teal-800/10 flex flex-col bg-gradient-to-b from-[#e8f4f1] via-[#f2f8f6] to-white">
+
+  <!-- Brand -->
+  <div class="p-5 border-b border-teal-900/10 bg-gradient-to-l from-teal-50/70 to-transparent">
+    <div class="flex items-center gap-3">
+      <div class="brand-gradient w-11 h-11 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-teal-900/15">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M12 3L14.5 9.5L21 12L14.5 14.5L12 21L9.5 14.5L3 12L9.5 9.5L12 3Z"/>
+          <path d="M19 2V6M17 4H21"/>
+        </svg>
+      </div>
+      <div>
+        <h1 class="font-extrabold text-gray-800 text-lg">TalimBot</h1>
+        <p class="text-[11px] text-gray-400">دستیار هوشمند آموزشی</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- New chat -->
+  <div class="p-4 pb-2">
+    <button onclick="newChat()" class="w-full brand-gradient text-white rounded-xl py-3 px-4 flex items-center justify-center gap-2 font-semibold text-sm shadow-md shadow-teal-900/10 hover:shadow-lg hover:-translate-y-0.5">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 5V19M5 12H19"/>
+      </svg>
+      گفتگوی جدید
+    </button>
+  </div>
+
+  <!-- Conversation history -->
+  <div class="px-5 pt-5 pb-2 flex items-center justify-between">
+    <span class="text-xs font-bold text-gray-400">تاریخچه گفتگوها</span>
+    <span class="text-[10px] text-gray-300">CHATS</span>
+  </div>
+
+  <div id="list" class="flex-1 overflow-y-auto px-3 pb-3 space-y-1">
+    <div class="text-center text-xs text-gray-400 py-6">در حال بارگذاری...</div>
+  </div>
+
+  <!-- Sidebar footer -->
+  <div class="p-4 border-t border-gray-100">
+    <div class="flex items-center gap-3 rounded-xl bg-gray-50 p-3">
+      <div class="w-9 h-9 rounded-full bg-teal-100 text-teal-800 flex items-center justify-center font-bold text-sm">
+        ت
+      </div>
+      <div class="min-w-0">
+        <p class="text-sm font-semibold text-gray-700">دانش‌آموز</p>
+        <p class="text-[11px] text-gray-400">حساب کاربری شما</p>
+      </div>
+      <span class="dot mr-auto"></span>
+    </div>
+  </div>
+
+</aside>
+
+
+<!-- MAIN CONTENT -->
+<main class="flex-1 flex flex-col min-w-0">
+
+  <!-- TOP NAVBAR -->
+  <header class="h-[68px] shrink-0 bg-white/90 backdrop-blur-xl border-b border-gray-100 flex items-center justify-between px-4 md:px-7">
+
+    <div class="flex items-center gap-3">
+
+      <button onclick="toggleSidebar()" class="md:hidden w-10 h-10 rounded-xl hover:bg-gray-100 flex items-center justify-center text-gray-600" aria-label="باز کردن منو">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M4 6H20M4 12H20M4 18H20"/>
+        </svg>
+      </button>
+
+      <div>
+        <h2 class="font-bold text-gray-800 text-sm md:text-base">گفتگو با TalimBot</h2>
+        <div class="flex items-center gap-1.5 mt-1">
+          <span class="dot"></span>
+          <span class="text-[11px] text-gray-400">دستیار آموزشی هوشمند</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="flex items-center gap-2">
+
+      <div class="hidden sm:flex items-center gap-2 text-[11px] text-amber-700 bg-amber-50 border border-amber-100 rounded-lg px-3 py-2">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M12 9V13M12 17H12.01"/>
+          <path d="M10.3 3.86L2.9 17a2 2 0 0 0 1.74 3h14.72a2 2 0 0 0 1.74-3l-7.4-13.14a2 2 0 0 0-3.4 0Z"/>
+        </svg>
+        گفتگوها برای معلم قابل مشاهده هستند
+      </div>
+
+      <a href="student-dashboard.html" class="flex items-center gap-2 bg-gray-50 hover:bg-teal-50 border border-gray-100 hover:border-teal-100 text-gray-600 hover:text-teal-800 rounded-xl px-3 py-2 text-xs font-semibold">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <rect x="3" y="3" width="8" height="8" rx="1"/>
+          <rect x="13" y="3" width="8" height="5" rx="1"/>
+          <rect x="13" y="10" width="8" height="11" rx="1"/>
+          <rect x="3" y="13" width="8" height="8" rx="1"/>
+        </svg>
+        <span>داشبورد</span>
+      </a>
+      <a href="group-view.html" class="flex items-center gap-2 bg-gray-50 hover:bg-teal-50 border border-gray-100 hover:border-teal-100 text-gray-600 hover:text-teal-800 rounded-xl px-3 py-2 text-xs font-semibold">
+        گروه من
+      </a>
+      <a href="student-chat.html" class="flex items-center gap-2 bg-teal-50 border border-teal-100 text-teal-800 rounded-xl px-3 py-2 text-xs font-semibold">
+        چت‌بات
+      </a>
+
+    </div>
+  </header>
+
+
+  <!-- PRIVACY NOTICE - MOBILE -->
+  <div class="sm:hidden text-center text-[10px] text-amber-700 bg-amber-50 py-2 border-b border-amber-100">
+    توجه: معلم می‌تواند گفتگوهای شما را مشاهده کند.
+  </div>
+
+
+  <!-- CHAT AREA -->
+  <section id="msgs" class="flex-1 overflow-y-auto p-4 md:p-8">
+
+    <!-- Welcome screen -->
+    <div id="welcome" class="min-h-full flex flex-col items-center justify-center text-center max-w-2xl mx-auto py-8">
+
+      <div class="welcome-icon w-[88px] h-[88px] rounded-[28px] flex items-center justify-center mb-6">
+        <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="#1b6e6e" stroke-width="1.5">
+          <path d="M12 3L14.5 9.5L21 12L14.5 14.5L12 21L9.5 14.5L3 12L9.5 9.5L12 3Z"/>
+          <path d="M19 2V6M17 4H21"/>
+        </svg>
+      </div>
+
+      <span class="text-xs font-bold text-teal-700 bg-teal-50 border border-teal-100 px-4 py-1.5 rounded-full mb-4">
+        دستیار هوشمند یادگیری شما
+      </span>
+
+      <h2 class="text-2xl md:text-3xl font-extrabold text-gray-800 mb-3 leading-relaxed">
+        سلام! چطور می‌تونم کمکت کنم؟
+      </h2>
+
+      <p class="text-sm text-gray-400 leading-8 max-w-md mb-9">
+        اینجا می‌تونی سوالات درسی‌ات رو بپرسی، مفاهیم سخت رو یاد بگیری و برای مطالعه و یادگیری بهتر از من کمک بگیری.
+      </p>
+
+      <div class="w-full text-right mb-3">
+        <p class="text-xs font-bold text-gray-500">از کجا شروع کنیم؟</p>
+      </div>
+
+      <!-- Suggested prompts -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
+
+        <button onclick="useSuggestion('یک مفهوم درسی را برای من ساده و قابل فهم توضیح بده.')" class="suggestion text-right bg-white border border-gray-100 rounded-2xl p-4">
+          <div class="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center mb-3">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+              <circle cx="12" cy="12" r="9"/>
+              <path d="M9.5 9a2.5 2.5 0 1 1 4.5 1.5c-1 1-2 1-2 3M12 17H12.01"/>
+            </svg>
+          </div>
+          <p class="text-sm font-bold text-gray-700 mb-1">توضیح یک مفهوم</p>
+          <p class="text-xs text-gray-400">مفاهیم پیچیده را ساده یاد بگیر.</p>
+        </button>
+
+        <button onclick="useSuggestion('برای درس‌های من یک برنامه مطالعه مناسب پیشنهاد بده.')" class="suggestion text-right bg-white border border-gray-100 rounded-2xl p-4">
+          <div class="w-9 h-9 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center mb-3">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+              <rect x="3" y="4" width="18" height="17" rx="2"/>
+              <path d="M16 2V6M8 2V6M3 10H21M8 14H11M8 17H15"/>
+            </svg>
+          </div>
+          <p class="text-sm font-bold text-gray-700 mb-1">برنامه‌ریزی مطالعه</p>
+          <p class="text-xs text-gray-400">برای یادگیری بهتر برنامه‌ریزی کن.</p>
+        </button>
+
+        <button onclick="useSuggestion('لطفاً یک سوال تمرینی از مباحث درسی من طراحی کن.')" class="suggestion text-right bg-white border border-gray-100 rounded-2xl p-4">
+          <div class="w-9 h-9 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center mb-3">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+              <path d="M8 6H21M8 12H21M8 18H21M3 6H3.01M3 12H3.01M3 18H3.01"/>
+            </svg>
+          </div>
+          <p class="text-sm font-bold text-gray-700 mb-1">تمرین و آزمون</p>
+          <p class="text-xs text-gray-400">دانسته‌هایت را محک بزن.</p>
+        </button>
+
+        <button onclick="useSuggestion('چطور می‌توانم روش مطالعه و یادگیری خودم را بهتر کنم؟')" class="suggestion text-right bg-white border border-gray-100 rounded-2xl p-4">
+          <div class="w-9 h-9 rounded-xl bg-teal-50 text-teal-700 flex items-center justify-center mb-3">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+              <path d="M12 3a7 7 0 0 0-4 12.7V19h8v-3.3A7 7 0 0 0 12 3Z"/>
+              <path d="M9 22H15M9 16H15"/>
+            </svg>
+          </div>
+          <p class="text-sm font-bold text-gray-700 mb-1">بهبود روش یادگیری</p>
+          <p class="text-xs text-gray-400">روش مناسب یادگیری خودت را پیدا کن.</p>
+        </button>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- COMPOSER -->
+  <footer class="shrink-0 bg-gradient-to-t from-white via-white to-transparent px-3 md:px-8 pt-3 pb-4 md:pb-6">
+
+    <div class="max-w-4xl mx-auto">
+
+      <div class="composer bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+
+        <textarea
+          id="inp"
+          rows="1"
+          maxlength="2000"
+          placeholder="هر سوالی داری اینجا بنویس..."
+          class="w-full bg-transparent px-5 pt-4 pb-2 text-sm text-gray-700 placeholder:text-gray-400 leading-7"
+        ></textarea>
+
+        <div class="flex items-center justify-between px-3 pb-3">
+
+          <div class="flex items-center gap-2">
+            <span class="text-[10px] text-gray-300 hidden sm:block">حداکثر ۲۰۰۰ کاراکتر</span>
+            <span id="charCount" class="text-[10px] text-gray-300">۰ / ۲۰۰۰</span>
+          </div>
+
+          <button id="btn" onclick="send()" class="send-button flex items-center gap-2 text-white text-xs font-bold px-5 py-3 rounded-xl">
+            ارسال پیام
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 2L11 13"/>
+              <path d="M22 2L15 22L11 13L2 9L22 2Z"/>
+            </svg>
+          </button>
+
+        </div>
+
+      </div>
+
+      <p class="text-center text-[10px] text-gray-400 mt-3">
+        TalimBot ممکن است گاهی پاسخ‌های نادرست ارائه دهد. پاسخ‌ها را با منابع درسی خود بررسی کنید.
+      </p>
+
+    </div>
+
+  </footer>
+
+</main>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
+<script src="../assets/js/data.js"></script>
+
+<script>
+if (!sessionStorage.getItem('token')) location.href = 'login.html';
+
+const api = (p, o = {}) => apiCall('/chat' + p, {
+  ...o,
+  headers: {
+    Authorization: 'Bearer ' + sessionStorage.getItem('token'),
+    ...(o.headers || {})
+  }
+});
+
+let cid = null;
+
+const msgs = document.getElementById('msgs');
+const inp = document.getElementById('inp');
+const btn = document.getElementById('btn');
+const welcome = document.getElementById('welcome');
+
+
+// SIDEBAR
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('mobile-open');
+  document.getElementById('overlay').classList.toggle('visible');
+}
+
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('mobile-open');
+  document.getElementById('overlay').classList.remove('visible');
+}
+
+
+// WELCOME SCREEN
+function showWelcome() {
+  if (!document.getElementById('welcome')) {
+    const el = document.createElement('div');
+    el.id = 'welcome';
+    el.className = 'min-h-full flex flex-col items-center justify-center text-center py-8';
+    el.innerHTML = `
+      <div class="welcome-icon w-[88px] h-[88px] rounded-[28px] flex items-center justify-center mb-6">
+        <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="#1b6e6e" stroke-width="1.5">
+          <path d="M12 3L14.5 9.5L21 12L14.5 14.5L12 21L9.5 14.5L3 12L9.5 9.5L12 3Z"/>
+        </svg>
+      </div>
+      <h2 class="text-2xl font-extrabold text-gray-800 mb-3">سلام! چطور می‌تونم کمکت کنم؟</h2>
+      <p class="text-sm text-gray-400 leading-8">سوالات درسی‌ات را بپرس و یادگیری را شروع کن.</p>
+    `;
+    msgs.appendChild(el);
+  }
+}
+
+function hideWelcome() {
+  const w = document.getElementById('welcome');
+  if (w) w.remove();
+}
+
+function renderMarkdown(text) {
+  const cleaned = text.replace(/&nbsp;|&#x20;|&#160;/gi, ' ');
+  return DOMPurify.sanitize(marked.parse(cleaned));
+}
+
+
+// MESSAGE BUBBLES
+function bubble(role, text) {
+  hideWelcome();
+
+  const isUser = role === 'user';
+
+  const wrapper = document.createElement('div');
+//   wrapper.className = 'message flex items-start gap-3 max-w-4xl mx-auto w-full ' +
+//     (isUser ? 'flex-row-reverse justify-start' : 'flex-row');
+  wrapper.className = 'message flex items-start gap-3 max-w-4xl mx-auto w-full ' +
+    (isUser ? 'flex-row' : 'flex-row-reverse');
+
+  const avatar = document.createElement('div');
+  avatar.className = 'w-9 h-9 shrink-0 rounded-xl flex items-center justify-center text-sm font-bold ' +
+    (isUser
+      ? 'bg-gray-200 text-gray-600'
+      : 'brand-gradient text-white shadow-sm');
+
+//   avatar.textContent = isUser ? 'ش' : '✦';
+    avatar.innerHTML = isUser
+    ? `<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <circle cx="12" cy="8" r="4"/>
+        <path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/>
+        </svg>`
+    : '✦';
+
+  const content = document.createElement('div');
+  content.className = 'max-w-[85%] md:max-w-[75%] min-w-0';
+
+  const label = document.createElement('div');
+  label.className = 'text-[10px] text-gray-400 mb-1.5 ' +
+    (isUser ? 'text-right' : 'text-left');
+  label.textContent = isUser ? 'شما' : 'TalimBot';
+
+  const b = document.createElement('div');
+  b.className = 'p-3.5 md:p-4 text-sm whitespace-pre-wrap break-words ' +
+    (isUser ? 'leading-8 ' : '') +
+    (isUser ? 'user-bubble' : 'ai-bubble');
+  if (isUser) {
+    b.textContent = text;
+  } else {
+    b.innerHTML = renderMarkdown(text);
+  }
+
+  content.appendChild(label);
+  content.appendChild(b);
+  wrapper.appendChild(avatar);
+  wrapper.appendChild(content);
+
+  msgs.appendChild(wrapper);
+  msgs.scrollTop = msgs.scrollHeight;
+
+  return b;
+}
+
+
+// CONVERSATION LIST
+async function loadList() {
+  const l = await api('/conversations');
+  const el = document.getElementById('list');
+
+  el.innerHTML = '';
+
+  if (!l.length) {
+    el.innerHTML = `
+      <div class="text-center py-8 px-3">
+        <p class="text-xs text-gray-400">هنوز گفتگویی نداری.</p>
+        <p class="text-[10px] text-gray-300 mt-2">با یک گفتگوی جدید شروع کن!</p>
+      </div>`;
+    return;
+  }
+
+  l.forEach(c => {
+    const b = document.createElement('div');
+
+    b.className = 'chat-item w-full text-right p-3 rounded-xl text-xs text-gray-600 flex items-center gap-2.5 mb-1 ' +
+      (c.id === cid ? 'active font-bold' : '');
+
+    const icon = document.createElement('span');
+    icon.className = 'shrink-0 text-gray-400';
+    icon.innerHTML = `
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+        <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8A8.5 8.5 0 0 1 8.7 3.9a8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5Z"/>
+      </svg>`;
+
+    const title = document.createElement('span');
+    title.className = 'truncate flex-1';
+    title.textContent = c.title || 'گفتگوی جدید';
+
+    const select = document.createElement('button');
+    select.type = 'button';
+    select.className = 'flex items-center gap-2.5 min-w-0 flex-1 text-right';
+    select.appendChild(icon);
+    select.appendChild(title);
+
+    select.onclick = () => {
+      open(c.id);
+      closeSidebar();
+    };
+
+    const remove = document.createElement('button');
+    remove.type = 'button';
+    remove.className = 'shrink-0 p-1.5 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors';
+    remove.title = 'حذف گفتگو';
+    remove.setAttribute('aria-label', 'حذف گفتگو');
+    remove.innerHTML = `
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <path d="M3 6h18M9 6V4h6v2M19 6l-1 14H6L5 6M10 11v5M14 11v5"/>
+      </svg>`;
+    remove.onclick = event => {
+      event.stopPropagation();
+      deleteConversation(c.id, c.title || 'گفتگوی جدید');
+    };
+
+    b.appendChild(select);
+    b.appendChild(remove);
+    el.appendChild(b);
+  });
+}
+
+
+async function deleteConversation(id, title) {
+  if (!confirm(`گفتگوی «${title}» حذف شود؟ این کار قابل بازگشت نیست.`)) return;
+  try {
+    await api(`/conversations/${id}`, { method: 'DELETE' });
+    if (cid === id) {
+      cid = null;
+      msgs.innerHTML = '';
+      showWelcome();
+    }
+    await loadList();
+  } catch (e) {
+    alert('حذف گفتگو انجام نشد: ' + e.message);
+  }
+}
+
+
+// OPEN CONVERSATION
+async function open(id) {
+  cid = id;
+  msgs.innerHTML = '';
+
+  const history = await api(`/conversations/${id}/messages`);
+
+  if (!history.length) {
+    showWelcome();
+  } else {
+    history.forEach(m => bubble(m.role, m.content));
+  }
+
+  await loadList();
+}
+
+
+// NEW CONVERSATION
+async function newChat() {
+  const c = await api('/conversations', { method: 'POST' });
+  await open(c.id);
+  closeSidebar();
+}
+
+
+// SUGGESTED PROMPTS
+function useSuggestion(text) {
+  inp.value = text;
+  inp.focus();
+  updateCount();
+  send();
+}
+
+
+// CHARACTER COUNT + AUTO RESIZE
+function updateCount() {
+  document.getElementById('charCount').textContent =
+    inp.value.length.toLocaleString('fa-IR') + ' / ۲۰۰۰';
+}
+
+inp.addEventListener('input', () => {
+  inp.style.height = 'auto';
+  inp.style.height = Math.min(inp.scrollHeight, 140) + 'px';
+  updateCount();
+});
+
+
+// SEND MESSAGE
+async function send() {
+  const t = inp.value.trim();
+
+  if (!t || btn.disabled) return;
+
+  try {
+    if (!cid) {
+      const c = await api('/conversations', { method: 'POST' });
+      cid = c.id;
+    }
+
+    inp.value = '';
+    inp.style.height = 'auto';
+    updateCount();
+
+    bubble('user', t);
+
+    btn.disabled = true;
+
+    const w = bubble('assistant', 'در حال فکر کردن...');
+
+    w.innerHTML = `
+      <div class="flex items-center gap-2 py-1 text-gray-400 text-xs">
+        <span>در حال نوشتن پاسخ</span>
+        <div class="flex gap-1">
+          <span class="typing-dot"></span>
+          <span class="typing-dot"></span>
+          <span class="typing-dot"></span>
+        </div>
+      </div>
+    `;
+
+    try {
+      const r = await api(`/conversations/${cid}/messages`, {
+        method: 'POST',
+        body: JSON.stringify({ content: t })
+      });
+
+      w.innerHTML = renderMarkdown(r.content);
+    }
+    catch(e) {
+      w.textContent = 'خطا: ' + e.message + ' پیام شما ذخیره شده است.';
+      w.classList.add('text-red-600');
+    }
+
+    await loadList();
+
+  } catch(e) {
+    bubble('assistant', 'خطا در ایجاد گفتگو: ' + e.message);
+  }
+  finally {
+    btn.disabled = false;
+    inp.focus();
+  }
+}
+
+
+// KEYBOARD SHORTCUT
+inp.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    send();
+  }
+});
+
+
+// INITIALIZATION
+loadList()
+  .then(l => {
+    if (l.length) return open(l[0].id);
+    showWelcome();
+  })
+  .catch(e => {
+    console.error('Failed to load conversations:', e);
+    showWelcome();
+  });
+
+</script>
+
+</body>
+</html>
+
+
+
+
+
+
+<!-- <!DOCTYPE html><html lang="fa" dir="rtl"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>چت‌بات - TalimBot</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet">
+<style>body{font-family:'Vazirmatn',sans-serif}</style></head>
+<body class="bg-gray-50 h-screen flex flex-col">
+<nav style="background:#1b6e6e" class="text-white px-4 h-14 flex items-center justify-between shrink-0">
+  <b>TalimBot چت‌بات</b><a href="student-dashboard.html" class="bg-white/20 px-3 py-1 rounded-lg">داشبورد</a></nav>
+<div class="flex flex-1 min-h-0">
+  <aside class="w-60 bg-white border-l p-3 overflow-y-auto">
+    <button onclick="newChat()" class="w-full bg-teal-700 text-white rounded-lg py-2 mb-3">+ گفتگوی جدید</button>
+    <div id="list" class="space-y-1"></div></aside>
+  <main class="flex-1 flex flex-col min-w-0">
+    <p class="text-xs text-center text-gray-500 py-1 bg-amber-50">توجه: معلم می‌تواند گفتگوهای شما را ببیند.</p>
+    <div id="msgs" class="flex-1 overflow-y-auto p-4 space-y-3"></div>
+    <div class="p-3 bg-white border-t flex gap-2">
+      <textarea id="inp" rows="1" maxlength="2000" class="flex-1 border-2 rounded-xl p-2" placeholder="پیام خود را بنویسید..."></textarea>
+      <button id="btn" onclick="send()" class="bg-teal-700 text-white px-5 rounded-xl">ارسال</button></div></main></div>
+<script src="../assets/js/data.js"></script>
+<script>
+if(!sessionStorage.getItem('token')) location.href='login.html';
+const api=(p,o={})=>apiCall('/chat'+p,{...o,headers:{Authorization:'Bearer '+sessionStorage.getItem('token')}});
+let cid=null;
+function bubble(role,text){const d=document.createElement('div');
+  d.className='max-w-[80%] p-3 rounded-2xl whitespace-pre-wrap '+(role==='user'?'bg-teal-700 text-white mr-0 ml-auto':'bg-white border');
+  d.textContent=text;const m=document.getElementById('msgs');m.appendChild(d);m.scrollTop=m.scrollHeight;return d}
+async function loadList(){const l=await api('/conversations');const el=document.getElementById('list');el.innerHTML='';
+  l.forEach(c=>{const b=document.createElement('button');b.textContent=c.title;
+    b.className='block w-full text-right p-2 rounded-lg truncate hover:bg-gray-100 '+(c.id===cid?'bg-teal-50 font-bold':'');
+    b.onclick=()=>open(c.id);el.appendChild(b)})}
+async function open(id){cid=id;document.getElementById('msgs').innerHTML='';
+  (await api(`/conversations/${id}/messages`)).forEach(m=>bubble(m.role,m.content));loadList()}
+async function newChat(){const c=await api('/conversations',{method:'POST'});await open(c.id)}
+async function send(){const inp=document.getElementById('inp'),t=inp.value.trim();if(!t)return;
+  if(!cid) await newChat();inp.value='';bubble('user',t);
+  const btn=document.getElementById('btn');btn.disabled=true;const w=bubble('assistant','...');
+  try{const r=await api(`/conversations/${cid}/messages`,{method:'POST',body:JSON.stringify({content:t})});w.textContent=r.content;loadList()}
+  catch(e){w.textContent='خطا: '+e.message+' پیام شما ذخیره شده است.';w.className+=' text-red-600'}
+  finally{btn.disabled=false;loadList()}}
+document.getElementById('inp').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send()}});
+loadList().then(()=>api('/conversations')).then(l=>l[0]&&open(l[0].id));
+</script></body></html> -->

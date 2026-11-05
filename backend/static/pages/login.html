@@ -230,7 +230,13 @@
                         return;
                     }
                     
+                    // const result = await response.json();
+                    // sessionStorage.setItem('currentStudent', result.student.studentNumber);
+                    // sessionStorage.setItem('studentName', result.student.name);
+                    // window.location.href = 'student-dashboard.html';
+
                     const result = await response.json();
+                    sessionStorage.setItem('token', result.token);
                     sessionStorage.setItem('currentStudent', result.student.studentNumber);
                     sessionStorage.setItem('studentName', result.student.name);
                     window.location.href = 'student-dashboard.html';
