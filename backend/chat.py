@@ -10,6 +10,7 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 from itsdangerous import URLSafeTimedSerializer
 from dotenv import load_dotenv
 
+load_dotenv(Path(__file__).parents[1] / ".env.local")
 load_dotenv(Path(__file__).parent / ".env")
 
 default_db = "sqlite:///" + str(Path(__file__).parent / "data" / "chat.db")
