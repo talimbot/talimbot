@@ -46,3 +46,8 @@ data/*.backup
 
 backend/data/*.db
 data/*.db
+
+
+.env
+data/
+__pycache__/

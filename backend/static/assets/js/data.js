@@ -30,8 +30,15 @@ async function apiCall(endpoint, options = {}) {
         });
         
         if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.detail || 'API request failed');
+            const body = await response.text();
+            let detail = 'API request failed';
+            try {
+                const error = JSON.parse(body);
+                detail = error.detail || detail;
+            } catch {
+                if (body.trim()) detail = `Server error (${response.status})`;
+            }
+            throw new Error(detail);
         }
         
         return await response.json();

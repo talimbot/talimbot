@@ -159,9 +159,14 @@ def send(cid: int, body: Msg, authorization: str = Header(None)):
             )
             if not response.ok:
                 try:
-                    provider_error = response.json().get("error", {}).get("message", "")
+                    error_body = response.json()
+                    error_value = error_body.get("error", "") if isinstance(error_body, dict) else error_body
+                    if isinstance(error_value, dict):
+                        provider_error = error_value.get("message", "")
+                    else:
+                        provider_error = str(error_value)
                 except ValueError:
-                    provider_error = ""
+                    provider_error = response.text[:500].strip()
                 detail = provider_error or f"OpenRouter returned HTTP {response.status_code}."
                 print("LLM ERROR:", detail)
                 raise HTTPException(502, detail)

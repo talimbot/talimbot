@@ -1,14 +1,8 @@
 {
-  "platform": "python",
+  "platform": "docker",
   "app": "talimbot",
   "port": 8000,
-  "python": {
-    "version": "3.11"
-  },
   "disks": [
-    {
-      "name": "data-disk",
-      "mountTo": "/usr/src/app/data"
-    }
+    { "name": "data-disk", "mountTo": "/app/data" }
   ]
 }
