@@ -142,7 +142,9 @@ def send(cid: int, body: Msg, authorization: str = Header(None)):
                        + [{"role": m["role"], "content": m["content"]} for m in history],
         }
         try:
-            api_key = os.getenv("OPENROUTER_API_KEY", "").strip()
+            # api_key = os.getenv("OPENROUTER_API_KEY", "").strip()
+            api_key = os.getenv("LLM_KEY").strip()
+
             if not api_key or api_key == "PASTE_YOUR_OPENROUTER_API_KEY_HERE":
                 raise HTTPException(502, "OpenRouter API key is not configured.")
             openrouter = requests.Session()
