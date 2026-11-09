@@ -203,6 +203,27 @@ textarea {
 }
 
 @media(max-width: 767px) {
+  .top-actions {
+    display: none;
+  }
+
+  #msgs {
+    padding-inline: 12px;
+  }
+
+  .message {
+    gap: 16px;
+  }
+
+  .message + .message {
+    margin-top: 16px;
+  }
+
+  .message > div:last-child {
+    flex: 1 1 0%;
+    max-width: none;
+  }
+
   .sidebar {
     position: fixed;
     z-index: 40;
@@ -309,17 +330,20 @@ textarea {
         </svg>
       </button>
 
-      <div>
-        <h2 class="font-bold text-gray-800 text-sm md:text-base">گفتگو با TalimBot</h2>
+      <div class="min-w-0">
+        <h2 class="font-bold text-gray-800 text-sm md:text-base">
+          <span class="hidden sm:inline">گفتگو با TalimBot</span>
+          <span class="sm:hidden">دستیار آموزشی هوشمند</span>
+        </h2>
         <div class="flex items-center gap-1.5 mt-1">
           <span class="dot"></span>
-          <span class="text-[11px] text-gray-400">دستیار آموزشی هوشمند</span>
+          <span class="text-[11px] text-gray-400 hidden sm:inline">دستیار آموزشی هوشمند</span>
         </div>
       </div>
 
     </div>
 
-    <div class="flex items-center gap-2">
+    <div class="top-actions flex items-center gap-2">
 
       <div class="hidden sm:flex items-center gap-2 text-[11px] text-amber-700 bg-amber-50 border border-amber-100 rounded-lg px-3 py-2">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
