@@ -188,7 +188,10 @@ async def perform_grouping(request: GroupingRequest):
     data = load_data()
     
     # Get API key from environment variable
-    api_key = os.getenv("OPENROUTER_API_KEY")
+    # api_key = os.getenv("OPENROUTER_API_KEY")
+    api_key = (os.getenv("LLM_KEY")
+            or os.getenv("OPENROUTER_API_KEY")
+            or "").strip()
     
     if not api_key:
         raise HTTPException(
