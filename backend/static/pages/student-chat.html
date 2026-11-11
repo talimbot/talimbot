@@ -672,6 +672,7 @@ function bubble(role, text, imageUrl = null) {
       image.src = imageUrl;
       image.alt = 'تصویر ارسال‌شده';
       image.className = 'mt-2 max-w-full max-h-48 rounded-xl object-contain';
+      image.addEventListener('load', () => URL.revokeObjectURL(imageUrl), { once: true });
       b.appendChild(image);
     }
   } else {
@@ -811,12 +812,12 @@ function updateCount() {
     inp.value.length.toLocaleString('fa-IR') + ' / ۲۰۰۰';
 }
 
-function clearSelectedImage() {
+function clearSelectedImage(revokeUrl = true) {
   selectedImage = null;
   imageInput.value = '';
   imagePreview.classList.add('hidden');
   imagePreviewImg.removeAttribute('src');
-  if (selectedImageUrl) URL.revokeObjectURL(selectedImageUrl);
+  if (revokeUrl && selectedImageUrl) URL.revokeObjectURL(selectedImageUrl);
   selectedImageUrl = null;
 }
 
@@ -887,6 +888,10 @@ async function send() {
     }
 
     bubble('user', t || 'تصویر ارسال شد.', imageUrl);
+    inp.value = '';
+    inp.style.height = 'auto';
+    updateCount();
+    if (image) clearSelectedImage(false);
 
     btn.disabled = true;
     imageButton.disabled = true;
@@ -916,13 +921,9 @@ async function send() {
           });
 
       w.innerHTML = renderMarkdown(r.content);
-      inp.value = '';
-      inp.style.height = 'auto';
-      updateCount();
-      if (image) clearSelectedImage();
     }
     catch(e) {
-      w.textContent = 'خطا: ' + e.message + ' متن شما حفظ شده است.';
+      w.textContent = 'خطا: ' + e.message + ' لطفاً دوباره تلاش کنید.';
       w.classList.add('text-red-600');
     }
 
