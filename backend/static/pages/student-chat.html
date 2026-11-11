@@ -847,6 +847,12 @@ async function sendImageMessage(text, image) {
   const form = new FormData();
   form.append('content', text);
   form.append('image', image, image.name);
+  console.info('Vision upload:', {
+    hasImage: Boolean(image),
+    mimeType: image?.type || '',
+    bytes: image?.size || 0,
+    textCharacters: text.length
+  });
   const response = await fetch(`${API_BASE_URL}/chat/conversations/${cid}/messages/with-image`, {
     method: 'POST',
     headers: { Authorization: 'Bearer ' + sessionStorage.getItem('token') },
@@ -863,7 +869,16 @@ async function sendImageMessage(text, image) {
     }
     throw new Error(detail);
   }
-  return response.json();
+  const result = await response.json();
+  console.info('Vision response:', {
+    httpStatus: response.status,
+    contentType: typeof result.content,
+    contentLength: typeof result.content === 'string' ? result.content.length : 0
+  });
+  if (typeof result.content !== 'string' || !result.content.trim()) {
+    throw new Error('سرویس تحلیل تصویر پاسخ متنی معتبری برنگرداند.');
+  }
+  return result;
 }
 
 inp.addEventListener('input', () => {

@@ -160,6 +160,12 @@ def _vision_payload(history, text, image, image_data):
 
     media_type = image.content_type or "application/octet-stream"
     image_url = "data:" + media_type + ";base64," + base64.b64encode(image_data).decode("ascii")
+    print(
+        "VISION IMAGE ENCODED:",
+        "mime_type=", media_type,
+        "bytes=", len(image_data),
+        "base64_chars=", len(image_url) - len("data:" + media_type + ";base64,"),
+    )
     prompt = text or "این تصویر را با دقت توصیف کن و اطلاعات آموزشی آن را بخوان."
     content = [
         {"type": "text", "text": prompt},
@@ -174,13 +180,54 @@ def _vision_payload(history, text, image, image_data):
     }
 
 
+def _extract_vision_content(result):
+    try:
+        content = result["choices"][0]["message"]["content"]
+    except (KeyError, IndexError, TypeError) as e:
+        print("VISION RESPONSE MISSING CONTENT:", repr(e))
+        raise HTTPException(502, "پاسخ سرویس تحلیل تصویر ساختار مورد انتظار را ندارد.")
+
+    print(
+        "VISION CONTENT FIELD:",
+        "exists=", content is not None,
+        "type=", type(content).__name__,
+        "length=", len(content) if isinstance(content, (str, list, dict)) else "n/a",
+    )
+    if isinstance(content, str):
+        reply = content.strip()
+    elif isinstance(content, list):
+        parts = []
+        for part in content:
+            if isinstance(part, str):
+                parts.append(part)
+            elif isinstance(part, dict) and isinstance(part.get("text"), str):
+                parts.append(part["text"])
+            else:
+                raise HTTPException(502, "پاسخ تحلیل تصویر شامل محتوای متنی قابل خواندن نیست.")
+        reply = "\n".join(parts).strip()
+    elif isinstance(content, dict) and isinstance(content.get("text"), str):
+        reply = content["text"].strip()
+    else:
+        raise HTTPException(502, "قالب محتوای پاسخ تحلیل تصویر پشتیبانی نمی‌شود.")
+
+    if not reply:
+        print("VISION RESPONSE EMPTY: assistant content was empty")
+        raise HTTPException(502, "سرویس تحلیل تصویر پاسخ متنی خالی برگرداند.")
+    print("VISION FINAL RESPONSE:", "non_empty=", True, "chars=", len(reply))
+    return reply
+
+
 def _call_vision(payload):
     api_key = os.getenv("GAPGPT_API_KEY", "").strip()
     if not api_key:
         raise HTTPException(503, "تحلیل تصویر فعال نیست. GAPGPT_API_KEY را در تنظیمات سرور وارد کنید.")
+    endpoint = os.getenv("GAPGPT_URL", "https://api.gapgpt.app/v1/chat/completions")
+    print("VISION REQUEST:", "endpoint=", endpoint, "model=", payload.get("model", ""))
     try:
-        response = requests.post(
-            os.getenv("GAPGPT_URL", "https://api.gapgpt.app/v1/chat/completions"),
+        gapgpt = requests.Session()
+        gapgpt.trust_env = False
+        response = gapgpt.post(
+            endpoint,
             json=payload,
             timeout=90,
             headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
@@ -188,6 +235,7 @@ def _call_vision(payload):
     except requests.RequestException as e:
         print("VISION CONNECTION ERROR:", repr(e))
         raise HTTPException(502, "ارتباط با سرویس تحلیل تصویر برقرار نشد.")
+    print("VISION HTTP STATUS:", response.status_code)
     if not response.ok:
         try:
             body = response.json()
@@ -195,6 +243,7 @@ def _call_vision(payload):
             detail = error.get("message", "") if isinstance(error, dict) else str(error)
         except ValueError:
             detail = ""
+        print("VISION API ERROR:", "status=", response.status_code, "detail=", detail or "unavailable")
         if response.status_code in (401, 403):
             raise HTTPException(502, "کلید سرویس تحلیل تصویر معتبر نیست یا دسترسی ندارد.")
         if response.status_code in (400, 404):
@@ -202,8 +251,18 @@ def _call_vision(payload):
         raise HTTPException(502, detail or "سرویس تحلیل تصویر پاسخ مناسبی نداد.")
     try:
         result = response.json()
-        return result["choices"][0]["message"]["content"]
-    except (KeyError, IndexError, TypeError, ValueError) as e:
+        has_content = (
+            isinstance(result, dict)
+            and bool(result.get("choices"))
+            and isinstance(result["choices"][0], dict)
+            and isinstance(result["choices"][0].get("message"), dict)
+            and "content" in result["choices"][0]["message"]
+        )
+        print("VISION CHOICE CONTENT EXISTS:", has_content)
+        return _extract_vision_content(result)
+    except HTTPException:
+        raise
+    except (TypeError, ValueError) as e:
         print("VISION RESPONSE ERROR:", repr(e))
         raise HTTPException(502, "پاسخ سرویس تحلیل تصویر قابل پردازش نیست.")
 
@@ -354,6 +413,13 @@ async def send_with_image(
     u = auth(authorization, "student")
     text = content.strip()[:2000]
     image_data = await image.read(VISION_MAX_BYTES + 1)
+    print(
+        "VISION UPLOAD RECEIVED:",
+        "received=", bool(image_data),
+        "mime_type=", image.content_type,
+        "bytes=", len(image_data),
+        "text_chars=", len(text),
+    )
     _validate_image_bytes(image, image_data)
 
     with Session() as s:
@@ -367,6 +433,7 @@ async def send_with_image(
         history = msgs(s, cid)[-20:]
         payload = _vision_payload(history, text, image, image_data)
         reply = _call_vision(payload)
+        print("VISION BACKEND RESPONSE:", "non_empty=", bool(reply), "chars=", len(reply))
         s.add(Message(conversation_id=cid, role="assistant", content=reply))
         c.updated_at = datetime.utcnow()
         s.commit()
