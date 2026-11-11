@@ -3,7 +3,7 @@ from datetime import datetime
 from pathlib import Path
 
 import requests
-from fastapi import APIRouter, Header, HTTPException
+from fastapi import APIRouter, File, Form, Header, HTTPException, UploadFile
 from pydantic import BaseModel
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Text, create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
@@ -41,12 +41,14 @@ class Message(Base):
 
 Base.metadata.create_all(engine)
 router = APIRouter(prefix="/api/chat")
+VISION_MAX_BYTES = 5 * 1024 * 1024
+VISION_MIME_TYPES = {"image/png", "image/jpeg", "image/webp"}
 
 # SYSTEM_PROMPT = ("You are a friendly study assistant for 15-16 year old students. "
 #                  "Reply in the student's language (Persian by default). Be clear and concise. "
 #                  "Students know their teacher can read these chats.")
 
-SYSTEM_PROMPT = """You are a patient, warm private tutor for students aged 15-16. You guide their thinking; you never do their work for them. Reply in the student's language (Persian by default). Students know their teacher can read these chats. Students can only type text; if they mention an image or file, ask them to type the question.
+SYSTEM_PROMPT = """You are a patient, warm private tutor for students aged 15-16. You guide their thinking; you never do their work for them. Reply in the student's language (Persian by default). Students know their teacher can read these chats. Students may send text or an image; when an image is attached, use only information visible in it and say when something is unreadable.
 
     FIRST REPLY
     If you have not replied yet in this conversation and the student has not stated a question or task (for example, only a greeting), reply with ONLY this and nothing else:
@@ -91,6 +93,76 @@ def auth(authorization, role):
 
 class Msg(BaseModel):
     content: str
+
+
+def _validate_image_bytes(image: UploadFile, data: bytes):
+    if image.content_type not in VISION_MIME_TYPES:
+        raise HTTPException(415, "فقط تصاویر PNG، JPG، JPEG و WEBP پشتیبانی می‌شوند.")
+    if not data:
+        raise HTTPException(400, "تصویر خالی است.")
+    if len(data) > VISION_MAX_BYTES:
+        raise HTTPException(413, "حجم تصویر نباید بیشتر از ۵ مگابایت باشد.")
+
+    signatures = {
+        "image/png": data.startswith(b"\x89PNG\r\n\x1a\n"),
+        "image/jpeg": data.startswith(b"\xff\xd8\xff"),
+        "image/webp": len(data) >= 12 and data[:4] == b"RIFF" and data[8:12] == b"WEBP",
+    }
+    if not signatures[image.content_type]:
+        raise HTTPException(415, "محتوای فایل با نوع تصویر اعلام‌شده سازگار نیست.")
+
+
+def _vision_payload(history, text, image, image_data):
+    import base64
+
+    media_type = image.content_type or "application/octet-stream"
+    image_url = "data:" + media_type + ";base64," + base64.b64encode(image_data).decode("ascii")
+    prompt = text or "این تصویر را با دقت توصیف کن و اطلاعات آموزشی آن را بخوان."
+    content = [
+        {"type": "text", "text": prompt},
+        {"type": "image_url", "image_url": {"url": image_url}},
+    ]
+    return {
+        "model": os.getenv("GAPGPT_VISION_MODEL", "gapgpt-deepseek-v4.1-flash"),
+        "max_tokens": 2000,
+        "messages": [{"role": "system", "content": SYSTEM_PROMPT}]
+                   + [{"role": m["role"], "content": m["content"]} for m in history[:-1]]
+                   + [{"role": "user", "content": content}],
+    }
+
+
+def _call_vision(payload):
+    api_key = os.getenv("GAPGPT_API_KEY", "").strip()
+    if not api_key:
+        raise HTTPException(503, "تحلیل تصویر فعال نیست. GAPGPT_API_KEY را در تنظیمات سرور وارد کنید.")
+    try:
+        response = requests.post(
+            os.getenv("GAPGPT_URL", "https://api.gapgpt.app/v1/chat/completions"),
+            json=payload,
+            timeout=90,
+            headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
+        )
+    except requests.RequestException as e:
+        print("VISION CONNECTION ERROR:", repr(e))
+        raise HTTPException(502, "ارتباط با سرویس تحلیل تصویر برقرار نشد.")
+    if not response.ok:
+        try:
+            body = response.json()
+            error = body.get("error", body) if isinstance(body, dict) else body
+            detail = error.get("message", "") if isinstance(error, dict) else str(error)
+        except ValueError:
+            detail = ""
+        if response.status_code in (401, 403):
+            raise HTTPException(502, "کلید سرویس تحلیل تصویر معتبر نیست یا دسترسی ندارد.")
+        if response.status_code in (400, 404):
+            raise HTTPException(502, detail or "مدل تحلیل تصویر یا قالب درخواست پشتیبانی نمی‌شود.")
+        raise HTTPException(502, detail or "سرویس تحلیل تصویر پاسخ مناسبی نداد.")
+    try:
+        result = response.json()
+        return result["choices"][0]["message"]["content"]
+    except (KeyError, IndexError, TypeError, ValueError) as e:
+        print("VISION RESPONSE ERROR:", repr(e))
+        raise HTTPException(502, "پاسخ سرویس تحلیل تصویر قابل پردازش نیست.")
 
 
 def conv_dict(c):
@@ -223,6 +295,35 @@ def send(cid: int, body: Msg, authorization: str = Header(None)):
         except (KeyError, IndexError, TypeError, ValueError) as e:
             print("LLM RESPONSE ERROR:", repr(e))
             raise HTTPException(502, "OpenRouter returned an unexpected response.")
+        s.add(Message(conversation_id=cid, role="assistant", content=reply))
+        c.updated_at = datetime.utcnow()
+        s.commit()
+        return {"role": "assistant", "content": reply}
+
+
+@router.post("/conversations/{cid}/messages/with-image")
+async def send_with_image(
+    cid: int,
+    image: UploadFile = File(...),
+    content: str = Form(""),
+    authorization: str = Header(None),
+):
+    u = auth(authorization, "student")
+    text = content.strip()[:2000]
+    image_data = await image.read(VISION_MAX_BYTES + 1)
+    _validate_image_bytes(image, image_data)
+
+    with Session() as s:
+        c = owned(s, cid, u)
+        stored_text = text or "تصویر ارسال شد."
+        s.add(Message(conversation_id=cid, role="user", content=stored_text))
+        if c.title == "New chat":
+            c.title = text[:40] if text else "گفتگو درباره تصویر"
+        c.updated_at = datetime.utcnow()
+        s.commit()
+        history = msgs(s, cid)[-20:]
+        payload = _vision_payload(history, text, image, image_data)
+        reply = _call_vision(payload)
         s.add(Message(conversation_id=cid, role="assistant", content=reply))
         c.updated_at = datetime.utcnow()
         s.commit()

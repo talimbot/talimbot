@@ -202,6 +202,25 @@ textarea {
   outline: none;
 }
 
+.composer-row {
+  direction: ltr;
+}
+
+.composer-row textarea {
+  direction: rtl;
+}
+
+.image-preview {
+  max-width: 180px;
+  max-height: 110px;
+  object-fit: cover;
+}
+
+.drop-active {
+  border-color: rgba(27,110,110,.75);
+  background: #f0f8f6;
+}
+
 @media(max-width: 767px) {
   .top-actions {
     display: none;
@@ -468,19 +487,44 @@ textarea {
 
       <div class="composer bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
 
-        <textarea
-          id="inp"
-          rows="1"
-          maxlength="2000"
-          placeholder="هر سوالی داری اینجا بنویس..."
-          class="w-full bg-transparent px-5 pt-4 pb-2 text-sm text-gray-700 placeholder:text-gray-400 leading-7"
-        ></textarea>
+        <div id="imagePreview" class="hidden px-4 pt-3">
+          <div class="relative inline-block rounded-xl overflow-hidden border border-gray-200 bg-gray-50">
+            <img id="imagePreviewImg" class="image-preview block" alt="پیش‌نمایش تصویر انتخاب‌شده">
+            <button id="removeImage" type="button" aria-label="حذف تصویر" title="حذف تصویر"
+              class="absolute top-1 left-1 w-6 h-6 rounded-full bg-white/95 text-gray-600 hover:text-red-600 shadow-sm flex items-center justify-center">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M6 6L18 18M18 6L6 18"/>
+              </svg>
+            </button>
+          </div>
+          <p id="uploadStatus" class="text-[10px] text-gray-400 mt-1"></p>
+        </div>
+
+        <div class="composer-row flex items-end gap-2 px-3 pt-2">
+          <input id="imageInput" type="file" accept="image/png,image/jpeg,image/webp" class="hidden">
+          <button id="imageButton" type="button" aria-label="افزودن تصویر" title="افزودن تصویر"
+            class="shrink-0 mb-1 p-3 rounded-xl text-gray-500 hover:text-teal-700 hover:bg-teal-50 transition-colors">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <rect x="3" y="3" width="18" height="18" rx="3"/>
+              <circle cx="8.5" cy="8.5" r="1.5"/>
+              <path d="M21 15l-4.5-4.5L7 20M14 14l2-2"/>
+            </svg>
+          </button>
+          <textarea
+            id="inp"
+            rows="1"
+            maxlength="2000"
+            placeholder="هر سوالی داری اینجا بنویس..."
+            class="flex-1 min-w-0 bg-transparent px-2 pt-2 pb-2 text-sm text-gray-700 placeholder:text-gray-400 leading-7"
+          ></textarea>
+        </div>
 
         <div class="flex items-center justify-between px-3 pb-3">
 
           <div class="flex items-center gap-2">
             <span class="text-[10px] text-gray-300 hidden sm:block">حداکثر ۲۰۰۰ کاراکتر</span>
             <span id="charCount" class="text-[10px] text-gray-300">۰ / ۲۰۰۰</span>
+            <span id="uploadError" class="text-[10px] text-red-500"></span>
           </div>
 
           <button id="btn" onclick="send()" class="send-button flex items-center gap-2 text-white text-xs font-bold px-5 py-3 rounded-xl">
@@ -528,6 +572,17 @@ const msgs = document.getElementById('msgs');
 const inp = document.getElementById('inp');
 const btn = document.getElementById('btn');
 const welcome = document.getElementById('welcome');
+const imageInput = document.getElementById('imageInput');
+const imageButton = document.getElementById('imageButton');
+const imagePreview = document.getElementById('imagePreview');
+const imagePreviewImg = document.getElementById('imagePreviewImg');
+const removeImage = document.getElementById('removeImage');
+const uploadError = document.getElementById('uploadError');
+const composer = document.querySelector('.composer');
+let selectedImage = null;
+let selectedImageUrl = null;
+const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
+const IMAGE_TYPES = new Set(['image/png', 'image/jpeg', 'image/webp']);
 
 
 // SIDEBAR
@@ -573,7 +628,7 @@ function renderMarkdown(text) {
 
 
 // MESSAGE BUBBLES
-function bubble(role, text) {
+function bubble(role, text, imageUrl = null) {
   hideWelcome();
 
   const isUser = role === 'user';
@@ -612,6 +667,13 @@ function bubble(role, text) {
     (isUser ? 'user-bubble' : 'ai-bubble');
   if (isUser) {
     b.textContent = text;
+    if (imageUrl) {
+      const image = document.createElement('img');
+      image.src = imageUrl;
+      image.alt = 'تصویر ارسال‌شده';
+      image.className = 'mt-2 max-w-full max-h-48 rounded-xl object-contain';
+      b.appendChild(image);
+    }
   } else {
     b.innerHTML = renderMarkdown(text);
   }
@@ -749,6 +811,60 @@ function updateCount() {
     inp.value.length.toLocaleString('fa-IR') + ' / ۲۰۰۰';
 }
 
+function clearSelectedImage() {
+  selectedImage = null;
+  imageInput.value = '';
+  imagePreview.classList.add('hidden');
+  imagePreviewImg.removeAttribute('src');
+  if (selectedImageUrl) URL.revokeObjectURL(selectedImageUrl);
+  selectedImageUrl = null;
+}
+
+function showUploadError(message) {
+  uploadError.textContent = message;
+}
+
+function chooseImage(file) {
+  showUploadError('');
+  if (!file) return;
+  if (!IMAGE_TYPES.has(file.type)) {
+    showUploadError('فرمت تصویر باید PNG، JPG، JPEG یا WEBP باشد.');
+    return;
+  }
+  if (file.size > MAX_IMAGE_BYTES) {
+    showUploadError('حجم تصویر نباید بیشتر از ۵ مگابایت باشد.');
+    return;
+  }
+  clearSelectedImage();
+  selectedImage = file;
+  selectedImageUrl = URL.createObjectURL(file);
+  imagePreviewImg.src = selectedImageUrl;
+  imagePreview.classList.remove('hidden');
+}
+
+async function sendImageMessage(text, image) {
+  const form = new FormData();
+  form.append('content', text);
+  form.append('image', image, image.name);
+  const response = await fetch(`${API_BASE_URL}/chat/conversations/${cid}/messages/with-image`, {
+    method: 'POST',
+    headers: { Authorization: 'Bearer ' + sessionStorage.getItem('token') },
+    body: form
+  });
+  if (!response.ok) {
+    const body = await response.text();
+    let detail = 'ارسال تصویر انجام نشد.';
+    try {
+      const error = JSON.parse(body);
+      detail = error.detail || detail;
+    } catch {
+      if (response.status >= 500) detail = 'سرویس تحلیل تصویر موقتاً در دسترس نیست.';
+    }
+    throw new Error(detail);
+  }
+  return response.json();
+}
+
 inp.addEventListener('input', () => {
   inp.style.height = 'auto';
   inp.style.height = Math.min(inp.scrollHeight, 140) + 'px';
@@ -759,8 +875,10 @@ inp.addEventListener('input', () => {
 // SEND MESSAGE
 async function send() {
   const t = inp.value.trim();
+  const image = selectedImage;
+  const imageUrl = selectedImageUrl;
 
-  if (!t || btn.disabled) return;
+  if ((!t && !image) || btn.disabled) return;
 
   try {
     if (!cid) {
@@ -768,13 +886,13 @@ async function send() {
       cid = c.id;
     }
 
-    inp.value = '';
-    inp.style.height = 'auto';
-    updateCount();
-
-    bubble('user', t);
+    bubble('user', t || 'تصویر ارسال شد.', imageUrl);
 
     btn.disabled = true;
+    imageButton.disabled = true;
+    btn.innerHTML = image
+      ? 'در حال تحلیل <span class="typing-dot"></span>'
+      : 'در حال ارسال...';
 
     const w = bubble('assistant', 'در حال فکر کردن...');
 
@@ -790,15 +908,21 @@ async function send() {
     `;
 
     try {
-      const r = await api(`/conversations/${cid}/messages`, {
-        method: 'POST',
-        body: JSON.stringify({ content: t })
-      });
+      const r = image
+        ? await sendImageMessage(t, image)
+        : await api(`/conversations/${cid}/messages`, {
+            method: 'POST',
+            body: JSON.stringify({ content: t })
+          });
 
       w.innerHTML = renderMarkdown(r.content);
+      inp.value = '';
+      inp.style.height = 'auto';
+      updateCount();
+      if (image) clearSelectedImage();
     }
     catch(e) {
-      w.textContent = 'خطا: ' + e.message + ' پیام شما ذخیره شده است.';
+      w.textContent = 'خطا: ' + e.message + ' متن شما حفظ شده است.';
       w.classList.add('text-red-600');
     }
 
@@ -809,9 +933,32 @@ async function send() {
   }
   finally {
     btn.disabled = false;
+    imageButton.disabled = false;
+    btn.innerHTML = `ارسال پیام
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M22 2L11 13"/>
+        <path d="M22 2L15 22L11 13L2 9L22 2Z"/>
+      </svg>`;
     inp.focus();
   }
 }
+
+imageButton.addEventListener('click', () => imageInput.click());
+imageInput.addEventListener('change', () => chooseImage(imageInput.files[0]));
+removeImage.addEventListener('click', clearSelectedImage);
+
+composer.addEventListener('dragover', event => {
+  event.preventDefault();
+  composer.classList.add('drop-active');
+});
+composer.addEventListener('dragleave', event => {
+  if (!composer.contains(event.relatedTarget)) composer.classList.remove('drop-active');
+});
+composer.addEventListener('drop', event => {
+  event.preventDefault();
+  composer.classList.remove('drop-active');
+  chooseImage(event.dataTransfer.files[0]);
+});
 
 
 // KEYBOARD SHORTCUT
