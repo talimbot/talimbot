@@ -626,6 +626,13 @@ function renderMarkdown(text) {
   return DOMPurify.sanitize(marked.parse(cleaned));
 }
 
+async function loadImg(imgEl, url) {
+  const r = await fetch(url, {
+    headers: { Authorization: 'Bearer ' + sessionStorage.getItem('token') }
+  });
+  if (r.ok) imgEl.src = URL.createObjectURL(await r.blob());
+}
+
 
 // MESSAGE BUBBLES
 function bubble(role, text, imageUrl = null) {
@@ -669,10 +676,14 @@ function bubble(role, text, imageUrl = null) {
     b.textContent = text;
     if (imageUrl) {
       const image = document.createElement('img');
-      image.src = imageUrl;
       image.alt = 'تصویر ارسال‌شده';
       image.className = 'mt-2 max-w-full max-h-48 rounded-xl object-contain';
-      image.addEventListener('load', () => URL.revokeObjectURL(imageUrl), { once: true });
+      if (imageUrl.startsWith('/api/')) {
+        loadImg(image, imageUrl);
+      } else {
+        image.src = imageUrl;
+        image.addEventListener('load', () => URL.revokeObjectURL(imageUrl), { once: true });
+      }
       b.appendChild(image);
     }
   } else {
@@ -782,7 +793,7 @@ async function open(id) {
   if (!history.length) {
     showWelcome();
   } else {
-    history.forEach(m => bubble(m.role, m.content));
+    history.forEach(m => bubble(m.role, m.content, m.image));
   }
 
   await loadList();

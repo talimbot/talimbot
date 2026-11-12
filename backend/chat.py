@@ -1,6 +1,7 @@
 import os
 from datetime import datetime
 from pathlib import Path
+from typing import Optional
 
 import requests
 from fastapi import APIRouter, File, Form, Header, HTTPException, UploadFile
@@ -9,6 +10,9 @@ from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Text, crea
 from sqlalchemy.orm import declarative_base, sessionmaker
 from itsdangerous import URLSafeTimedSerializer
 from dotenv import load_dotenv
+
+import base64, uuid
+from fastapi.responses import FileResponse
 
 load_dotenv(Path(__file__).parents[1] / ".env.local")
 load_dotenv(Path(__file__).parent / ".env")
@@ -36,10 +40,19 @@ class Message(Base):
     conversation_id = Column(Integer, ForeignKey("conversations.id"), index=True)
     role = Column(String)
     content = Column(Text)
+    image_path = Column(String, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 
 
 Base.metadata.create_all(engine)
+
+from sqlalchemy import inspect, text as sql_text
+UPLOAD_DIR = Path(__file__).parent / "data" / "uploads"
+UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+if "image_path" not in [c["name"] for c in inspect(engine).get_columns("messages")]:
+    with engine.begin() as conn:
+        conn.execute(sql_text("ALTER TABLE messages ADD COLUMN image_path VARCHAR"))
+
 router = APIRouter(prefix="/api/chat")
 VISION_MAX_BYTES = 5 * 1024 * 1024
 VISION_MIME_TYPES = {"image/png", "image/jpeg", "image/webp"}
@@ -136,6 +149,7 @@ def auth(authorization, role):
 
 class Msg(BaseModel):
     content: str
+    image: Optional[str] = None
 
 
 def _validate_image_bytes(image: UploadFile, data: bytes):
@@ -273,8 +287,28 @@ def conv_dict(c):
 
 
 def msgs(s, cid):
-    return [{"role": m.role, "content": m.content, "created_at": m.created_at.isoformat()}
-            for m in s.query(Message).filter_by(conversation_id=cid).order_by(Message.id)]
+    return [{"role": m.role, "content": m.content, "created_at": m.created_at.isoformat(),
+            "image": f"/api/chat/images/{m.id}" if m.image_path else None}
+        for m in s.query(Message).filter_by(conversation_id=cid).order_by(Message.id)]
+    # return [{"role": m.role, "content": m.content, "created_at": m.created_at.isoformat()}
+    #         for m in s.query(Message).filter_by(conversation_id=cid).order_by(Message.id)]
+
+
+ALLOWED = {"image/png": ".png", "image/jpeg": ".jpg", "image/webp": ".webp"}
+
+def save_image(data_url):
+    """data_url like 'data:image/png;base64,AAAA...'. Returns filename or None."""
+    try:
+        head, b64 = data_url.split(",", 1)
+        mime = head.split(";")[0].replace("data:", "")
+        raw = base64.b64decode(b64)
+    except Exception:
+        raise HTTPException(400, "Invalid image")
+    if mime not in ALLOWED or len(raw) > 5 * 1024 * 1024:
+        raise HTTPException(400, "Image must be PNG/JPEG/WebP under 5 MB")
+    name = uuid.uuid4().hex + ALLOWED[mime]
+    (UPLOAD_DIR / name).write_bytes(raw)
+    return name
 
 
 @router.post("/conversations")
@@ -316,6 +350,9 @@ def delete_conv(cid: int, authorization: str = Header(None)):
     u = auth(authorization, "student")
     with Session() as s:
         conversation = owned(s, cid, u)
+        for m in s.query(Message).filter_by(conversation_id=cid):
+            if m.image_path:
+                (UPLOAD_DIR / m.image_path).unlink(missing_ok=True)
         s.query(Message).filter_by(conversation_id=cid).delete(
             synchronize_session=False
         )
@@ -332,7 +369,8 @@ def send(cid: int, body: Msg, authorization: str = Header(None)):
         raise HTTPException(400, "Empty message")
     with Session() as s:
         c = owned(s, cid, u)
-        s.add(Message(conversation_id=cid, role="user", content=text))
+        image_path = save_image(body.image) if body.image else None
+        s.add(Message(conversation_id=cid, role="user", content=text, image_path=image_path))
         if c.title == "New chat":
             c.title = text[:40]
         c.updated_at = datetime.utcnow()
@@ -425,7 +463,16 @@ async def send_with_image(
     with Session() as s:
         c = owned(s, cid, u)
         stored_text = text or "تصویر ارسال شد."
-        s.add(Message(conversation_id=cid, role="user", content=stored_text))
+        stored_image = save_image(
+            "data:" + image.content_type + ";base64,"
+            + base64.b64encode(image_data).decode("ascii")
+        )
+        s.add(Message(
+            conversation_id=cid,
+            role="user",
+            content=stored_text,
+            image_path=stored_image,
+        ))
         if c.title == "New chat":
             c.title = text[:40] if text else "گفتگو درباره تصویر"
         c.updated_at = datetime.utcnow()
@@ -455,3 +502,20 @@ def t_msgs(cid: int, authorization: str = Header(None)):
     auth(authorization, "teacher")
     with Session() as s:
         return msgs(s, cid)
+
+
+@router.get("/images/{mid}")
+def get_image(mid: int, authorization: str = Header(None)):
+    try:
+        u = signer.loads((authorization or "").removeprefix("Bearer "), max_age=43200)
+    except Exception:
+        raise HTTPException(401, "Not authenticated")
+    with Session() as s:
+        m = s.get(Message, mid)
+        if not m or not m.image_path:
+            raise HTTPException(404, "Not found")
+        if u.get("role") != "teacher":
+            c = s.get(Conversation, m.conversation_id)
+            if u.get("role") != "student" or c.student_number != u["id"]:
+                raise HTTPException(403, "Forbidden")
+        return FileResponse(UPLOAD_DIR / m.image_path)

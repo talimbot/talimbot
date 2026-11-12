@@ -478,9 +478,16 @@ function renderMessage(content, isUser) {
   );
 }
 
+async function loadImg(imgEl, url) {
+  const r = await fetch(url, {
+    headers: { Authorization: 'Bearer ' + sessionStorage.getItem('token') }
+  });
+  if (r.ok) imgEl.src = URL.createObjectURL(await r.blob());
+}
+
 
 // MESSAGE BUBBLES
-function addMessage(role, content) {
+function addMessage(role, content, imageUrl = null) {
 
   const isUser = role === 'user';
 
@@ -529,6 +536,14 @@ function addMessage(role, content) {
     bubble.textContent = content;
   } else {
     bubble.innerHTML = renderMessage(content, false);
+  }
+
+  if (imageUrl) {
+    const image = document.createElement('img');
+    image.className = 'max-w-xs rounded-lg';
+    image.alt = 'تصویر ارسال‌شده';
+    bubble.appendChild(image);
+    loadImg(image, imageUrl);
   }
 
   contentBox.appendChild(label);
@@ -712,7 +727,7 @@ async function show(c) {
     }
 
     history.forEach(x => {
-      addMessage(x.role, x.content);
+      addMessage(x.role, x.content, x.image);
     });
 
     msgs.scrollTop = 0;
